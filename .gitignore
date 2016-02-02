@@ -1,8 +1,8 @@
-.classpath
-.project
+/.classpath
+/.project
 
-/bin/
-/build/
-/dist/
+bin/
+build/
+dist/
 
 TestSmartDashboard.xml
