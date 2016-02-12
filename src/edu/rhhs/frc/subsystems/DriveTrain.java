@@ -2,6 +2,7 @@ package edu.rhhs.frc.subsystems;
 
 
 import com.kauailabs.navx.frc.AHRS;
+
 import edu.rhhs.frc.OI;
 import edu.rhhs.frc.commands.DriveWithJoystick;
 import edu.rhhs.frc.utility.AudioPlayer;
@@ -9,10 +10,9 @@ import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.command.PIDSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class DriveTrain extends PIDSubsystem
+public class DriveTrain extends MPSubsystem
 {
 	// private CANTalon rightFrontMotor;
 	// private CANTalon leftFrontMotor;
@@ -68,7 +68,10 @@ public class DriveTrain extends PIDSubsystem
 	// PID/Software Area
 
 	public DriveTrain() {
-		super(0.018, 0.00006, .050);
+		//PID
+		//P .018
+		//I .00006
+		//D .05
 		
 		getPIDController().setOutputRange(-1, 1);
 		// leftFrontMotor = new CANTalon(1);
