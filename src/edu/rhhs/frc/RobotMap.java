@@ -1,4 +1,5 @@
 package edu.rhhs.frc;
+
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into
  * to a variable name. This provides flexibility changing wiring, makes checking
@@ -7,6 +8,7 @@ package edu.rhhs.frc;
  */
 public class RobotMap
 {
+	//MOTORS
 	public static final int DRIVETRAIN_LEFT_MOTOR1 = 1;
 	public static final int DRIVETRAIN_LEFT_MOTOR2 = 2;
 	public static final int DRIVETRAIN_LEFT_MOTOR3 = 3;
@@ -23,9 +25,16 @@ public class RobotMap
 	public static final int MANIPULATOR_RIGHT_MOTOR_ID = 11;
 	
 	//PNEUMATICS
+	public static final int DRIVETRAIN_SPEEDSHIFT_MODULE_ID = 1;
+	public static final int DRIVETRAIN_WINCHSHIFT_MODULE_ID = 2;
+	
 	public static final int SHOOTER_POSITION_MODULE_ID = 6;
     public static final int CARRIAGE_RELEASE_MODULE_ID = 7;
     
     public static final int INTAKE_OUTER_LIFT_MODULE_ID = 8;
     public static final int INTAKE_INNER_LIFT_MODULE_ID = 9;
+    
+    //DIGITAL INPUTS
+    public static final int CARRIAGE_RETRACTED1_PORT_ID = 1;
+    public static final int CARRIAGE_RETRACTED2_PORT_ID = 2;
 }

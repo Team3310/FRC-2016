@@ -11,7 +11,6 @@ public class DriveTrainTurn extends Command
 	public DriveTrainTurn(double target) {
 		requires(RobotMain.driveTrain);
 		this.target = target;
-		errorDeg = 5;
 	}
 
 	public DriveTrainTurn(double target, double errorDeg) {
@@ -22,10 +21,10 @@ public class DriveTrainTurn extends Command
 
 	protected void initialize() {
 		RobotMain.driveTrain.setYawAngleZero();
-		RobotMain.driveTrain.setSetpoint(target);
+//		RobotMain.driveTrain.setSetpoint(target);
 //		RobotMain.driveTrain.getPIDController().setAbsoluteTolerance(errorDeg);
 		RobotMain.driveTrain.setControlMode(ControlMode.SOFTWARE_TURN);
-		RobotMain.driveTrain.enable();
+//		RobotMain.driveTrain.enable();
 	}
 
 	protected void execute() {
@@ -37,8 +36,8 @@ public class DriveTrainTurn extends Command
 	}
 
 	protected void end() {
-		RobotMain.driveTrain.getPIDController().reset();
 		RobotMain.driveTrain.setControlMode(ControlMode.DRIVER);
+		RobotMain.driveTrain.disableControlLoop();
 	}
 
 	protected void interrupted() {

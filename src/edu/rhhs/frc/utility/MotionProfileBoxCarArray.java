@@ -1,7 +1,7 @@
 package edu.rhhs.frc.utility;
 
-public class MotionProfileBoxCarArray {
-	
+public class MotionProfileBoxCarArray
+{
 	static double DEFAULT_T1 = 200;	// millisecond
 	static double DEFAULT_T2 = 100; // millisecond
 	
@@ -99,8 +99,8 @@ public class MotionProfileBoxCarArray {
 	public static void main(String[] args) {
 		long startTime = System.nanoTime();
 		
-		MotionProfileBoxCarArray mp = new MotionProfileBoxCarArray(4, 10, 10);
-		MotionProfilePoint[] points = mp.getProfile();
+//		MotionProfileBoxCarArray mp = new MotionProfileBoxCarArray(4, 10, 10);
+//		MotionProfilePoint[] points = mp.getProfile();
 
 //		System.out.println("Time, Position, Velocity, Acceleration");
 //		for (int i = 0; i < points.length; i++) {

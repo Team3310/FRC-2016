@@ -2,7 +2,7 @@
 package edu.rhhs.frc;
 
 import edu.rhhs.frc.subsystems.DriveTrain;
-import edu.rhhs.frc.subsystems.PneumaticShooter;
+import edu.rhhs.frc.subsystems.ShooterSubsystem;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -22,7 +22,7 @@ public class RobotMain extends IterativeRobot
 //	public static final MPSingleMotorTest talonMP = new MPSingleMotorTest();
 //  public static final MPDrivetrainTest driveTrain = new MPDrivetrainTest();
 	public static final DriveTrain driveTrain = new DriveTrain();
-	public static final PneumaticShooter shooter = new PneumaticShooter();
+	public static final ShooterSubsystem shooter = new ShooterSubsystem();
 	public static OI oi;
 
     Command autonomousCommand;

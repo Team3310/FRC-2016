@@ -1,25 +1,36 @@
 package edu.rhhs.frc.subsystems;
 
-
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.rhhs.frc.OI;
+import edu.rhhs.frc.RobotMap;
 import edu.rhhs.frc.commands.DriveWithJoystick;
 import edu.rhhs.frc.utility.AudioPlayer;
+import edu.rhhs.frc.utility.CANTalonEncoder;
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.SPI.Port;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DriveTrain extends MPSubsystem
 {
-	// private CANTalon rightFrontMotor;
-	// private CANTalon leftFrontMotor;
-	private CANTalon rightRearMotor;
-	private CANTalon leftRearMotor;
-
 	public static enum ControlMode { DRIVER, SOFTWARE_DRIVE, SOFTWARE_TURN };
+	
+	public static final long LOOP_PERIOD_MS = 10;
+	public static final double ENCODER_TICKS_TO_WORLD = 0; //MAJOR TODO
+	
+	private CANTalonEncoder leftDrive1;
+	private CANTalon leftDrive2;
+	private CANTalon leftDrive3;
+	private CANTalonEncoder rightDrive1;
+	private CANTalon rightDrive2;
+	private CANTalon rightDrive3;
+	
+	private Solenoid speedShift;
+	private Solenoid winchShift;
 
 	private RobotDrive m_drive;
 	private Port m_imuSerialPort;
@@ -68,19 +79,34 @@ public class DriveTrain extends MPSubsystem
 	// PID/Software Area
 
 	public DriveTrain() {
+		super(LOOP_PERIOD_MS);
 		//PID
 		//P .018
 		//I .00006
 		//D .05
+
+		//DriveTrain Motors
+		leftDrive1 = new CANTalonEncoder(RobotMap.DRIVETRAIN_LEFT_MOTOR1, ENCODER_TICKS_TO_WORLD, false);
+		leftDrive2 = new CANTalon(RobotMap.DRIVETRAIN_LEFT_MOTOR2);
+		leftDrive3 = new CANTalon(RobotMap.DRIVETRAIN_LEFT_MOTOR3);
+		addMotorController(leftDrive1);
 		
-		getPIDController().setOutputRange(-1, 1);
-		// leftFrontMotor = new CANTalon(1);
-		// rightFrontMotor = new CANTalon(2);
-		leftRearMotor = new CANTalon(2);
-		rightRearMotor = new CANTalon(4);
-		// m_drive = new RobotDrive(leftFrontMotor, leftRearMotor,
-		// rightFrontMotor, rightRearMotor);
-		m_drive = new RobotDrive(leftRearMotor, rightRearMotor);
+		rightDrive1 = new CANTalonEncoder(RobotMap.DRIVETRAIN_RIGHT_MOTOR1, ENCODER_TICKS_TO_WORLD, true);
+		rightDrive2 = new CANTalon(RobotMap.DRIVETRAIN_RIGHT_MOTOR2);
+		rightDrive3 = new CANTalon(RobotMap.DRIVETRAIN_RIGHT_MOTOR3);
+		addMotorController(rightDrive1);
+		
+		leftDrive2.changeControlMode(TalonControlMode.Follower);
+		leftDrive2.set(leftDrive1.getDeviceID());
+		leftDrive3.changeControlMode(TalonControlMode.Follower);
+		leftDrive3.set(leftDrive1.getDeviceID());
+		
+		rightDrive2.changeControlMode(TalonControlMode.Follower);
+		rightDrive2.set(rightDrive1.getDeviceID());
+		rightDrive3.changeControlMode(TalonControlMode.Follower);
+		rightDrive3.set(rightDrive1.getDeviceID());
+		
+		m_drive = new RobotDrive(leftDrive1, rightDrive1);
 		// m_drive.setInvertedMotor(RobotDrive.MotorType.kFrontLeft, true);
 		// m_drive.setInvertedMotor(RobotDrive.MotorType.kFrontRight, true);
 		m_drive.setInvertedMotor(RobotDrive.MotorType.kRearLeft, true);
@@ -88,7 +114,11 @@ public class DriveTrain extends MPSubsystem
 		m_drive.setSafetyEnabled(false);
 		// m_drive.setInvertedMotor(RobotDrive.MotorType.kRearLeft, true);
 		// m_drive.setInvertedMotor(RobotDrive.MotorType.kRearRight, true);
-
+		
+		//DriveTrain Pneumatics
+		speedShift = new Solenoid(RobotMap.DRIVETRAIN_SPEEDSHIFT_MODULE_ID);
+		winchShift = new Solenoid(RobotMap.DRIVETRAIN_WINCHSHIFT_MODULE_ID);
+		
 		// You can add a second parameter to modify the
 		// update rate (in hz) from. The minimum is 4.
 		// The maximum (and the default) is 100 on a nav6, 60 on a navX MXP.
@@ -111,61 +141,21 @@ public class DriveTrain extends MPSubsystem
 		m_imu = new AHRS(m_imuSerialPort, updateRateHz);
 		m_imuFirstIteration = true;
 		calibrateIMU();
-		getPIDController().setAbsoluteTolerance(5);
 	}
 
 	public void initDefaultCommand() {
 		// Set the default command for a subsystem here.
 		setDefaultCommand(new DriveWithJoystick());
 	}
-
-	/**
-	 * Zeroes the IMU in the NavX.
-	 */
-	public void calibrateIMU() {
-		// Set up the IMU
-		if(!m_imuFirstIteration) return;
-		for (int i = 0; i < 500; i++) {
-			try {
-				boolean isCalibrating = m_imu.isCalibrating();
-				if (!isCalibrating) {
-					Timer.delay(0.3);
-					m_imu.zeroYaw();
-					m_imuFirstIteration = false;
-					break;
-				}
-				m_imu.wait(10);
-			} catch (Exception e) {
-
-			}
-		}
+	
+	public void straightMP(double distanceInches, boolean useGyroLock) {
+		//Implementation
+		this.setMPTarget(distanceInches, 0); //TODO: Velocity
 	}
-
-	public AHRS getIMU() {
-		return m_imu;
-	}
-
-	public double getYawAngleDeg() {
-		double yaw = m_imu.getYaw();
-		if (Math.abs(yaw) > 5 && yaw < 0) {
-			yaw += 360;
-		}
-		return yaw;
-	}
-
-	public double getYawRateDegPerSec() {
-		double rate = (getYawAngleDeg() - lastYawAngle) * 1000000000.0 / (System.nanoTime() - lastTime);
-		lastYawAngle = getYawAngleDeg();
-		lastTime = System.nanoTime();
-		return rate;
-	}
-
-	public void setYawAngleZero() {
-		m_imu.zeroYaw();
-	}
-
-	public void setDisplacementZero() {
-		m_imu.resetDisplacement();
+	
+	public void turnMP(double angleDegrees) {
+		//Implementation
+		this.setMPTarget(angleDegrees, 0); //TODO: Velocity
 	}
 
 	public void driveWithJoystick() {
@@ -322,15 +312,8 @@ public class DriveTrain extends MPSubsystem
 		SmartDashboard.putNumber("YawRate", getYawRateDegPerSec());
 		
 		SmartDashboard.putNumber("PIDOutput", output);
-		SmartDashboard.putBoolean("PIDOnTarget", getPIDController().onTarget());
-		SmartDashboard.putNumber("PIDError", getPIDController().getError());
-		SmartDashboard.putNumber("PID Target", getPIDController().getSetpoint());
-		SmartDashboard.putBoolean("PID", getPIDController().isEnabled());
-
-		SmartDashboard.putNumber("NavX X Accel", getIMU()
-				.getWorldLinearAccelX());
-		SmartDashboard.putNumber("NavX Y Accel", getIMU()
-				.getWorldLinearAccelY());
+		SmartDashboard.putNumber("MP Target", this.getMPTarget());
+		SmartDashboard.putBoolean("Control Loop", this.isControlLoopEnabled());
 		SmartDashboard
 				.putNumber("NavX X Distance", getIMU().getDisplacementX());
 		SmartDashboard
@@ -340,33 +323,75 @@ public class DriveTrain extends MPSubsystem
 		SmartDashboard.putData(this);
 	}
 
-	@Override
-	protected double returnPIDInput() {
-		lastYawAngle = getYawAngleDeg();
-		lastTime = System.nanoTime();
-		if (m_controlMode == ControlMode.SOFTWARE_TURN)
-			return getYawAngleDeg();
-		if (m_controlMode == ControlMode.SOFTWARE_DRIVE)
-			return 0; // TODO: ADD IMPLEMENTATION
-		if (m_controlMode == ControlMode.DRIVER)
-			return 0;
-		return 0;
-	}
-
-	@Override
-	protected void usePIDOutput(double output) {
-		this.output = output;
-		if (m_controlMode == ControlMode.SOFTWARE_TURN)
-			m_drive.arcadeDrive(0, output);
-		if (m_controlMode == ControlMode.DRIVER)
-			this.getPIDController().disable();
-	}
-
-	public double getError() {
-		return this.getPIDController().getError();
-	}
+	//PIDInput
+//	lastYawAngle = getYawAngleDeg();
+//	lastTime = System.nanoTime();
+//	if (m_controlMode == ControlMode.SOFTWARE_TURN)
+//		return getYawAngleDeg();
+//	if (m_controlMode == ControlMode.SOFTWARE_DRIVE)
+//		return 0; // TODO: ADD IMPLEMENTATION
+//	if (m_controlMode == ControlMode.DRIVER)
+//		return 0;
+//	return 0;
+//
+	//PIDOutput
+//	this.output = output;
+//	if (m_controlMode == ControlMode.SOFTWARE_TURN)
+//		m_drive.arcadeDrive(0, output);
+//	if (m_controlMode == ControlMode.DRIVER)
+//		this.getPIDController().disable();
 
 	public void setControlMode(ControlMode mode) {
 		this.m_controlMode = mode;
+	}
+	
+	//TODO: Not to do, TEMPORARY NavX CODE
+	/**
+	 * Zeroes the IMU in the NavX.
+	 */
+	public void calibrateIMU() {
+		// Set up the IMU
+		if(!m_imuFirstIteration) return;
+		for (int i = 0; i < 500; i++) {
+			try {
+				boolean isCalibrating = m_imu.isCalibrating();
+				if (!isCalibrating) {
+					Timer.delay(0.3);
+					m_imu.zeroYaw();
+					m_imuFirstIteration = false;
+					break;
+				}
+				m_imu.wait(10);
+			} catch (Exception e) {
+
+			}
+		}
+	}
+
+	public AHRS getIMU() {
+		return m_imu;
+	}
+
+	public double getYawAngleDeg() {
+		double yaw = m_imu.getYaw();
+		if (Math.abs(yaw) > 5 && yaw < 0) {
+			yaw += 360;
+		}
+		return yaw;
+	}
+
+	public double getYawRateDegPerSec() {
+		double rate = (getYawAngleDeg() - lastYawAngle) * 1000000000.0 / (System.nanoTime() - lastTime);
+		lastYawAngle = getYawAngleDeg();
+		lastTime = System.nanoTime();
+		return rate;
+	}
+
+	public void setYawAngleZero() {
+		m_imu.zeroYaw();
+	}
+
+	public void setDisplacementZero() {
+		m_imu.resetDisplacement();
 	}
 }

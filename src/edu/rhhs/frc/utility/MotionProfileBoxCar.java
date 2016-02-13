@@ -1,7 +1,7 @@
 package edu.rhhs.frc.utility;
 
-public class MotionProfileBoxCar {
-	
+public class MotionProfileBoxCar
+{
 	static double DEFAULT_T1 = 200;	// millisecond
 	static double DEFAULT_T2 = 100; // millisecond
 	

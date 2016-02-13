@@ -1,7 +1,7 @@
 package edu.rhhs.frc.subsystems;
 
 import java.util.ArrayList;
-
+import edu.rhhs.frc.RobotMain;
 import edu.rhhs.frc.utility.CANTalonEncoder;
 import edu.rhhs.frc.utility.ControlLoopable;
 import edu.rhhs.frc.utility.ControlLooper;
@@ -10,8 +10,8 @@ import edu.rhhs.frc.utility.MotionProfilePoint;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
-public abstract class MPSubsystem extends Subsystem implements ControlLoopable {
-	
+public abstract class MPSubsystem extends Subsystem implements ControlLoopable
+{	
 	private ArrayList<CANTalonEncoder> motorControllers;
 	
 	private ControlLooper m_controlLoop;
@@ -19,6 +19,7 @@ public abstract class MPSubsystem extends Subsystem implements ControlLoopable {
 	
 	private double Ka = 0.0;
 	private double Kv = 0.0;
+	private double Kg = 0.0;
 	
 	private MotionProfileBoxCar mp;
 	private MotionProfilePoint mpPoint;
@@ -42,10 +43,16 @@ public abstract class MPSubsystem extends Subsystem implements ControlLoopable {
 		motorControllers.add(motorController);	
 	}
 	
+	public void addMotorController(CANTalonEncoder motorController, Boolean isRight) {
+		motorControllers.add(motorController);	
+		motorController.setRight(isRight);	
+	}
+	
 	// Must call this after all the controllers have been added
-	public void setPID(double Kp, double Ki, double Kd, double Ka, double Kv) {
+	public void setPID(double Kp, double Ki, double Kd, double Ka, double Kv, double Kg) {
 		this.Ka = Ka;
 		this.Kv = Kv;
+		this.Kg = Kg;
 		
 		for (CANTalonEncoder motorController : motorControllers) {
 			motorController.setPID(Kp, Ki, Kd);
@@ -70,15 +77,13 @@ public abstract class MPSubsystem extends Subsystem implements ControlLoopable {
 		}
 		
 		// Set up the motion profile 
-		// set talon control mode based on encoder position or gyro mode
-		
 		mp = new MotionProfileBoxCar(targetValue, maxVelocity, periodMs);
 		for (CANTalonEncoder motorController : motorControllers) {
 			motorController.setPosition(0);
 			motorController.set(0);
 			motorController.changeControlMode(TalonControlMode.Position);
+			RobotMain.driveTrain.setYawAngleZero();
 		}
-	
 		enableControlLoop();
 	}
 
@@ -94,39 +99,22 @@ public abstract class MPSubsystem extends Subsystem implements ControlLoopable {
 		if (mpPoint != null) {
 			currentPosition = mpPoint.position;
 			currentVelocity = 1000 * (currentPosition - lastPosition) / (System.currentTimeMillis() - lastTime);
-			double Kf = 0.0;
+			double KfLeft = 0.0;
+			double KfRight = 0.0;
+			double gyroAngleDeg = RobotMain.driveTrain.getYawAngleDeg();
 			if (Math.abs(mpPoint.position) > 0.001) {
-				Kf = (Ka * mpPoint.acceleration + Kv * mpPoint.velocity) / mpPoint.position;
+				KfLeft = (Ka * mpPoint.acceleration + Kv * mpPoint.velocity + Kg * gyroAngleDeg) / mpPoint.position;
+				KfRight = (Ka * mpPoint.acceleration + Kv * mpPoint.velocity - Kg * gyroAngleDeg) / mpPoint.position;
 			}
-			
-			// Talon PID MODE for encoders
-		
 			for (CANTalonEncoder motorController : motorControllers) {
-				motorController.setF(Kf);
-				motorController.setWorld(mpPoint.position);
-			}
-			
-			// Gyro software MODE
-			// 0) set the control mode
-			// 1) switch Talons to vbus (already done above)
-			// 2) KpGyro, KdGyro, KiGyro, KfGyro, KaGyro, KvGyro
-			// 3) PID Calculate
-			
-			double error = setpoint - NavxGyroYawAngle;
-			
-			double KfGyro = Ka * mpPoint.acceleration + Kv * mpPoint.velocity ;
-			
-			double output = KpGyro*error + KiGyro*totalerror + KdGyro*(error-previouserror) + KfGyro;
-			for (CANTalonEncoder motorController : motorControllers) {
-				if (motorController.isRight) {
-					motorController.set(output);
+				if (motorController.isRight()) {
+					motorController.setF(KfRight);
 				}
 				else {
-					motorController.set(-output);
+					motorController.setF(KfLeft);
 				}
+				motorController.setWorld(mpPoint.position);
 			}
-			
-			
 			lastTime = System.currentTimeMillis();
 			lastPosition = currentPosition;
 		}
@@ -139,9 +127,14 @@ public abstract class MPSubsystem extends Subsystem implements ControlLoopable {
 		}
 	}
 	
+	public double getMPTarget() {
+		return mp.getTargetDistance();
+	}
+
 	public double getMPPosition() {
 		return currentPosition;
 	}
+
 	public double getMPVelocity() {
 		return currentVelocity;
 	}

@@ -3,8 +3,6 @@ package edu.rhhs.frc;
 import edu.rhhs.frc.commands.DriveTrainTurn;
 import edu.rhhs.frc.commands.ResetGyro;
 import edu.rhhs.frc.commands.SetDriveAxisLock;
-import edu.rhhs.frc.commands.SetShooterState;
-import edu.rhhs.frc.subsystems.PneumaticShooter.ModuleState;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.InternalButton;
@@ -30,11 +28,11 @@ public class OI
 		//m_drivetrainController = new XboxController(0);
 		
 		//Joystick - Straight Move
-		JoystickButton shooterShoot = new JoystickButton(m_joystick1, 1);
-		shooterShoot.whenPressed(new SetShooterState(ModuleState.EXTENDED));
-		
-		JoystickButton shooterPullback = new JoystickButton(m_joystick1, 2);
-		shooterPullback.whenPressed(new SetShooterState(ModuleState.RETRACTED));
+//		JoystickButton shooterShoot = new JoystickButton(m_joystick1, 1);
+//		shooterShoot.whenPressed(new SetShooterPosition(ModuleState.EXTENDED));
+//		
+//		JoystickButton shooterPullback = new JoystickButton(m_joystick1, 2);
+//		shooterPullback.whenPressed(new SetShooterPosition(ModuleState.RETRACTED));
 		
 		JoystickButton axisLock = new JoystickButton(m_joystick2, 1);
 		axisLock.whenPressed(new SetDriveAxisLock(true));

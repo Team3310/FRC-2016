@@ -1,21 +1,21 @@
 package edu.rhhs.frc.commands;
 
 import edu.rhhs.frc.RobotMain;
-import edu.rhhs.frc.subsystems.PneumaticShooter.ModuleState;
+import edu.rhhs.frc.subsystems.ShooterSubsystem.ShotPosition;
 import edu.wpi.first.wpilibj.command.Command;
 
-public class SetShooterState extends Command
+public class SetShooterPosition extends Command
 {
-	private ModuleState state;
+	private ShotPosition state;
 	
-	public SetShooterState(ModuleState state) {
+	public SetShooterPosition(ShotPosition state) {
 		requires(RobotMain.shooter);
 		this.state = state;
 	}
 
 	@Override
 	protected void initialize() {
-		RobotMain.shooter.setState(state);
+		RobotMain.shooter.setShotPosition(state);
 	}
 
 	@Override
