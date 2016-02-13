@@ -1,18 +1,15 @@
 package edu.rhhs.frc.subsystems;
 
-import com.kauailabs.navx.frc.AHRS;
-
 import edu.rhhs.frc.OI;
+import edu.rhhs.frc.RobotMain;
 import edu.rhhs.frc.RobotMap;
 import edu.rhhs.frc.commands.DriveWithJoystick;
-import edu.rhhs.frc.utility.AudioPlayer;
 import edu.rhhs.frc.utility.CANTalonEncoder;
+import edu.rhhs.frc.utility.MotionProfilePoint;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.RobotDrive;
-import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DriveTrain extends MPSubsystem
@@ -33,9 +30,6 @@ public class DriveTrain extends MPSubsystem
 	private Solenoid winchShift;
 
 	private RobotDrive m_drive;
-	private Port m_imuSerialPort;
-	private AHRS m_imu = null;
-	private boolean m_imuFirstIteration;
 	private double lastYawAngle;
 	private long lastTime;
 	private double output;
@@ -80,6 +74,7 @@ public class DriveTrain extends MPSubsystem
 
 	public DriveTrain() {
 		super(LOOP_PERIOD_MS);
+
 		//PID
 		//P .018
 		//I .00006
@@ -119,30 +114,10 @@ public class DriveTrain extends MPSubsystem
 		speedShift = new Solenoid(RobotMap.DRIVETRAIN_SPEEDSHIFT_MODULE_ID);
 		winchShift = new Solenoid(RobotMap.DRIVETRAIN_WINCHSHIFT_MODULE_ID);
 		
-		// You can add a second parameter to modify the
-		// update rate (in hz) from. The minimum is 4.
-		// The maximum (and the default) is 100 on a nav6, 60 on a navX MXP.
-		// If you need to minimize CPU load, you can set it to a
-		// lower value, as shown here, depending upon your needs.
-		// The recommended maximum update rate is 50Hz
-
-		// You can also use the IMUAdvanced class for advanced
-		// features on a nav6 or a navX MXP.
-
-		// You can also use the AHRS class for advanced features on
-		// a navX MXP. This offers superior performance to the
-		// IMU Advanced class, and also access to 9-axis headings
-		// and magnetic disturbance detection. This class also offers
-		// access to altitude/barometric pressure data from a
-		// navX MXP Aero.
-		m_imuSerialPort = Port.kMXP;
-
-		byte updateRateHz = 50;
-		m_imu = new AHRS(m_imuSerialPort, updateRateHz);
-		m_imuFirstIteration = true;
-		calibrateIMU();
+		RobotMain.gyro.calibrate();
 	}
 
+	@Override
 	public void initDefaultCommand() {
 		// Set the default command for a subsystem here.
 		setDefaultCommand(new DriveWithJoystick());
@@ -157,99 +132,145 @@ public class DriveTrain extends MPSubsystem
 		//Implementation
 		this.setMPTarget(angleDegrees, 0); //TODO: Velocity
 	}
+	
+	public void controlLoopUpdate() {
+		if (!isControlLoopEnabled()) return;
+		MotionProfilePoint lastMPPoint = mpPoint;
+		mpPoint = mp.getNextPoint(mpPoint);
+		if (mpPoint == null) {
+			disableControlLoop();
+			for (CANTalonEncoder motorController : motorControllers) {
+				motorController.changeControlMode(TalonControlMode.PercentVbus);
+			}
+			return;
+		}
+		
+		currentPosition = mpPoint.position;
+		currentVelocity = 1000 * (currentPosition - lastPosition) / (System.currentTimeMillis() - lastTime);
+		double Kf = 0.0;
+		if (Math.abs(mpPoint.position) > 0.001) {
+			Kf = (Ka * mpPoint.acceleration + Kv * mpPoint.velocity) / mpPoint.position;
+		}
+		
+		// Talon PID MODE for encoders
+	
+		for (CANTalonEncoder motorController : motorControllers) {
+			motorController.setF(Kf);
+			motorController.setWorld(mpPoint.position);
+		}
+		
+		// Gyro software MODE
+		// 0) set the control mode
+		// 1) switch Talons to vbus (already done above)
+		// 2) KpGyro, KdGyro, KiGyro, KfGyro, KaGyro, KvGyro
+		// 3) PID Calculate
+		double previousError = this.getMPTarget() - lastMPPoint.position;
+		double error = this.getMPTarget() - getYawAngleDeg();
+		
+		double KfGyro = Ka * mpPoint.acceleration + Kv * mpPoint.velocity;
+		
+		double output = KpGyro*error + KiGyro*totalError + KdGyro*(error-previousError) + KfGyro;
+		for (CANTalonEncoder motorController : motorControllers) {
+			if (motorController.isRight()) {
+				motorController.set(output);
+			}
+			else {
+				motorController.set(-output);
+			}
+		}
+		
+		
+		lastTime = System.currentTimeMillis();
+		lastPosition = currentPosition;
+	}
 
 	public void driveWithJoystick() {
-		if (Math.abs(m_imu.getRoll()) > 8) {
-			AudioPlayer.play();
-		}
+		if(m_controlMode != ControlMode.DRIVER || m_drive == null) return;
+		// switch(m_controllerMode) {
+		// case CONTROLLER_JOYSTICK_ARCADE:
+		// m_moveInput = OI.getInstance().getJoystick1().getY();
+		// m_steerInput = OI.getInstance().getJoystick1().getX();
+		// m_moveOutput = adjustForSensitivity(m_moveScale, m_moveTrim,
+		// m_moveInput, m_moveNonLinear, MOVE_NON_LINEARITY);
+		// m_steerOutput = adjustForSensitivity(m_steerScale, m_steerTrim,
+		// m_steerInput, m_steerNonLinear, STEER_NON_LINEARITY);
+		// m_drive.arcadeDrive(m_moveOutput, m_steerOutput);
+		// break;
+		// case CONTROLLER_JOYSTICK_TANK:
+		// m_moveInput = OI.getInstance().getJoystick1().getY();
+		// m_steerInput = OI.getInstance().getJoystick2().getY();
+		// m_moveOutput = adjustForSensitivity(m_moveScale, m_moveTrim,
+		// m_moveInput, m_moveNonLinear, MOVE_NON_LINEARITY);
+		// m_steerOutput = adjustForSensitivity(m_moveScale, m_moveTrim,
+		// m_steerInput, m_moveNonLinear, MOVE_NON_LINEARITY);
+		// m_drive.tankDrive(m_moveOutput, m_steerOutput);
+		// break;
+		// case CONTROLLER_JOYSTICK_CHEESY:
+		// m_moveInput = OI.getInstance().getJoystick1().getY();
+		// m_steerInput = OI.getInstance().getJoystick2().getX();
+		// m_moveOutput = adjustForSensitivity(m_moveScale, m_moveTrim,
+		// m_moveInput, m_moveNonLinear, MOVE_NON_LINEARITY);
+		// m_steerOutput = adjustForSensitivity(m_steerScale, m_steerTrim,
+		// m_steerInput, m_steerNonLinear, STEER_NON_LINEARITY);
+		// m_drive.arcadeDrive(m_moveOutput, m_steerOutput);
+		// break;
+		// case CONTROLLER_XBOX_CHEESY:
+		// boolean turbo = OI.getInstance().getDriveTrainController()
+		// .getLeftJoystickButton();
+		// boolean slow = OI.getInstance().getDriveTrainController()
+		// .getRightJoystickButton();
+		// double speedToUseMove, speedToUseSteer;
+		// if (turbo && !slow) {
+		// speedToUseMove = m_moveScaleTurbo;
+		// speedToUseSteer = m_steerScaleTurbo;
+		// } else if (!turbo && slow) {
+		// speedToUseMove = m_moveScaleSlow;
+		// speedToUseSteer = m_steerScaleSlow;
+		// } else {
+		// speedToUseMove = m_moveScale;
+		// speedToUseSteer = m_steerScale;
+		// }
 
-		if (m_drive != null && m_controlMode == ControlMode.DRIVER) {
-			// switch(m_controllerMode) {
-			// case CONTROLLER_JOYSTICK_ARCADE:
-			// m_moveInput = OI.getInstance().getJoystick1().getY();
-			// m_steerInput = OI.getInstance().getJoystick1().getX();
-			// m_moveOutput = adjustForSensitivity(m_moveScale, m_moveTrim,
-			// m_moveInput, m_moveNonLinear, MOVE_NON_LINEARITY);
-			// m_steerOutput = adjustForSensitivity(m_steerScale, m_steerTrim,
-			// m_steerInput, m_steerNonLinear, STEER_NON_LINEARITY);
-			// m_drive.arcadeDrive(m_moveOutput, m_steerOutput);
-			// break;
-			// case CONTROLLER_JOYSTICK_TANK:
-			// m_moveInput = OI.getInstance().getJoystick1().getY();
-			// m_steerInput = OI.getInstance().getJoystick2().getY();
-			// m_moveOutput = adjustForSensitivity(m_moveScale, m_moveTrim,
-			// m_moveInput, m_moveNonLinear, MOVE_NON_LINEARITY);
-			// m_steerOutput = adjustForSensitivity(m_moveScale, m_moveTrim,
-			// m_steerInput, m_moveNonLinear, MOVE_NON_LINEARITY);
-			// m_drive.tankDrive(m_moveOutput, m_steerOutput);
-			// break;
-			// case CONTROLLER_JOYSTICK_CHEESY:
-			// m_moveInput = OI.getInstance().getJoystick1().getY();
-			// m_steerInput = OI.getInstance().getJoystick2().getX();
-			// m_moveOutput = adjustForSensitivity(m_moveScale, m_moveTrim,
-			// m_moveInput, m_moveNonLinear, MOVE_NON_LINEARITY);
-			// m_steerOutput = adjustForSensitivity(m_steerScale, m_steerTrim,
-			// m_steerInput, m_steerNonLinear, STEER_NON_LINEARITY);
-			// m_drive.arcadeDrive(m_moveOutput, m_steerOutput);
-			// break;
-			// case CONTROLLER_XBOX_CHEESY:
-			// boolean turbo = OI.getInstance().getDriveTrainController()
-			// .getLeftJoystickButton();
-			// boolean slow = OI.getInstance().getDriveTrainController()
-			// .getRightJoystickButton();
-			// double speedToUseMove, speedToUseSteer;
-			// if (turbo && !slow) {
-			// speedToUseMove = m_moveScaleTurbo;
-			// speedToUseSteer = m_steerScaleTurbo;
-			// } else if (!turbo && slow) {
-			// speedToUseMove = m_moveScaleSlow;
-			// speedToUseSteer = m_steerScaleSlow;
-			// } else {
-			// speedToUseMove = m_moveScale;
-			// speedToUseSteer = m_steerScale;
-			// }
+		// m_moveInput =
+		// OI.getInstance().getDriveTrainController().getLeftYAxis();
+		// m_steerInput =
+		// OI.getInstance().getDriveTrainController().getRightXAxis();
+		m_moveInput = OI.getInstance().getJoystick1().getY();
+		m_steerInput = OI.getInstance().getJoystick2().getX();
 
-			// m_moveInput =
-			// OI.getInstance().getDriveTrainController().getLeftYAxis();
-			// m_steerInput =
-			// OI.getInstance().getDriveTrainController().getRightXAxis();
-			m_moveInput = OI.getInstance().getJoystick1().getY();
-			m_steerInput = OI.getInstance().getJoystick2().getX();
-
-			m_moveOutput = adjustForSensitivity(m_moveScale, m_moveTrim,
-					m_moveInput, m_moveNonLinear, MOVE_NON_LINEARITY);
-			m_steerOutput = adjustForSensitivity(m_steerScale, m_steerTrim,
-					m_steerInput, m_steerNonLinear, STEER_NON_LINEARITY);
-			if (isAxisLocked)
-				m_steerOutput = 0;
-			
-			output = m_steerOutput;
-			m_drive.arcadeDrive(m_moveOutput, m_steerOutput);
-			// break;
-			// case CONTROLLER_XBOX_ARCADE_RIGHT:
-			// m_moveInput =
-			// OI.getInstance().getDrivetrainController().getRightYAxis();
-			// m_steerInput =
-			// OI.getInstance().getDrivetrainController().getRightXAxis();
-			// m_moveOutput = adjustForSensitivity(m_moveScale, m_moveTrim,
-			// m_moveInput, m_moveNonLinear, MOVE_NON_LINEARITY);
-			// m_steerOutput = adjustForSensitivity(m_steerScale, m_steerTrim,
-			// m_steerInput, m_steerNonLinear, STEER_NON_LINEARITY);
-			// m_drive.arcadeDrive(m_moveOutput, m_steerOutput);
-			// break;
-			// case CONTROLLER_XBOX_ARCADE_LEFT:
-			// m_moveInput =
-			// OI.getInstance().getDrivetrainController().getLeftYAxis();
-			// m_steerInput =
-			// OI.getInstance().getDrivetrainController().getLeftXAxis();
-			// m_moveOutput = adjustForSensitivity(m_moveScale, m_moveTrim,
-			// m_moveInput, m_moveNonLinear, MOVE_NON_LINEARITY);
-			// m_steerOutput = adjustForSensitivity(m_steerScale, m_steerTrim,
-			// m_steerInput, m_steerNonLinear, STEER_NON_LINEARITY);
-			// m_drive.arcadeDrive(m_moveOutput, m_steerOutput);
-			// break;
-			// }
-		}
+		m_moveOutput = adjustForSensitivity(m_moveScale, m_moveTrim,
+				m_moveInput, m_moveNonLinear, MOVE_NON_LINEARITY);
+		m_steerOutput = adjustForSensitivity(m_steerScale, m_steerTrim,
+				m_steerInput, m_steerNonLinear, STEER_NON_LINEARITY);
+		if (isAxisLocked)
+			m_steerOutput = 0;
+		
+		output = m_steerOutput;
+		m_drive.arcadeDrive(m_moveOutput, m_steerOutput);
+		// break;
+		// case CONTROLLER_XBOX_ARCADE_RIGHT:
+		// m_moveInput =
+		// OI.getInstance().getDrivetrainController().getRightYAxis();
+		// m_steerInput =
+		// OI.getInstance().getDrivetrainController().getRightXAxis();
+		// m_moveOutput = adjustForSensitivity(m_moveScale, m_moveTrim,
+		// m_moveInput, m_moveNonLinear, MOVE_NON_LINEARITY);
+		// m_steerOutput = adjustForSensitivity(m_steerScale, m_steerTrim,
+		// m_steerInput, m_steerNonLinear, STEER_NON_LINEARITY);
+		// m_drive.arcadeDrive(m_moveOutput, m_steerOutput);
+		// break;
+		// case CONTROLLER_XBOX_ARCADE_LEFT:
+		// m_moveInput =
+		// OI.getInstance().getDrivetrainController().getLeftYAxis();
+		// m_steerInput =
+		// OI.getInstance().getDrivetrainController().getLeftXAxis();
+		// m_moveOutput = adjustForSensitivity(m_moveScale, m_moveTrim,
+		// m_moveInput, m_moveNonLinear, MOVE_NON_LINEARITY);
+		// m_steerOutput = adjustForSensitivity(m_steerScale, m_steerTrim,
+		// m_steerInput, m_steerNonLinear, STEER_NON_LINEARITY);
+		// m_drive.arcadeDrive(m_moveOutput, m_steerOutput);
+		// break;
+		// }
 	}
 
 	private boolean inDeadZone(double input) {
@@ -311,16 +332,11 @@ public class DriveTrain extends MPSubsystem
 		//TODO: Add wheel distances/positions
 		SmartDashboard.putNumber("YawRate", getYawRateDegPerSec());
 		
-		SmartDashboard.putNumber("PIDOutput", output);
 		SmartDashboard.putNumber("MP Target", this.getMPTarget());
 		SmartDashboard.putBoolean("Control Loop", this.isControlLoopEnabled());
-		SmartDashboard
-				.putNumber("NavX X Distance", getIMU().getDisplacementX());
-		SmartDashboard
-				.putNumber("NavX Y Distance", getIMU().getDisplacementY());
 		SmartDashboard.putNumber("IMU Yaw (deg)", getYawAngleDeg());
-		SmartDashboard.putNumber("IMU Pitch", m_imu.getRoll());
 		SmartDashboard.putData(this);
+		
 	}
 
 	//PIDInput
@@ -344,36 +360,10 @@ public class DriveTrain extends MPSubsystem
 	public void setControlMode(ControlMode mode) {
 		this.m_controlMode = mode;
 	}
-	
-	//TODO: Not to do, TEMPORARY NavX CODE
-	/**
-	 * Zeroes the IMU in the NavX.
-	 */
-	public void calibrateIMU() {
-		// Set up the IMU
-		if(!m_imuFirstIteration) return;
-		for (int i = 0; i < 500; i++) {
-			try {
-				boolean isCalibrating = m_imu.isCalibrating();
-				if (!isCalibrating) {
-					Timer.delay(0.3);
-					m_imu.zeroYaw();
-					m_imuFirstIteration = false;
-					break;
-				}
-				m_imu.wait(10);
-			} catch (Exception e) {
 
-			}
-		}
-	}
-
-	public AHRS getIMU() {
-		return m_imu;
-	}
-
+	//Gyro Implementation
 	public double getYawAngleDeg() {
-		double yaw = m_imu.getYaw();
+		double yaw = RobotMain.gyro.getAngle(); //TODO: Goes from 360 to 361
 		if (Math.abs(yaw) > 5 && yaw < 0) {
 			yaw += 360;
 		}
@@ -388,10 +378,6 @@ public class DriveTrain extends MPSubsystem
 	}
 
 	public void setYawAngleZero() {
-		m_imu.zeroYaw();
-	}
-
-	public void setDisplacementZero() {
-		m_imu.resetDisplacement();
+		RobotMain.gyro.reset();
 	}
 }

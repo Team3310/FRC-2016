@@ -2,7 +2,7 @@ package edu.rhhs.frc;
 
 import edu.rhhs.frc.commands.DriveTrainTurn;
 import edu.rhhs.frc.commands.ResetGyro;
-import edu.rhhs.frc.commands.SetDriveAxisLock;
+import edu.rhhs.frc.commands.DriveTrainAxisLock;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.InternalButton;
@@ -17,8 +17,6 @@ public class OI
 {
 	private static OI instance;
 
-	//private XboxController m_drivetrainController;
-	//private XboxController m_robotArmController;
 	private Joystick m_joystick1;
 	private Joystick m_joystick2;
 
@@ -35,8 +33,8 @@ public class OI
 //		shooterPullback.whenPressed(new SetShooterPosition(ModuleState.RETRACTED));
 		
 		JoystickButton axisLock = new JoystickButton(m_joystick2, 1);
-		axisLock.whenPressed(new SetDriveAxisLock(true));
-		axisLock.whenReleased(new SetDriveAxisLock(false));
+		axisLock.whenPressed(new DriveTrainAxisLock(true));
+		axisLock.whenReleased(new DriveTrainAxisLock(false));
 		
 		JoystickButton left180 = new JoystickButton(m_joystick2, 3);
 		left180.whenPressed(new DriveTrainTurn(-180, 5));
@@ -46,22 +44,6 @@ public class OI
 		left90.whenPressed(new DriveTrainTurn(-90, 3));
 		JoystickButton right90 = new JoystickButton(m_joystick2, 6);
 		right90.whenPressed(new DriveTrainTurn(90, 3));
-		//		SmartDashboard.putData("Go 0", go0);
-		//		Button off = new InternalButton();
-		//		off.whenPressed(new ExecuteTimer(0.0));
-		//		SmartDashboard.putData("Stop", off);
-
-		//		Button reset = new InternalButton();
-		//		reset.whenPressed(new ResetNavX());
-		//		SmartDashboard.putData("Reset imu", reset);
-		//		
-		//		Button go90PID = new InternalButton();
-		//		go90PID.whenPressed(new PIDTalonTest(90.0));
-		//		SmartDashboard.putData("Go 90 PID", go90PID);
-		//		
-		//		Button go0PID = new InternalButton();
-		//		go0PID.whenPressed(new PIDTalonTest(0.0));
-		//		SmartDashboard.putData("Go 0 PID", go0PID);
 
 //		Button mpTest = new InternalButton();
 //		mpTest.whenPressed(new TalonMPSet(90.0, 90.0));

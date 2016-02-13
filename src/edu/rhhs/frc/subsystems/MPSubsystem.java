@@ -12,23 +12,22 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
 public abstract class MPSubsystem extends Subsystem implements ControlLoopable
 {	
-	private ArrayList<CANTalonEncoder> motorControllers;
+	protected ArrayList<CANTalonEncoder> motorControllers;
 	
-	private ControlLooper m_controlLoop;
+	protected ControlLooper m_controlLoop;
 	private long periodMs;
 	
-	private double Ka = 0.0;
-	private double Kv = 0.0;
-	private double Kg = 0.0;
+	protected double Ka = 0.0;
+	protected double Kv = 0.0;
+	protected double Kg = 0.0;
 	
-	private MotionProfileBoxCar mp;
-	private MotionProfilePoint mpPoint;
+	protected MotionProfileBoxCar mp;
+	protected MotionProfilePoint mpPoint;
 	
-	private double currentPosition;
-	private double lastPosition;
-	private double lastTime;
-	private double currentVelocity;
-
+	protected double currentPosition;
+	protected double lastPosition;
+	protected double lastTime;
+	protected double currentVelocity;
 	
 	public MPSubsystem(long periodMs) {
 		motorControllers = new ArrayList<CANTalonEncoder>();
@@ -82,8 +81,8 @@ public abstract class MPSubsystem extends Subsystem implements ControlLoopable
 			motorController.setPosition(0);
 			motorController.set(0);
 			motorController.changeControlMode(TalonControlMode.Position);
-			RobotMain.driveTrain.setYawAngleZero();
 		}
+		RobotMain.driveTrain.setYawAngleZero();
 		enableControlLoop();
 	}
 

@@ -2,7 +2,7 @@ package edu.rhhs.frc.utility;
 
 import edu.wpi.first.wpilibj.CANTalon;
 
-public class CANTalonEncoder extends CANTalon 
+public class CANTalonEncoder extends CANTalon
 {
 	private double encoderTicksToWorld;
 	private boolean isRight = true;
@@ -47,5 +47,4 @@ public class CANTalonEncoder extends CANTalon
     public double getPositionWorld() {
     	return convertEncoderTicksToWorld(this.getPosition());
     }
-
 }

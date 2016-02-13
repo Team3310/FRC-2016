@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 
 public class ShooterSubsystem extends MPSubsystem
 {
-	public static enum CarriageState {RELEASED, LOCKED };
+	public static enum CarriageState { RELEASED, LOCKED };
 	public static enum ShotPosition { SHORT, LONG };
 	private static final long LOOP_PERIOD_MS = 10;
 	private static final double ENCODER_TICKS_TO_WORLD = 0; //MAJOR TODO:
@@ -26,7 +26,7 @@ public class ShooterSubsystem extends MPSubsystem
 	
 	public void retractWinch() {
 		//Set winch to a value.
-		if(!carriageRetracted1.get() && !carriageRetracted2.get()) winch.set(0.5);
+		if(!isRetracted()) winch.set(0.5);
 	}
 
 	public boolean isRetracted() {
@@ -50,6 +50,10 @@ public class ShooterSubsystem extends MPSubsystem
 
 	@Override
 	protected void initDefaultCommand() {
+		
+	}
+	
+	public void updateStatus() {
 		
 	}
 }

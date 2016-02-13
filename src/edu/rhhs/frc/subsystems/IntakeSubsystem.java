@@ -41,4 +41,8 @@ public class IntakeSubsystem extends Subsystem
 	protected void initDefaultCommand() {
 		
 	}
+	
+	public void updateStatus() {
+		
+	}
 }

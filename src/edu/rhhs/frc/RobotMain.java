@@ -2,7 +2,10 @@
 package edu.rhhs.frc;
 
 import edu.rhhs.frc.subsystems.DriveTrain;
+import edu.rhhs.frc.subsystems.IntakeSubsystem;
+import edu.rhhs.frc.subsystems.ManipulatorSubsystem;
 import edu.rhhs.frc.subsystems.ShooterSubsystem;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -23,7 +26,10 @@ public class RobotMain extends IterativeRobot
 //  public static final MPDrivetrainTest driveTrain = new MPDrivetrainTest();
 	public static final DriveTrain driveTrain = new DriveTrain();
 	public static final ShooterSubsystem shooter = new ShooterSubsystem();
+	public static final IntakeSubsystem intake = new IntakeSubsystem();
+	public static final ManipulatorSubsystem manipulator = new ManipulatorSubsystem();
 	public static OI oi;
+	public static ADXRS450_Gyro gyro = new ADXRS450_Gyro();
 
     Command autonomousCommand;
 
@@ -32,9 +38,7 @@ public class RobotMain extends IterativeRobot
      * used for any initialization code.
      */
     public void robotInit() {
-        // instantiate the command used for the autonomous period
-//        autonomousCommand = new ExampleCommand();
-//        drivetrainSub.calibrateIMU();
+    	gyro.calibrate();
         updateStatus();
     }
 	
@@ -44,7 +48,7 @@ public class RobotMain extends IterativeRobot
 	}
 
     public void autonomousInit() {
-        // schedule the autonomous command (example)
+        // Schedule the autonomous command (example)
         if (autonomousCommand != null) autonomousCommand.start();
     }
 
@@ -73,25 +77,21 @@ public class RobotMain extends IterativeRobot
 
     }
 
-    /**
-     * This function is called periodically during operator control
-     */
+    /** This function is called periodically during operator control */
     public void teleopPeriodic() {
         Scheduler.getInstance().run();
         updateStatus();
     }
     
-    /**
-     * This function is called periodically during test mode
-     */
+    /** This function is called periodically during test mode */
     public void testPeriodic() {
         LiveWindow.run();
     }
     
     public void updateStatus() {
     	driveTrain.updateStatus();
-//      timedSub.updateStatus();
-//      talonMP.updateStatus();
-//      tPID.updateStatus();
+    	intake.updateStatus();
+    	manipulator.updateStatus();
+    	shooter.updateStatus();
     }
 }

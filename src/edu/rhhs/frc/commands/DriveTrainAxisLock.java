@@ -3,13 +3,18 @@ package edu.rhhs.frc.commands;
 import edu.rhhs.frc.RobotMain;
 import edu.wpi.first.wpilibj.command.Command;
 
-public class ResetGyro extends Command
+public class DriveTrainAxisLock extends Command
 {
-	public ResetGyro() {
+	private boolean locked;
+
+	public DriveTrainAxisLock(boolean locked) {
+		requires(RobotMain.driveTrain);
+		this.locked = locked;
 	}
 
 	protected void initialize() {
-		RobotMain.gyro.reset();
+		// RobotMain.driveTrain.setYawAngleZero();
+		RobotMain.driveTrain.setAxisLocked(locked);
 	}
 
 	protected void execute() {
