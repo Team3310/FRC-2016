@@ -1,21 +1,22 @@
 package edu.rhhs.frc.commands;
 
 import edu.rhhs.frc.RobotMain;
-import edu.rhhs.frc.subsystems.Shooter.ShotPosition;
+import edu.rhhs.frc.subsystems.DriveTrain.SpeedShiftState;
+import edu.rhhs.frc.subsystems.DriveTrain.PTOShiftState;
 import edu.wpi.first.wpilibj.command.Command;
 
-public class ShooterShotPosition extends Command
+public class DriveTrainPTOShift extends Command
 {
-	private ShotPosition position;
+	private PTOShiftState state;
 	
-	public ShooterShotPosition(ShotPosition position) {
-		requires(RobotMain.shooter);
-		this.position = position;
+	public DriveTrainPTOShift(PTOShiftState state) {
+		requires(RobotMain.driveTrain);
+		this.state = state;
 	}
 
 	@Override
 	protected void initialize() {
-		RobotMain.shooter.setShotPosition(position);
+		RobotMain.driveTrain.setPTOState(state);
 	}
 
 	@Override

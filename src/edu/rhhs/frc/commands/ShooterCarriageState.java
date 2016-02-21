@@ -1,7 +1,7 @@
 package edu.rhhs.frc.commands;
 
 import edu.rhhs.frc.RobotMain;
-import edu.rhhs.frc.subsystems.ShooterSubsystem.CarriageState;
+import edu.rhhs.frc.subsystems.Shooter.CarriageState;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class ShooterCarriageState extends Command

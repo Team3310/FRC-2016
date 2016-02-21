@@ -1,21 +1,20 @@
 package edu.rhhs.frc.commands;
 
 import edu.rhhs.frc.RobotMain;
-import edu.rhhs.frc.subsystems.Shooter.ShotPosition;
 import edu.wpi.first.wpilibj.command.Command;
 
-public class ShooterShotPosition extends Command
+public class ManipulatorArmSpeed extends Command
 {
-	private ShotPosition position;
+	private double speed;
 	
-	public ShooterShotPosition(ShotPosition position) {
-		requires(RobotMain.shooter);
-		this.position = position;
+	public ManipulatorArmSpeed(double speed) {
+		requires(RobotMain.manipulator);
+		this.speed = speed;
 	}
 
 	@Override
 	protected void initialize() {
-		RobotMain.shooter.setShotPosition(position);
+		RobotMain.manipulator.setArmSpeed(speed);
 	}
 
 	@Override

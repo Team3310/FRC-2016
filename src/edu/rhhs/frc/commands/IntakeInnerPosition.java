@@ -1,21 +1,21 @@
 package edu.rhhs.frc.commands;
 
 import edu.rhhs.frc.RobotMain;
-import edu.rhhs.frc.subsystems.IntakeSubsystem.LiftState;
+import edu.rhhs.frc.subsystems.Intake.LiftState;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class IntakeInnerPosition extends Command
 {
-	private LiftState ls;
+	private LiftState state;
 	
-	public IntakeInnerPosition(LiftState ls) {
+	public IntakeInnerPosition(LiftState state) {
 		requires(RobotMain.intake);
-		this.ls = ls;
+		this.state = state;
 	}
 
 	@Override
 	protected void initialize() {
-		RobotMain.intake.setPositionInner(ls);
+		RobotMain.intake.setPositionInner(state);
 	}
 
 	@Override

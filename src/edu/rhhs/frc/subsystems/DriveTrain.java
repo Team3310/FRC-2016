@@ -4,10 +4,13 @@ import edu.rhhs.frc.OI;
 import edu.rhhs.frc.RobotMain;
 import edu.rhhs.frc.RobotMap;
 import edu.rhhs.frc.commands.DriveWithJoystick;
+import edu.rhhs.frc.subsystems.Intake.LiftState;
 import edu.rhhs.frc.utility.CANTalonEncoder;
 import edu.rhhs.frc.utility.MotionProfilePoint;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -15,6 +18,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class DriveTrain extends MPSubsystem
 {
 	public static enum ControlMode { DRIVER, SOFTWARE_DRIVE, SOFTWARE_TURN };
+	public static enum SpeedShiftState { HI, LO };
+	public static enum PTOShiftState { ENGAGED, DISENGAGED };
 	
 	public static final long LOOP_PERIOD_MS = 10;
 	public static final double ENCODER_TICKS_TO_WORLD = 0; //MAJOR TODO
@@ -27,13 +32,17 @@ public class DriveTrain extends MPSubsystem
 	private CANTalon rightDrive3;
 	
 	private Solenoid speedShift;
-	private Solenoid winchShift;
+	private DoubleSolenoid ptoShift;
 
 	private RobotDrive m_drive;
 	private double lastYawAngle;
 	private long lastTime;
-	private double output;
+	private double totalError;
 
+	protected double KpGyro = 0.0;
+	protected double KiGyro = 0.0;
+	protected double KdGyro = 0.0;
+	
 	// Controllers
 	public static final int CONTROLLER_JOYSTICK_ARCADE = 0;
 	public static final int CONTROLLER_JOYSTICK_TANK = 1;
@@ -112,9 +121,9 @@ public class DriveTrain extends MPSubsystem
 		
 		//DriveTrain Pneumatics
 		speedShift = new Solenoid(RobotMap.DRIVETRAIN_SPEEDSHIFT_MODULE_ID);
-		winchShift = new Solenoid(RobotMap.DRIVETRAIN_WINCHSHIFT_MODULE_ID);
+		ptoShift = new DoubleSolenoid(RobotMap.DRIVETRAIN_WINCH_ENGAGE_MODULE_ID, RobotMap.DRIVETRAIN_WINCH_DISENGAGE_MODULE_ID);
 		
-		RobotMain.gyro.calibrate();
+//		RobotMain.gyro.calibrate();
 	}
 
 	@Override
@@ -170,6 +179,7 @@ public class DriveTrain extends MPSubsystem
 		double KfGyro = Ka * mpPoint.acceleration + Kv * mpPoint.velocity;
 		
 		double output = KpGyro*error + KiGyro*totalError + KdGyro*(error-previousError) + KfGyro;
+		
 		for (CANTalonEncoder motorController : motorControllers) {
 			if (motorController.isRight()) {
 				motorController.set(output);
@@ -178,8 +188,7 @@ public class DriveTrain extends MPSubsystem
 				motorController.set(-output);
 			}
 		}
-		
-		
+			
 		lastTime = System.currentTimeMillis();
 		lastPosition = currentPosition;
 	}
@@ -245,7 +254,6 @@ public class DriveTrain extends MPSubsystem
 		if (isAxisLocked)
 			m_steerOutput = 0;
 		
-		output = m_steerOutput;
 		m_drive.arcadeDrive(m_moveOutput, m_steerOutput);
 		// break;
 		// case CONTROLLER_XBOX_ARCADE_RIGHT:
@@ -330,12 +338,12 @@ public class DriveTrain extends MPSubsystem
 
 	public void updateStatus() {
 		//TODO: Add wheel distances/positions
-		SmartDashboard.putNumber("YawRate", getYawRateDegPerSec());
+//		SmartDashboard.putNumber("YawRate", getYawRateDegPerSec());
 		
-		SmartDashboard.putNumber("MP Target", this.getMPTarget());
-		SmartDashboard.putBoolean("Control Loop", this.isControlLoopEnabled());
-		SmartDashboard.putNumber("IMU Yaw (deg)", getYawAngleDeg());
-		SmartDashboard.putData(this);
+//		SmartDashboard.putNumber("MP Target", this.getMPTarget());
+//		SmartDashboard.putBoolean("Control Loop", this.isControlLoopEnabled());
+//		SmartDashboard.putNumber("IMU Yaw (deg)", getYawAngleDeg());
+//		SmartDashboard.putData(this);
 		
 	}
 
@@ -380,4 +388,23 @@ public class DriveTrain extends MPSubsystem
 	public void setYawAngleZero() {
 		RobotMain.gyro.reset();
 	}
+	
+	public void setShiftState(SpeedShiftState state) {
+		if(state == SpeedShiftState.HI) {
+			speedShift.set(true);
+		}
+		else if(state == SpeedShiftState.LO) {
+			speedShift.set(false);
+		}
+	}
+
+	public void setPTOState(PTOShiftState state) {
+		if(state == PTOShiftState.ENGAGED) {
+			ptoShift.set(Value.kForward);
+		}
+		else if(state == PTOShiftState.DISENGAGED) {
+			ptoShift.set(Value.kReverse);
+		}
+	}
+
 }

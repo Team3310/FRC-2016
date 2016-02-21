@@ -1,12 +1,23 @@
 package edu.rhhs.frc;
 
-import edu.rhhs.frc.commands.DriveTrainTurn;
-import edu.rhhs.frc.commands.ResetGyro;
-import edu.rhhs.frc.commands.DriveTrainAxisLock;
+import edu.rhhs.frc.commands.DriveTrainPTOShift;
+import edu.rhhs.frc.commands.DriveTrainSpeedShift;
+import edu.rhhs.frc.commands.IntakeInnerPosition;
+import edu.rhhs.frc.commands.IntakeInnerSpeed;
+import edu.rhhs.frc.commands.IntakeOuterPosition;
+import edu.rhhs.frc.commands.IntakeOuterSpeed;
+import edu.rhhs.frc.commands.ManipulatorArmSpeed;
+import edu.rhhs.frc.commands.ShooterCarriageState;
+import edu.rhhs.frc.commands.ShooterShotPosition;
+import edu.rhhs.frc.commands.ShooterWinchSpeed;
+import edu.rhhs.frc.subsystems.DriveTrain.PTOShiftState;
+import edu.rhhs.frc.subsystems.DriveTrain.SpeedShiftState;
+import edu.rhhs.frc.subsystems.Intake.LiftState;
+import edu.rhhs.frc.subsystems.Shooter.CarriageState;
+import edu.rhhs.frc.subsystems.Shooter.ShotPosition;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.InternalButton;
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -23,43 +34,97 @@ public class OI
 	private OI() {
 		m_joystick1 = new Joystick(0);
 		m_joystick2 = new Joystick(1);
-		//m_drivetrainController = new XboxController(0);
-		
-		//Joystick - Straight Move
-//		JoystickButton shooterShoot = new JoystickButton(m_joystick1, 1);
-//		shooterShoot.whenPressed(new SetShooterPosition(ModuleState.EXTENDED));
-//		
-//		JoystickButton shooterPullback = new JoystickButton(m_joystick1, 2);
-//		shooterPullback.whenPressed(new SetShooterPosition(ModuleState.RETRACTED));
-		
-		JoystickButton axisLock = new JoystickButton(m_joystick2, 1);
-		axisLock.whenPressed(new DriveTrainAxisLock(true));
-		axisLock.whenReleased(new DriveTrainAxisLock(false));
-		
-		JoystickButton left180 = new JoystickButton(m_joystick2, 3);
-		left180.whenPressed(new DriveTrainTurn(-180, 5));
-		JoystickButton right180 = new JoystickButton(m_joystick2, 4);
-		right180.whenPressed(new DriveTrainTurn(180, 5));
-		JoystickButton left90 = new JoystickButton(m_joystick2, 5);
-		left90.whenPressed(new DriveTrainTurn(-90, 3));
-		JoystickButton right90 = new JoystickButton(m_joystick2, 6);
-		right90.whenPressed(new DriveTrainTurn(90, 3));
+				
+		// Pneumatics Test
+		Button drivetrainSpeedShiftHi = new InternalButton();
+		drivetrainSpeedShiftHi.whenPressed(new DriveTrainSpeedShift(SpeedShiftState.HI));
+		SmartDashboard.putData("Drivetrain speed shift HI", drivetrainSpeedShiftHi);
 
-//		Button mpTest = new InternalButton();
-//		mpTest.whenPressed(new TalonMPSet(90.0, 90.0));
-//		SmartDashboard.putData("Test Motion Profile", mpTest);
-//
-//		Button mpDrivetrainTest = new InternalButton();
-//		mpDrivetrainTest.whenPressed(new DrivetrainMPSet(60.0, 40.0));
-//		SmartDashboard.putData("Test Drivetrain Motion Profile", mpDrivetrainTest);
-		Button resetGyro = new InternalButton();
-		resetGyro.whenPressed(new ResetGyro());
-		SmartDashboard.putData("Reset Gyro", resetGyro);
+		Button drivetrainSpeedShiftLo = new InternalButton();
+		drivetrainSpeedShiftLo.whenPressed(new DriveTrainSpeedShift(SpeedShiftState.LO));
+		SmartDashboard.putData("Drivetrain speed shift LO", drivetrainSpeedShiftLo);
+
+		Button drivetrainPTOShiftEngaged = new InternalButton();
+		drivetrainPTOShiftEngaged.whenPressed(new DriveTrainPTOShift(PTOShiftState.ENGAGED));
+		SmartDashboard.putData("Drivetrain PTO shift ENGAGED", drivetrainPTOShiftEngaged);
+
+		Button drivetrainPTOShiftDisengaged = new InternalButton();
+		drivetrainPTOShiftDisengaged.whenPressed(new DriveTrainPTOShift(PTOShiftState.DISENGAGED));
+		SmartDashboard.putData("Drivetrain PTO shift DISENGAGED", drivetrainPTOShiftDisengaged);
+
+		Button outerIntakeUp = new InternalButton();
+		outerIntakeUp.whenPressed(new IntakeOuterPosition(LiftState.UP));
+		SmartDashboard.putData("Intake outer UP", outerIntakeUp);
+
+		Button outerIntakeDown = new InternalButton();
+		outerIntakeDown.whenPressed(new IntakeOuterPosition(LiftState.DOWN));
+		SmartDashboard.putData("Intake outer DOWN", outerIntakeDown);
+
+		Button innerIntakeUp = new InternalButton();
+		innerIntakeUp.whenPressed(new IntakeInnerPosition(LiftState.UP));
+		SmartDashboard.putData("Intake inner UP", innerIntakeUp);
+
+		Button innerIntakeDown = new InternalButton();
+		innerIntakeDown.whenPressed(new IntakeInnerPosition(LiftState.DOWN));
+		SmartDashboard.putData("Intake inner DOWN", innerIntakeDown);
+
+		Button shooterShotPositionLong = new InternalButton();
+		shooterShotPositionLong.whenPressed(new ShooterShotPosition(ShotPosition.LONG));
+		SmartDashboard.putData("Shooter shot position LONG", shooterShotPositionLong);
+
+		Button shooterShotPositionShort = new InternalButton();
+		shooterShotPositionShort.whenPressed(new ShooterShotPosition(ShotPosition.SHORT));
+		SmartDashboard.putData("Shooter shot position SHORT", shooterShotPositionShort);
+
+		Button shooterCarriageReleased = new InternalButton();
+		shooterCarriageReleased.whenPressed(new ShooterCarriageState(CarriageState.RELEASED));
+		SmartDashboard.putData("Shooter carriage RELEASED", shooterCarriageReleased);
+
+		Button shooterCarriageLocked = new InternalButton();
+		shooterCarriageLocked.whenPressed(new ShooterCarriageState(CarriageState.LOCKED));
+		SmartDashboard.putData("Shooter carriage LOCKED", shooterCarriageLocked);
+		
+		// Motors
+		Button manipulatorArmPositive = new InternalButton();
+		manipulatorArmPositive.whenPressed(new ManipulatorArmSpeed(0.06));
+		SmartDashboard.putData("Manipulator speed positive", manipulatorArmPositive);
+
+		Button manipulatorArmNegative = new InternalButton();
+		manipulatorArmNegative.whenPressed(new ManipulatorArmSpeed(-0.06));
+		SmartDashboard.putData("Manipulator speed negative", manipulatorArmNegative);
+		
+		Button manipulatorArmOff = new InternalButton();
+		manipulatorArmOff.whenPressed(new ManipulatorArmSpeed(0.0));
+		SmartDashboard.putData("Manipulator speed off", manipulatorArmOff);
+		
+		Button outerIntakeOn = new InternalButton();
+		outerIntakeOn.whenPressed(new IntakeOuterSpeed(0.8));
+		SmartDashboard.putData("Intake outer roller on", outerIntakeOn);
+
+		Button outerIntakeOff = new InternalButton();
+		outerIntakeOff.whenPressed(new IntakeOuterSpeed(0.0));
+		SmartDashboard.putData("Intake outer roller off", outerIntakeOff);
+
+		Button innerIntakeOn = new InternalButton();
+		innerIntakeOn.whenPressed(new IntakeInnerSpeed(0.5));
+		SmartDashboard.putData("Intake inner roller on", innerIntakeOn);
+
+		Button innerIntakeOff = new InternalButton();
+		innerIntakeOff.whenPressed(new IntakeInnerSpeed(0.0));
+		SmartDashboard.putData("Intake inner roller off", innerIntakeOff);
+
+		Button shooterWinchPositive = new InternalButton();
+		shooterWinchPositive.whenPressed(new ShooterWinchSpeed(0.5));
+		SmartDashboard.putData("Shooter winch speed positive", shooterWinchPositive);
+
+		Button shooterWinchNegative = new InternalButton();
+		shooterWinchNegative.whenPressed(new ShooterWinchSpeed(-0.5));
+		SmartDashboard.putData("Shooter winch speed negative", shooterWinchNegative);
+		
+		Button shooterWinchOff = new InternalButton();
+		shooterWinchOff.whenPressed(new ShooterWinchSpeed(0.0));
+		SmartDashboard.putData("Shooter winch speed off", shooterWinchOff);
 	}
-	
-//	public XboxController getDriveTrainController() {
-//		return m_drivetrainController;
-//	}
 	
 	public Joystick getJoystick1() {
 		return m_joystick1;
