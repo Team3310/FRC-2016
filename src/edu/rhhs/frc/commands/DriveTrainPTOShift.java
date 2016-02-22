@@ -1,7 +1,6 @@
 package edu.rhhs.frc.commands;
 
 import edu.rhhs.frc.RobotMain;
-import edu.rhhs.frc.subsystems.DriveTrain.SpeedShiftState;
 import edu.rhhs.frc.subsystems.DriveTrain.PTOShiftState;
 import edu.wpi.first.wpilibj.command.Command;
 

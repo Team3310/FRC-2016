@@ -2,17 +2,29 @@ package edu.rhhs.frc.utility;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.Vector;
+
+/**
+ * ControlLooper.java
+ * <p>
+ * Runs several ControlLoopables simultaneously with one timing loop.
+ * Useful for running a bunch of control loops
+ * with only one Thread worth of overhead.
+ * 
+ * Shamelessly stolen from team 254 2015 code and then slightly modified
+ *
+ * @author Tom Bottiglieri
+ */
 
 public class ControlLooper 
 {
-	private Timer controlLoopTimer;
-	private boolean isControlLoopEnabled = false;
-	
-	private ControlLoopable loopable;
+	private Timer controlLoopTimer;	
+    private Vector<ControlLoopable> loopables = new Vector<ControlLoopable>();
 	private long periodMs;
+	private String name;
 
-	public ControlLooper(ControlLoopable loopable, long periodMs) {
-		this.loopable = loopable;
+	public ControlLooper(String name, long periodMs) {
+		this.name = name;
 		this.periodMs = periodMs;
 	}
 	
@@ -33,6 +45,10 @@ public class ControlLooper
 		
 	}
 	
+	public String getName() {
+		return name;
+	}
+	
 	public void start() {
 		if (controlLoopTimer == null) {
 			controlLoopTimer = new Timer();
@@ -46,29 +62,18 @@ public class ControlLooper
 			controlLoopTimer = null;
 		}
 	}
-	
-	public synchronized void enable() {
-		isControlLoopEnabled = true;
-	}
-
-	public synchronized void disable() {
-		isControlLoopEnabled = false;
-	}
-
-	public synchronized boolean isEnabled() {
-		return isControlLoopEnabled;
-	}
-
-	
-	private void controlLoopUpdate() {
-		boolean enabled;
-        synchronized (this) {
-            enabled = isControlLoopEnabled; // take snapshot of this value
-        }
 		
-        if (enabled) {
-        	loopable.controlLoopUpdate();
+	private void controlLoopUpdate() {
+        for (int i = 0; i < loopables.size(); ++i) {
+        	ControlLoopable c = loopables.elementAt(i);
+            if (c != null) {
+            	c.controlLoopUpdate();
+            }
         }
-
 	}
+	
+    public void addLoopable(ControlLoopable c) {
+        loopables.addElement(c);
+        c.setPeriodMs(periodMs);
+    }
 }

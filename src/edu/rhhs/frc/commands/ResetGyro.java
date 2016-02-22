@@ -9,7 +9,7 @@ public class ResetGyro extends Command
 	}
 
 	protected void initialize() {
-		RobotMain.gyro.reset();
+		RobotMain.driveTrain.getGyro().reset();
 	}
 
 	protected void execute() {

@@ -1,7 +1,7 @@
 package edu.rhhs.frc.commands;
 
 import edu.rhhs.frc.RobotMain;
-import edu.rhhs.frc.subsystems.DriveTrain.ControlMode;
+import edu.rhhs.frc.subsystems.DriveTrain.DriveTrainControlMode;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class DriveWithJoystick extends Command 
@@ -12,7 +12,7 @@ public class DriveWithJoystick extends Command
 	
 	@Override
 	protected void initialize() {
-		RobotMain.driveTrain.setControlMode(ControlMode.DRIVER);
+		RobotMain.driveTrain.setControlMode(DriveTrainControlMode.JOYSTICK);
 	}
 
 	@Override

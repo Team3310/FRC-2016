@@ -5,7 +5,9 @@ import edu.rhhs.frc.subsystems.DriveTrain;
 import edu.rhhs.frc.subsystems.Intake;
 import edu.rhhs.frc.subsystems.Manipulator;
 import edu.rhhs.frc.subsystems.Shooter;
+import edu.rhhs.frc.utility.ControlLooper;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.ControllerPower;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -24,17 +26,20 @@ public class RobotMain extends IterativeRobot
 	public static final Shooter shooter = new Shooter();
 	public static final Intake intake = new Intake();
 	public static final Manipulator manipulator = new Manipulator();
+	public static final ControlLooper controlLoop = new ControlLooper("Main control loop", 10);
 	public static OI oi;
-	public static ADXRS450_Gyro gyro = new ADXRS450_Gyro();
 
-    Command autonomousCommand;
+    private Command autonomousCommand;
 
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
      */
     public void robotInit() {
-//    	gyro.calibrate();
+    	controlLoop.addLoopable(driveTrain);
+    	controlLoop.addLoopable(manipulator);
+    	controlLoop.addLoopable(shooter);
+	    driveTrain.getGyro().calibrate();
         updateStatus();
     }
 	
@@ -45,6 +50,7 @@ public class RobotMain extends IterativeRobot
 
     public void autonomousInit() {
         // Schedule the autonomous command (example)
+    	controlLoop.start();
         if (autonomousCommand != null) autonomousCommand.start();
     }
 
@@ -62,6 +68,7 @@ public class RobotMain extends IterativeRobot
         // continue until interrupted by another command, remove
         // this line or comment it out.
         if (autonomousCommand != null) autonomousCommand.cancel();
+        controlLoop.start();
         updateStatus();
     }
 

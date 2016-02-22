@@ -1,56 +1,57 @@
 package edu.rhhs.frc.subsystems;
 
+import java.util.ArrayList;
+
 import edu.rhhs.frc.OI;
 import edu.rhhs.frc.RobotMain;
 import edu.rhhs.frc.RobotMap;
 import edu.rhhs.frc.commands.DriveWithJoystick;
-import edu.rhhs.frc.subsystems.Intake.LiftState;
 import edu.rhhs.frc.utility.CANTalonEncoder;
-import edu.rhhs.frc.utility.MotionProfilePoint;
+import edu.rhhs.frc.utility.ControlLoopable;
+import edu.rhhs.frc.utility.MotionProfileController;
+import edu.rhhs.frc.utility.PIDParams;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.command.Subsystem;
 
-public class DriveTrain extends MPSubsystem
+public class DriveTrain extends Subsystem implements ControlLoopable
 {
-	public static enum ControlMode { DRIVER, SOFTWARE_DRIVE, SOFTWARE_TURN };
+	public static enum DriveTrainControlMode { JOYSTICK, MP_STRAIGHT };
 	public static enum SpeedShiftState { HI, LO };
 	public static enum PTOShiftState { ENGAGED, DISENGAGED };
 	
-	public static final long LOOP_PERIOD_MS = 10;
-	public static final double ENCODER_TICKS_TO_WORLD = 0; //MAJOR TODO
+	public static final double ENCODER_TICKS_TO_WORLD = 4096; 
 	
+	// Motor controllers
+	private ArrayList<CANTalonEncoder> motorControllers;	
+
 	private CANTalonEncoder leftDrive1;
 	private CANTalon leftDrive2;
 	private CANTalon leftDrive3;
+	
 	private CANTalonEncoder rightDrive1;
 	private CANTalon rightDrive2;
 	private CANTalon rightDrive3;
-	
+
+	private RobotDrive m_drive;
+
+	// Pneumatics
 	private Solenoid speedShift;
 	private DoubleSolenoid ptoShift;
 
-	private RobotDrive m_drive;
-	private double lastYawAngle;
-	private long lastTime;
-	private double totalError;
-
-	protected double KpGyro = 0.0;
-	protected double KiGyro = 0.0;
-	protected double KdGyro = 0.0;
-	
-	// Controllers
-	public static final int CONTROLLER_JOYSTICK_ARCADE = 0;
-	public static final int CONTROLLER_JOYSTICK_TANK = 1;
-	public static final int CONTROLLER_JOYSTICK_CHEESY = 2;
-	public static final int CONTROLLER_XBOX_CHEESY = 3;
-	public static final int CONTROLLER_XBOX_ARCADE_LEFT = 4;
-	public static final int CONTROLLER_XBOX_ARCADE_RIGHT = 5;
-	public static final int CONTROLLER_WHEEL = 6;
+	// Input devices
+	public static final int DRIVER_INPUT_JOYSTICK_ARCADE = 0;
+	public static final int DRIVER_INPUT_JOYSTICK_TANK = 1;
+	public static final int DRIVER_INPUT_JOYSTICK_CHEESY = 2;
+	public static final int DRIVER_INPUT_XBOX_CHEESY = 3;
+	public static final int DRIVER_INPUT_XBOX_ARCADE_LEFT = 4;
+	public static final int DRIVER_INPUT_XBOX_ARCADE_RIGHT = 5;
+	public static final int DRIVER_INPUT_WHEEL = 6;
 
 	public static final double STEER_NON_LINEARITY = 1.0;
 	public static final double MOVE_NON_LINEARITY = 1.0;
@@ -58,13 +59,8 @@ public class DriveTrain extends MPSubsystem
 	private int m_moveNonLinear = 0;
 	private int m_steerNonLinear = 0;
 
-	private boolean isAxisLocked = false;
-	// private double m_moveScaleSlow = 0.35;
-	// private double m_steerScaleSlow = 0.50;
 	private double m_moveScale = 1.0;
 	private double m_steerScale = 1.0;
-	// private double m_moveScaleTurbo = 1.0;
-	// private double m_steerScaleTurbo = 1.0;
 
 	private double m_moveInput = 0.0;
 	private double m_steerInput = 0.0;
@@ -75,126 +71,93 @@ public class DriveTrain extends MPSubsystem
 	private double m_moveTrim = 0.0;
 	private double m_steerTrim = 0.0;
 
-	private ControlMode m_controlMode;
+	private long periodMs;
+	private boolean controlLoopEnabled;
+	private DriveTrainControlMode controlMode;
+	
+	private MotionProfileController mpStraightController;
+	private PIDParams mpStraightPIDParams = new PIDParams(0, 0, 0, 0, 0);
 
-	// private int m_controllerMode;
-
-	// PID/Software Area
+	private ADXRS450_Gyro gyro = new ADXRS450_Gyro();
 
 	public DriveTrain() {
-		super(LOOP_PERIOD_MS);
-
-		//PID
-		//P .018
-		//I .00006
-		//D .05
-
-		//DriveTrain Motors
 		leftDrive1 = new CANTalonEncoder(RobotMap.DRIVETRAIN_LEFT_MOTOR1, ENCODER_TICKS_TO_WORLD, false);
 		leftDrive2 = new CANTalon(RobotMap.DRIVETRAIN_LEFT_MOTOR2);
 		leftDrive3 = new CANTalon(RobotMap.DRIVETRAIN_LEFT_MOTOR3);
-		addMotorController(leftDrive1);
 		
 		rightDrive1 = new CANTalonEncoder(RobotMap.DRIVETRAIN_RIGHT_MOTOR1, ENCODER_TICKS_TO_WORLD, true);
 		rightDrive2 = new CANTalon(RobotMap.DRIVETRAIN_RIGHT_MOTOR2);
 		rightDrive3 = new CANTalon(RobotMap.DRIVETRAIN_RIGHT_MOTOR3);
-		addMotorController(rightDrive1);
 		
 		leftDrive2.changeControlMode(TalonControlMode.Follower);
 		leftDrive2.set(leftDrive1.getDeviceID());
 		leftDrive3.changeControlMode(TalonControlMode.Follower);
 		leftDrive3.set(leftDrive1.getDeviceID());
+		motorControllers.add(leftDrive1);
 		
+		rightDrive1.setRight(true);
 		rightDrive2.changeControlMode(TalonControlMode.Follower);
 		rightDrive2.set(rightDrive1.getDeviceID());
 		rightDrive3.changeControlMode(TalonControlMode.Follower);
 		rightDrive3.set(rightDrive1.getDeviceID());
+		motorControllers.add(rightDrive1);
 		
 		m_drive = new RobotDrive(leftDrive1, rightDrive1);
-		// m_drive.setInvertedMotor(RobotDrive.MotorType.kFrontLeft, true);
-		// m_drive.setInvertedMotor(RobotDrive.MotorType.kFrontRight, true);
 		m_drive.setInvertedMotor(RobotDrive.MotorType.kRearLeft, true);
 		m_drive.setInvertedMotor(RobotDrive.MotorType.kRearRight, true);
 		m_drive.setSafetyEnabled(false);
-		// m_drive.setInvertedMotor(RobotDrive.MotorType.kRearLeft, true);
-		// m_drive.setInvertedMotor(RobotDrive.MotorType.kRearRight, true);
 		
-		//DriveTrain Pneumatics
 		speedShift = new Solenoid(RobotMap.DRIVETRAIN_SPEEDSHIFT_MODULE_ID);
 		ptoShift = new DoubleSolenoid(RobotMap.DRIVETRAIN_WINCH_ENGAGE_MODULE_ID, RobotMap.DRIVETRAIN_WINCH_DISENGAGE_MODULE_ID);
 		
-//		RobotMain.gyro.calibrate();
+		mpStraightController = new MotionProfileController(periodMs, mpStraightPIDParams, motorControllers);
 	}
 
 	@Override
 	public void initDefaultCommand() {
-		// Set the default command for a subsystem here.
 		setDefaultCommand(new DriveWithJoystick());
 	}
 	
-	public void straightMP(double distanceInches, boolean useGyroLock) {
-		//Implementation
-		this.setMPTarget(distanceInches, 0); //TODO: Velocity
+	public ADXRS450_Gyro getGyro() {
+		return gyro;
 	}
 	
-	public void turnMP(double angleDegrees) {
-		//Implementation
-		this.setMPTarget(angleDegrees, 0); //TODO: Velocity
+	public void setStraightMP(double distanceInches, double maxVelocity, boolean useGyroLock, double desiredAbsoluteAngle) {
+		if (isControlLoopEnabled()) {
+			disableControlLoop();
+		}	
+		mpStraightController.setMPTarget(distanceInches, maxVelocity, useGyroLock, desiredAbsoluteAngle); 
+		setControlMode(DriveTrainControlMode.MP_STRAIGHT);
+		enableControlLoop();
+	}
+	
+	public void setControlMode(DriveTrainControlMode controlMode) {
+		this.controlMode = controlMode;
+		if (controlMode == DriveTrainControlMode.JOYSTICK) {
+			leftDrive1.changeControlMode(TalonControlMode.PercentVbus);
+			rightDrive1.changeControlMode(TalonControlMode.PercentVbus);
+		}
 	}
 	
 	public void controlLoopUpdate() {
-		if (!isControlLoopEnabled()) return;
-		MotionProfilePoint lastMPPoint = mpPoint;
-		mpPoint = mp.getNextPoint(mpPoint);
-		if (mpPoint == null) {
-			disableControlLoop();
-			for (CANTalonEncoder motorController : motorControllers) {
-				motorController.changeControlMode(TalonControlMode.PercentVbus);
-			}
+		if (!isControlLoopEnabled()) {
 			return;
 		}
 		
-		currentPosition = mpPoint.position;
-		currentVelocity = 1000 * (currentPosition - lastPosition) / (System.currentTimeMillis() - lastTime);
-		double Kf = 0.0;
-		if (Math.abs(mpPoint.position) > 0.001) {
-			Kf = (Ka * mpPoint.acceleration + Kv * mpPoint.velocity) / mpPoint.position;
+		boolean isFinished = false;
+		if (controlMode == DriveTrainControlMode.MP_STRAIGHT) {
+			isFinished = mpStraightController.controlLoopUpdate(getGyro().getAngle());
 		}
-		
-		// Talon PID MODE for encoders
-	
-		for (CANTalonEncoder motorController : motorControllers) {
-			motorController.setF(Kf);
-			motorController.setWorld(mpPoint.position);
-		}
-		
-		// Gyro software MODE
-		// 0) set the control mode
-		// 1) switch Talons to vbus (already done above)
-		// 2) KpGyro, KdGyro, KiGyro, KfGyro, KaGyro, KvGyro
-		// 3) PID Calculate
-		double previousError = this.getMPTarget() - lastMPPoint.position;
-		double error = this.getMPTarget() - getYawAngleDeg();
-		
-		double KfGyro = Ka * mpPoint.acceleration + Kv * mpPoint.velocity;
-		
-		double output = KpGyro*error + KiGyro*totalError + KdGyro*(error-previousError) + KfGyro;
-		
-		for (CANTalonEncoder motorController : motorControllers) {
-			if (motorController.isRight()) {
-				motorController.set(output);
-			}
-			else {
-				motorController.set(-output);
-			}
-		}
-			
-		lastTime = System.currentTimeMillis();
-		lastPosition = currentPosition;
+
+		if (isFinished) {
+			disableControlLoop();
+			setControlMode(DriveTrainControlMode.JOYSTICK);
+			return;
+		}				
 	}
 
 	public void driveWithJoystick() {
-		if(m_controlMode != ControlMode.DRIVER || m_drive == null) return;
+		if(controlMode != DriveTrainControlMode.JOYSTICK || m_drive == null) return;
 		// switch(m_controllerMode) {
 		// case CONTROLLER_JOYSTICK_ARCADE:
 		// m_moveInput = OI.getInstance().getJoystick1().getY();
@@ -251,8 +214,7 @@ public class DriveTrain extends MPSubsystem
 				m_moveInput, m_moveNonLinear, MOVE_NON_LINEARITY);
 		m_steerOutput = adjustForSensitivity(m_steerScale, m_steerTrim,
 				m_steerInput, m_steerNonLinear, STEER_NON_LINEARITY);
-		if (isAxisLocked)
-			m_steerOutput = 0;
+		m_steerOutput = 0;
 		
 		m_drive.arcadeDrive(m_moveOutput, m_steerOutput);
 		// break;
@@ -289,10 +251,6 @@ public class DriveTrain extends MPSubsystem
 			inDeadZone = false;
 		}
 		return inDeadZone;
-	}
-
-	public void setAxisLocked(boolean locked) {
-		isAxisLocked = locked;
 	}
 
 	private double adjustForSensitivity(double scale, double trim,
@@ -336,59 +294,6 @@ public class DriveTrain extends MPSubsystem
 				/ Math.asin(steerNonLinearity);
 	}
 
-	public void updateStatus() {
-		//TODO: Add wheel distances/positions
-//		SmartDashboard.putNumber("YawRate", getYawRateDegPerSec());
-		
-//		SmartDashboard.putNumber("MP Target", this.getMPTarget());
-//		SmartDashboard.putBoolean("Control Loop", this.isControlLoopEnabled());
-//		SmartDashboard.putNumber("IMU Yaw (deg)", getYawAngleDeg());
-//		SmartDashboard.putData(this);
-		
-	}
-
-	//PIDInput
-//	lastYawAngle = getYawAngleDeg();
-//	lastTime = System.nanoTime();
-//	if (m_controlMode == ControlMode.SOFTWARE_TURN)
-//		return getYawAngleDeg();
-//	if (m_controlMode == ControlMode.SOFTWARE_DRIVE)
-//		return 0; // TODO: ADD IMPLEMENTATION
-//	if (m_controlMode == ControlMode.DRIVER)
-//		return 0;
-//	return 0;
-//
-	//PIDOutput
-//	this.output = output;
-//	if (m_controlMode == ControlMode.SOFTWARE_TURN)
-//		m_drive.arcadeDrive(0, output);
-//	if (m_controlMode == ControlMode.DRIVER)
-//		this.getPIDController().disable();
-
-	public void setControlMode(ControlMode mode) {
-		this.m_controlMode = mode;
-	}
-
-	//Gyro Implementation
-	public double getYawAngleDeg() {
-		double yaw = RobotMain.gyro.getAngle(); //TODO: Goes from 360 to 361
-		if (Math.abs(yaw) > 5 && yaw < 0) {
-			yaw += 360;
-		}
-		return yaw;
-	}
-
-	public double getYawRateDegPerSec() {
-		double rate = (getYawAngleDeg() - lastYawAngle) * 1000000000.0 / (System.nanoTime() - lastTime);
-		lastYawAngle = getYawAngleDeg();
-		lastTime = System.nanoTime();
-		return rate;
-	}
-
-	public void setYawAngleZero() {
-		RobotMain.gyro.reset();
-	}
-	
 	public void setShiftState(SpeedShiftState state) {
 		if(state == SpeedShiftState.HI) {
 			speedShift.set(true);
@@ -407,4 +312,23 @@ public class DriveTrain extends MPSubsystem
 		}
 	}
 
+	public boolean isControlLoopEnabled() {
+		return controlLoopEnabled;
+	}
+	
+	protected void disableControlLoop() {
+		controlLoopEnabled = false;
+	}
+
+	protected void enableControlLoop() {
+		controlLoopEnabled = true;
+	}
+
+	@Override
+	public void setPeriodMs(long periodMs) {
+		this.periodMs = periodMs;
+	}
+	
+	public void updateStatus() {
+	}	
 }
