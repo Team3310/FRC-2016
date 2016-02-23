@@ -1,5 +1,6 @@
 package edu.rhhs.frc.subsystems;
 
+import edu.rhhs.frc.RobotMain;
 import edu.rhhs.frc.RobotMap;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -13,13 +14,17 @@ public class Intake extends Subsystem
 	
 	public Intake() {
 		try {
-			outerLift = new Solenoid(RobotMap.INTAKE_OUTER_LIFT_MODULE_ID);
-			innerLift = new Solenoid(RobotMap.INTAKE_INNER_LIFT_MODULE_ID);
-			outerRoller = new CANTalon(RobotMap.INTAKE_OUTER_ROLLER_MOTOR_ID);
-			innerRoller = new CANTalon(RobotMap.INTAKE_INNER_ROLLER_MOTOR_ID);
+			outerRoller = new CANTalon(RobotMap.INTAKE_OUTER_ROLLER_MOTOR_CAN_ID);
+			innerRoller = new CANTalon(RobotMap.INTAKE_INNER_ROLLER_MOTOR_CAN_ID);
+
+			outerRoller.enableBrakeMode(true);
+			innerRoller.enableBrakeMode(true);
+			
+			outerLift = new Solenoid(RobotMap.INTAKE_OUTER_LIFT_PCM_ID);
+			innerLift = new Solenoid(RobotMap.INTAKE_INNER_LIFT_PCM_ID);			
 		} 
 		catch (Exception e) {
-			System.out.println("test");
+			System.err.println("An error occurred in the Intake constructor");
 		}
 	}
 	
@@ -55,7 +60,8 @@ public class Intake extends Subsystem
 		
 	}
 	
-	public void updateStatus() {
-		
+	public void updateStatus(RobotMain.OperationMode operationMode) {
+		if (operationMode == RobotMain.OperationMode.TEST) {
+		}
 	}
 }

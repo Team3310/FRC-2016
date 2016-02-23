@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import edu.rhhs.frc.OI;
 import edu.rhhs.frc.RobotMain;
 import edu.rhhs.frc.RobotMap;
-import edu.rhhs.frc.commands.DriveWithJoystick;
 import edu.rhhs.frc.utility.CANTalonEncoder;
 import edu.rhhs.frc.utility.ControlLoopable;
 import edu.rhhs.frc.utility.MotionProfileController;
 import edu.rhhs.frc.utility.PIDParams;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -81,37 +81,53 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 	private ADXRS450_Gyro gyro = new ADXRS450_Gyro();
 
 	public DriveTrain() {
-		leftDrive1 = new CANTalonEncoder(RobotMap.DRIVETRAIN_LEFT_MOTOR1, ENCODER_TICKS_TO_INCHES, false);
-		leftDrive2 = new CANTalon(RobotMap.DRIVETRAIN_LEFT_MOTOR2);
-		leftDrive3 = new CANTalon(RobotMap.DRIVETRAIN_LEFT_MOTOR3);
-		
-		rightDrive1 = new CANTalonEncoder(RobotMap.DRIVETRAIN_RIGHT_MOTOR1, ENCODER_TICKS_TO_INCHES, true);
-		rightDrive2 = new CANTalon(RobotMap.DRIVETRAIN_RIGHT_MOTOR2);
-		rightDrive3 = new CANTalon(RobotMap.DRIVETRAIN_RIGHT_MOTOR3);
-		
-		leftDrive1.reverseSensor(true);
-		leftDrive1.reverseOutput(false);
-		leftDrive2.changeControlMode(TalonControlMode.Follower);
-		leftDrive2.set(leftDrive1.getDeviceID());
-		leftDrive3.changeControlMode(TalonControlMode.Follower);
-		leftDrive3.set(leftDrive1.getDeviceID());
-		motorControllers.add(leftDrive1);
-		
-		rightDrive1.reverseSensor(false);
-		rightDrive1.reverseOutput(true);
-		rightDrive2.changeControlMode(TalonControlMode.Follower);
-		rightDrive2.set(rightDrive1.getDeviceID());
-		rightDrive3.changeControlMode(TalonControlMode.Follower);
-		rightDrive3.set(rightDrive1.getDeviceID());
-		motorControllers.add(rightDrive1);
-		
-		m_drive = new RobotDrive(leftDrive1, rightDrive1);
-		m_drive.setInvertedMotor(RobotDrive.MotorType.kRearLeft, true);
-		m_drive.setInvertedMotor(RobotDrive.MotorType.kRearRight, true);
-		m_drive.setSafetyEnabled(false);
-		
-		speedShift = new Solenoid(RobotMap.DRIVETRAIN_SPEEDSHIFT_MODULE_ID);
-		ptoShift = new DoubleSolenoid(RobotMap.DRIVETRAIN_WINCH_ENGAGE_MODULE_ID, RobotMap.DRIVETRAIN_WINCH_DISENGAGE_MODULE_ID);		
+		try {
+			leftDrive1 = new CANTalonEncoder(RobotMap.DRIVETRAIN_LEFT_MOTOR1_CAN_ID, ENCODER_TICKS_TO_INCHES, false, FeedbackDevice.CtreMagEncoder_Relative);
+			leftDrive2 = new CANTalon(RobotMap.DRIVETRAIN_LEFT_MOTOR2_CAN_ID);
+			leftDrive3 = new CANTalon(RobotMap.DRIVETRAIN_LEFT_MOTOR3_CAN_ID);
+			
+			rightDrive1 = new CANTalonEncoder(RobotMap.DRIVETRAIN_RIGHT_MOTOR1_CAN_ID, ENCODER_TICKS_TO_INCHES, true, FeedbackDevice.CtreMagEncoder_Relative);
+			rightDrive2 = new CANTalon(RobotMap.DRIVETRAIN_RIGHT_MOTOR2_CAN_ID);
+			rightDrive3 = new CANTalon(RobotMap.DRIVETRAIN_RIGHT_MOTOR3_CAN_ID);
+			
+			leftDrive2.changeControlMode(TalonControlMode.Follower);
+			leftDrive2.set(leftDrive1.getDeviceID());
+			leftDrive3.changeControlMode(TalonControlMode.Follower);
+			leftDrive3.set(leftDrive1.getDeviceID());
+			
+			rightDrive2.changeControlMode(TalonControlMode.Follower);
+			rightDrive2.set(rightDrive1.getDeviceID());
+			rightDrive3.changeControlMode(TalonControlMode.Follower);
+			rightDrive3.set(rightDrive1.getDeviceID());
+	
+			leftDrive1.reverseSensor(true);
+			leftDrive1.reverseOutput(false);
+			
+			rightDrive1.reverseSensor(false);
+			rightDrive1.reverseOutput(true);
+			
+			leftDrive1.enableBrakeMode(true);
+			leftDrive2.enableBrakeMode(true);
+			leftDrive3.enableBrakeMode(true);
+			
+			rightDrive1.enableBrakeMode(true);
+			rightDrive2.enableBrakeMode(true);
+			rightDrive3.enableBrakeMode(true);
+			
+			motorControllers.add(leftDrive1);
+			motorControllers.add(rightDrive1);
+			
+			m_drive = new RobotDrive(leftDrive1, rightDrive1);
+			m_drive.setInvertedMotor(RobotDrive.MotorType.kRearLeft, true);
+			m_drive.setInvertedMotor(RobotDrive.MotorType.kRearRight, true);
+			m_drive.setSafetyEnabled(false);
+			
+			speedShift = new Solenoid(RobotMap.DRIVETRAIN_SPEEDSHIFT_PCM_ID);
+			ptoShift = new DoubleSolenoid(RobotMap.DRIVETRAIN_WINCH_ENGAGE_PCM_ID, RobotMap.DRIVETRAIN_WINCH_DISENGAGE_PCM_ID);		
+		}
+		catch (Exception e) {
+			System.err.println("An error occurred in the DriveTrain constructor");
+		}
 	}
 
 	@Override
@@ -317,14 +333,16 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 		mpStraightController = new MotionProfileController(periodMs, mpStraightPIDParams, motorControllers);
 	}
 	
-	public void updateStatus() {
-		SmartDashboard.putNumber("Right Drive", rightDrive1.getPositionWorld());
-		SmartDashboard.putNumber("Left Drive", leftDrive1.getPositionWorld());
-		SmartDashboard.putNumber("Left Drive 1 Current", leftDrive1.getOutputCurrent());
-		SmartDashboard.putNumber("Left Drive 2 Current", leftDrive2.getOutputCurrent());
-		SmartDashboard.putNumber("Left Drive 3 Current", leftDrive3.getOutputCurrent());
-		SmartDashboard.putNumber("Right Drive 1 Current", rightDrive1.getOutputCurrent());
-		SmartDashboard.putNumber("Right Drive 2 Current", rightDrive2.getOutputCurrent());
-		SmartDashboard.putNumber("Right Drive 3 Current", rightDrive3.getOutputCurrent());
+	public void updateStatus(RobotMain.OperationMode operationMode) {
+		if (operationMode == RobotMain.OperationMode.TEST) {
+			SmartDashboard.putNumber("Right Drive", rightDrive1.getPositionWorld());
+			SmartDashboard.putNumber("Left Drive", leftDrive1.getPositionWorld());
+			SmartDashboard.putNumber("Left Drive 1 Current", leftDrive1.getOutputCurrent());
+			SmartDashboard.putNumber("Left Drive 2 Current", leftDrive2.getOutputCurrent());
+			SmartDashboard.putNumber("Left Drive 3 Current", leftDrive3.getOutputCurrent());
+			SmartDashboard.putNumber("Right Drive 1 Current", rightDrive1.getOutputCurrent());
+			SmartDashboard.putNumber("Right Drive 2 Current", rightDrive2.getOutputCurrent());
+			SmartDashboard.putNumber("Right Drive 3 Current", rightDrive3.getOutputCurrent());
+		}
 	}	
 }

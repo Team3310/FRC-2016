@@ -7,15 +7,13 @@ public class CANTalonEncoder extends CANTalon
 	private double encoderTicksToWorld;
 	private boolean isRight = true;
 	
-	public CANTalonEncoder(int deviceNumber, double encoderTicksToWorld) {
-		super(deviceNumber);
-		this.setFeedbackDevice(FeedbackDevice.QuadEncoder);
-		this.encoderTicksToWorld = encoderTicksToWorld;
+	public CANTalonEncoder(int deviceNumber, double encoderTicksToWorld, FeedbackDevice feedbackDevice) {
+		this(deviceNumber, encoderTicksToWorld, false, feedbackDevice);
 	}
 
-	public CANTalonEncoder(int deviceNumber, double encoderTicksToWorld, boolean isRight) {
+	public CANTalonEncoder(int deviceNumber, double encoderTicksToWorld, boolean isRight, FeedbackDevice feedbackDevice) {
 		super(deviceNumber);
-		this.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+		this.setFeedbackDevice(feedbackDevice);
 		this.encoderTicksToWorld = encoderTicksToWorld;
 		this.isRight = isRight;
 	}

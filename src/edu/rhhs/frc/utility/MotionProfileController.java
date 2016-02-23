@@ -48,6 +48,10 @@ public class MotionProfileController
 		
 	}
 
+	public boolean controlLoopUpdate() {
+		return controlLoopUpdate(0);
+	}
+	
 	public boolean controlLoopUpdate(double currentGyroAngle) {
 		mpPoint = mp.getNextPoint(mpPoint);
 		

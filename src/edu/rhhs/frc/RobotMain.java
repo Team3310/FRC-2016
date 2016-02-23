@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -25,10 +27,14 @@ public class RobotMain extends IterativeRobot
 	public static final DriveTrain driveTrain = new DriveTrain();
 	public static final Shooter shooter = new Shooter();
 	public static final Intake intake = new Intake();
-	public static final Manipulator manipulator = new Manipulator();
-	
+	public static final Manipulator manipulator = new Manipulator();	
 	public static final ControlLooper controlLoop = new ControlLooper("Main control loop", 10);
+
 	public static OI oi;
+	
+	public static enum OperationMode { TEST, COMPETITION };
+	private SendableChooser operationModeChooser;
+	private static OperationMode operationMode = OperationMode.TEST;
 
     private Command autonomousCommand;
 
@@ -40,11 +46,18 @@ public class RobotMain extends IterativeRobot
     	controlLoop.addLoopable(driveTrain);
     	controlLoop.addLoopable(manipulator);
     	controlLoop.addLoopable(shooter);
-	    driveTrain.getGyro().calibrate();
+
+	    operationModeChooser = new SendableChooser();
+	    operationModeChooser.addDefault ("Test", OperationMode.TEST);
+	    operationModeChooser.addObject ("Competition", OperationMode.COMPETITION);
+		SmartDashboard.putData("Operation Mode", operationModeChooser);
+		
         updateStatus();
     }
 	
 	public void disabledPeriodic() {
+		operationMode = (OperationMode)operationModeChooser.getSelected();
+		
 		Scheduler.getInstance().run();
 		updateStatus();
 	}
@@ -93,9 +106,9 @@ public class RobotMain extends IterativeRobot
     }
     
     public void updateStatus() {
-    	driveTrain.updateStatus();
-    	intake.updateStatus();
-    	manipulator.updateStatus();
-    	shooter.updateStatus();
+    	driveTrain.updateStatus(operationMode);
+    	intake.updateStatus(operationMode);
+    	manipulator.updateStatus(operationMode);
+    	shooter.updateStatus(operationMode);
     }
 }

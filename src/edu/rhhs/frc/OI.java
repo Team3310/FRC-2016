@@ -10,6 +10,7 @@ import edu.rhhs.frc.commands.IntakeOuterPosition;
 import edu.rhhs.frc.commands.IntakeOuterSpeed;
 import edu.rhhs.frc.commands.ManipulatorArmSpeed;
 import edu.rhhs.frc.commands.ManipulatorMoveMP;
+import edu.rhhs.frc.commands.ManipulatorResetZero;
 import edu.rhhs.frc.commands.ShooterCarriageState;
 import edu.rhhs.frc.commands.ShooterShotPosition;
 import edu.rhhs.frc.commands.ShooterWinchSpeed;
@@ -143,6 +144,10 @@ public class OI
 		Button armMP = new InternalButton();
 		armMP.whenPressed(new ManipulatorMoveMP(45, 5));
 		SmartDashboard.putData("MotionProfile Arm", armMP);
+
+		Button resetArmZero = new InternalButton();
+		resetArmZero.whenPressed(new ManipulatorResetZero());
+		SmartDashboard.putData("Reset Arm Zero", resetArmZero);
 	}
 	
 	public Joystick getJoystick1() {

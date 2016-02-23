@@ -22,14 +22,12 @@ public class ManipulatorMoveMP extends Command
 	}
 
 	protected boolean isFinished() {
-		return RobotMain.driveTrain.isFinished(); 
+		return RobotMain.manipulator.isAtTarget(); 
 	}
 
 	protected void end() {
-		RobotMain.driveTrain.setControlMode(DriveTrainControlMode.JOYSTICK);
 	}
 
 	protected void interrupted() {
-		end();
 	}
 }
