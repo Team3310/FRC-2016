@@ -43,6 +43,10 @@ public class MotionProfileController
 			motorController.changeControlMode(TalonControlMode.Position);
 		}
 	}
+	
+	public void setZeroPosition() {
+		
+	}
 
 	public boolean controlLoopUpdate(double currentGyroAngle) {
 		mpPoint = mp.getNextPoint(mpPoint);

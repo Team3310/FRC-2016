@@ -25,13 +25,14 @@ public class DriveTrainStraightMP extends Command
 	}
 
 	protected boolean isFinished() {
-		return RobotMain.driveTrain.isControlLoopEnabled(); 
+		return RobotMain.driveTrain.isFinished(); 
 	}
 
 	protected void end() {
+		RobotMain.driveTrain.setControlMode(DriveTrainControlMode.JOYSTICK);
 	}
 
 	protected void interrupted() {
-		RobotMain.driveTrain.setControlMode(DriveTrainControlMode.JOYSTICK);
+		end();
 	}
 }

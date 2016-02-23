@@ -1,12 +1,15 @@
 package edu.rhhs.frc;
 
 import edu.rhhs.frc.commands.DriveTrainPTOShift;
+import edu.rhhs.frc.commands.DriveTrainSpeed;
 import edu.rhhs.frc.commands.DriveTrainSpeedShift;
+import edu.rhhs.frc.commands.DriveTrainStraightMP;
 import edu.rhhs.frc.commands.IntakeInnerPosition;
 import edu.rhhs.frc.commands.IntakeInnerSpeed;
 import edu.rhhs.frc.commands.IntakeOuterPosition;
 import edu.rhhs.frc.commands.IntakeOuterSpeed;
 import edu.rhhs.frc.commands.ManipulatorArmSpeed;
+import edu.rhhs.frc.commands.ManipulatorMoveMP;
 import edu.rhhs.frc.commands.ShooterCarriageState;
 import edu.rhhs.frc.commands.ShooterShotPosition;
 import edu.rhhs.frc.commands.ShooterWinchSpeed;
@@ -114,16 +117,32 @@ public class OI
 		SmartDashboard.putData("Intake inner roller off", innerIntakeOff);
 
 		Button shooterWinchPositive = new InternalButton();
-		shooterWinchPositive.whenPressed(new ShooterWinchSpeed(0.5));
+		shooterWinchPositive.whenPressed(new ShooterWinchSpeed(1.0));
 		SmartDashboard.putData("Shooter winch speed positive", shooterWinchPositive);
 
 		Button shooterWinchNegative = new InternalButton();
-		shooterWinchNegative.whenPressed(new ShooterWinchSpeed(-0.5));
+		shooterWinchNegative.whenPressed(new ShooterWinchSpeed(-1.0));
 		SmartDashboard.putData("Shooter winch speed negative", shooterWinchNegative);
 		
 		Button shooterWinchOff = new InternalButton();
 		shooterWinchOff.whenPressed(new ShooterWinchSpeed(0.0));
 		SmartDashboard.putData("Shooter winch speed off", shooterWinchOff);
+		
+		Button drivePos = new InternalButton();
+		drivePos.whenPressed(new DriveTrainSpeed(0.1));
+		SmartDashboard.putData("Drive positive", drivePos);
+		
+		Button driveOff = new InternalButton();
+		driveOff.whenPressed(new DriveTrainSpeed(0.0));
+		SmartDashboard.putData("Drive off", driveOff);
+		
+		Button driveMP = new InternalButton();
+		driveMP.whenPressed(new DriveTrainStraightMP(48, 15, false, 0));
+		SmartDashboard.putData("MotionProfile Drive", driveMP);
+		
+		Button armMP = new InternalButton();
+		armMP.whenPressed(new ManipulatorMoveMP(45, 5));
+		SmartDashboard.putData("MotionProfile Arm", armMP);
 	}
 	
 	public Joystick getJoystick1() {

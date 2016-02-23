@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DriveTrain extends Subsystem implements ControlLoopable
 {
@@ -25,10 +26,10 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 	public static enum SpeedShiftState { HI, LO };
 	public static enum PTOShiftState { ENGAGED, DISENGAGED };
 	
-	public static final double ENCODER_TICKS_TO_WORLD = 4096; 
+	public static final double ENCODER_TICKS_TO_INCHES = 4096 / (4.0 * Math.PI); 
 	
 	// Motor controllers
-	private ArrayList<CANTalonEncoder> motorControllers;	
+	private ArrayList<CANTalonEncoder> motorControllers = new ArrayList<CANTalonEncoder>();	
 
 	private CANTalonEncoder leftDrive1;
 	private CANTalon leftDrive2;
@@ -71,31 +72,33 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 	private double m_moveTrim = 0.0;
 	private double m_steerTrim = 0.0;
 
-	private long periodMs;
-	private boolean controlLoopEnabled;
-	private DriveTrainControlMode controlMode;
+	private boolean isFinished;
+	private DriveTrainControlMode controlMode = DriveTrainControlMode.JOYSTICK;
 	
 	private MotionProfileController mpStraightController;
-	private PIDParams mpStraightPIDParams = new PIDParams(0, 0, 0, 0, 0);
+	private PIDParams mpStraightPIDParams = new PIDParams(1, 0, 0, .01, 0.18);
 
 	private ADXRS450_Gyro gyro = new ADXRS450_Gyro();
 
 	public DriveTrain() {
-		leftDrive1 = new CANTalonEncoder(RobotMap.DRIVETRAIN_LEFT_MOTOR1, ENCODER_TICKS_TO_WORLD, false);
+		leftDrive1 = new CANTalonEncoder(RobotMap.DRIVETRAIN_LEFT_MOTOR1, ENCODER_TICKS_TO_INCHES, false);
 		leftDrive2 = new CANTalon(RobotMap.DRIVETRAIN_LEFT_MOTOR2);
 		leftDrive3 = new CANTalon(RobotMap.DRIVETRAIN_LEFT_MOTOR3);
 		
-		rightDrive1 = new CANTalonEncoder(RobotMap.DRIVETRAIN_RIGHT_MOTOR1, ENCODER_TICKS_TO_WORLD, true);
+		rightDrive1 = new CANTalonEncoder(RobotMap.DRIVETRAIN_RIGHT_MOTOR1, ENCODER_TICKS_TO_INCHES, true);
 		rightDrive2 = new CANTalon(RobotMap.DRIVETRAIN_RIGHT_MOTOR2);
 		rightDrive3 = new CANTalon(RobotMap.DRIVETRAIN_RIGHT_MOTOR3);
 		
+		leftDrive1.reverseSensor(true);
+		leftDrive1.reverseOutput(false);
 		leftDrive2.changeControlMode(TalonControlMode.Follower);
 		leftDrive2.set(leftDrive1.getDeviceID());
 		leftDrive3.changeControlMode(TalonControlMode.Follower);
 		leftDrive3.set(leftDrive1.getDeviceID());
 		motorControllers.add(leftDrive1);
 		
-		rightDrive1.setRight(true);
+		rightDrive1.reverseSensor(false);
+		rightDrive1.reverseOutput(true);
 		rightDrive2.changeControlMode(TalonControlMode.Follower);
 		rightDrive2.set(rightDrive1.getDeviceID());
 		rightDrive3.changeControlMode(TalonControlMode.Follower);
@@ -108,14 +111,12 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 		m_drive.setSafetyEnabled(false);
 		
 		speedShift = new Solenoid(RobotMap.DRIVETRAIN_SPEEDSHIFT_MODULE_ID);
-		ptoShift = new DoubleSolenoid(RobotMap.DRIVETRAIN_WINCH_ENGAGE_MODULE_ID, RobotMap.DRIVETRAIN_WINCH_DISENGAGE_MODULE_ID);
-		
-		mpStraightController = new MotionProfileController(periodMs, mpStraightPIDParams, motorControllers);
+		ptoShift = new DoubleSolenoid(RobotMap.DRIVETRAIN_WINCH_ENGAGE_MODULE_ID, RobotMap.DRIVETRAIN_WINCH_DISENGAGE_MODULE_ID);		
 	}
 
 	@Override
 	public void initDefaultCommand() {
-		setDefaultCommand(new DriveWithJoystick());
+//		setDefaultCommand(new DriveWithJoystick());
 	}
 	
 	public ADXRS450_Gyro getGyro() {
@@ -123,37 +124,33 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 	}
 	
 	public void setStraightMP(double distanceInches, double maxVelocity, boolean useGyroLock, double desiredAbsoluteAngle) {
-		if (isControlLoopEnabled()) {
-			disableControlLoop();
-		}	
 		mpStraightController.setMPTarget(distanceInches, maxVelocity, useGyroLock, desiredAbsoluteAngle); 
 		setControlMode(DriveTrainControlMode.MP_STRAIGHT);
-		enableControlLoop();
 	}
 	
 	public void setControlMode(DriveTrainControlMode controlMode) {
-		this.controlMode = controlMode;
+ 		this.controlMode = controlMode;
 		if (controlMode == DriveTrainControlMode.JOYSTICK) {
 			leftDrive1.changeControlMode(TalonControlMode.PercentVbus);
 			rightDrive1.changeControlMode(TalonControlMode.PercentVbus);
 		}
+		else {
+			isFinished = false;
+		}
 	}
 	
 	public void controlLoopUpdate() {
-		if (!isControlLoopEnabled()) {
-			return;
+		if (controlMode == DriveTrainControlMode.JOYSTICK) {
+			driveWithJoystick();
 		}
-		
-		boolean isFinished = false;
-		if (controlMode == DriveTrainControlMode.MP_STRAIGHT) {
+		else if (controlMode == DriveTrainControlMode.MP_STRAIGHT) {
 			isFinished = mpStraightController.controlLoopUpdate(getGyro().getAngle());
 		}
-
-		if (isFinished) {
-			disableControlLoop();
-			setControlMode(DriveTrainControlMode.JOYSTICK);
-			return;
-		}				
+	}
+	
+	public void setSpeed(double speed) {
+		rightDrive1.set(speed);
+		leftDrive1.set(speed);
 	}
 
 	public void driveWithJoystick() {
@@ -214,7 +211,6 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 				m_moveInput, m_moveNonLinear, MOVE_NON_LINEARITY);
 		m_steerOutput = adjustForSensitivity(m_steerScale, m_steerTrim,
 				m_steerInput, m_steerNonLinear, STEER_NON_LINEARITY);
-		m_steerOutput = 0;
 		
 		m_drive.arcadeDrive(m_moveOutput, m_steerOutput);
 		// break;
@@ -312,23 +308,23 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 		}
 	}
 
-	public boolean isControlLoopEnabled() {
-		return controlLoopEnabled;
+	public boolean isFinished() {
+		return isFinished;
 	}
 	
-	protected void disableControlLoop() {
-		controlLoopEnabled = false;
-	}
-
-	protected void enableControlLoop() {
-		controlLoopEnabled = true;
-	}
-
 	@Override
 	public void setPeriodMs(long periodMs) {
-		this.periodMs = periodMs;
+		mpStraightController = new MotionProfileController(periodMs, mpStraightPIDParams, motorControllers);
 	}
 	
 	public void updateStatus() {
+		SmartDashboard.putNumber("Right Drive", rightDrive1.getPositionWorld());
+		SmartDashboard.putNumber("Left Drive", leftDrive1.getPositionWorld());
+		SmartDashboard.putNumber("Left Drive 1 Current", leftDrive1.getOutputCurrent());
+		SmartDashboard.putNumber("Left Drive 2 Current", leftDrive2.getOutputCurrent());
+		SmartDashboard.putNumber("Left Drive 3 Current", leftDrive3.getOutputCurrent());
+		SmartDashboard.putNumber("Right Drive 1 Current", rightDrive1.getOutputCurrent());
+		SmartDashboard.putNumber("Right Drive 2 Current", rightDrive2.getOutputCurrent());
+		SmartDashboard.putNumber("Right Drive 3 Current", rightDrive3.getOutputCurrent());
 	}	
 }

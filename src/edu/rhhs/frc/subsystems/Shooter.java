@@ -6,6 +6,7 @@ import edu.rhhs.frc.utility.ControlLoopable;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Shooter extends Subsystem implements ControlLoopable
 {
@@ -66,18 +67,16 @@ public class Shooter extends Subsystem implements ControlLoopable
 	}
 	
 	public void updateStatus() {
-		
+		SmartDashboard.putNumber("Winch Pos", winch.getPosition());
 	}
 
 	@Override
 	public void controlLoopUpdate() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void setPeriodMs(long periodMs) {
-		// TODO Auto-generated method stub
 		
 	}
 }

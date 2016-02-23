@@ -26,6 +26,7 @@ public class RobotMain extends IterativeRobot
 	public static final Shooter shooter = new Shooter();
 	public static final Intake intake = new Intake();
 	public static final Manipulator manipulator = new Manipulator();
+	
 	public static final ControlLooper controlLoop = new ControlLooper("Main control loop", 10);
 	public static OI oi;
 
