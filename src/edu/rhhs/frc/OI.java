@@ -102,7 +102,7 @@ public class OI
 		SmartDashboard.putData("Manipulator speed off", manipulatorArmOff);
 		
 		Button outerIntakeOn = new InternalButton();
-		outerIntakeOn.whenPressed(new IntakeOuterSpeed(0.8));
+		outerIntakeOn.whenPressed(new IntakeOuterSpeed(1.0));
 		SmartDashboard.putData("Intake outer roller on", outerIntakeOn);
 
 		Button outerIntakeOff = new InternalButton();
@@ -110,7 +110,7 @@ public class OI
 		SmartDashboard.putData("Intake outer roller off", outerIntakeOff);
 
 		Button innerIntakeOn = new InternalButton();
-		innerIntakeOn.whenPressed(new IntakeInnerSpeed(0.5));
+		innerIntakeOn.whenPressed(new IntakeInnerSpeed(0.7));
 		SmartDashboard.putData("Intake inner roller on", innerIntakeOn);
 
 		Button innerIntakeOff = new InternalButton();
@@ -130,7 +130,7 @@ public class OI
 		SmartDashboard.putData("Shooter winch speed off", shooterWinchOff);
 		
 		Button drivePos = new InternalButton();
-		drivePos.whenPressed(new DriveTrainSpeed(0.1));
+		drivePos.whenPressed(new DriveTrainSpeed(1.0));
 		SmartDashboard.putData("Drive positive", drivePos);
 		
 		Button driveOff = new InternalButton();

@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DriveTrain extends Subsystem implements ControlLoopable
 {
-	public static enum DriveTrainControlMode { JOYSTICK, MP_STRAIGHT };
+	public static enum DriveTrainControlMode { JOYSTICK, MP_STRAIGHT, TEST };
 	public static enum SpeedShiftState { HI, LO };
 	public static enum PTOShiftState { ENGAGED, DISENGAGED };
 	
@@ -78,7 +78,7 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 	private MotionProfileController mpStraightController;
 	private PIDParams mpStraightPIDParams = new PIDParams(1, 0, 0, .01, 0.18);
 
-	private ADXRS450_Gyro gyro = new ADXRS450_Gyro();
+	//private ADXRS450_Gyro gyro = new ADXRS450_Gyro();
 
 	public DriveTrain() {
 		try {
@@ -135,9 +135,9 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 //		setDefaultCommand(new DriveWithJoystick());
 	}
 	
-	public ADXRS450_Gyro getGyro() {
-		return gyro;
-	}
+//	public ADXRS450_Gyro getGyro() {
+//		return gyro;
+//	}
 	
 	public void setStraightMP(double distanceInches, double maxVelocity, boolean useGyroLock, double desiredAbsoluteAngle) {
 		mpStraightController.setMPTarget(distanceInches, maxVelocity, useGyroLock, desiredAbsoluteAngle); 
@@ -147,6 +147,10 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 	public void setControlMode(DriveTrainControlMode controlMode) {
  		this.controlMode = controlMode;
 		if (controlMode == DriveTrainControlMode.JOYSTICK) {
+			leftDrive1.changeControlMode(TalonControlMode.PercentVbus);
+			rightDrive1.changeControlMode(TalonControlMode.PercentVbus);
+		}
+		else if (controlMode == DriveTrainControlMode.TEST) {
 			leftDrive1.changeControlMode(TalonControlMode.PercentVbus);
 			rightDrive1.changeControlMode(TalonControlMode.PercentVbus);
 		}
@@ -160,13 +164,19 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 			driveWithJoystick();
 		}
 		else if (controlMode == DriveTrainControlMode.MP_STRAIGHT) {
-			isFinished = mpStraightController.controlLoopUpdate(getGyro().getAngle());
+			isFinished = mpStraightController.controlLoopUpdate(0); //getGyro().getAngle()
 		}
 	}
 	
 	public void setSpeed(double speed) {
-		rightDrive1.set(speed);
-		leftDrive1.set(speed);
+		if (speed == 0) {
+			setControlMode(DriveTrainControlMode.JOYSTICK);
+		}
+		else {
+			setControlMode(DriveTrainControlMode.TEST);
+			rightDrive1.set(speed);
+			leftDrive1.set(speed);
+		}
 	}
 
 	public void driveWithJoystick() {
