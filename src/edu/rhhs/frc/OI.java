@@ -130,7 +130,7 @@ public class OI
 		SmartDashboard.putData("Shooter winch speed off", shooterWinchOff);
 		
 		Button drivePos = new InternalButton();
-		drivePos.whenPressed(new DriveTrainSpeed(1.0));
+		drivePos.whenPressed(new DriveTrainSpeed(0.5));
 		SmartDashboard.putData("Drive positive", drivePos);
 		
 		Button driveOff = new InternalButton();
