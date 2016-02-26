@@ -37,10 +37,16 @@ public class MotionProfileBoxCar
 	} 
 	
 	private void initializeProfile() {
+		t4 = Math.abs((targetDistance - startDistance)/maxVelocity) * 100;
+		
+		// When there is a remainder on t4, we need to adjust maxVelocity slightly to get the correct end point
+		int t5 = (int)Math.ceil(t4);
+		maxVelocity = Math.abs((targetDistance - startDistance) / t5) * 100;
 		t4 = Math.abs((targetDistance - startDistance)/maxVelocity) * 1000;
+
 		numFilter1Boxes = (int)Math.ceil(t1/itp);
 		numFilter2Boxes = (int)Math.ceil(t2/itp);
-		numPoints = (int)(t4/itp);
+		numPoints = (int)Math.ceil(t4/itp);
 
 		numITP = numPoints + numFilter1Boxes + numFilter2Boxes;
 		filter1 = 0;
@@ -79,7 +85,7 @@ public class MotionProfileBoxCar
 		}
 		
 		double firstFilter1InWindow = filter2Window[windowIndex];
-		if (pointIndex < numFilter2Boxes) {
+		if (pointIndex <= numFilter2Boxes) {
 			firstFilter1InWindow = 0;
 		}
 		filter2Window[windowIndex] = filter1;
@@ -134,7 +140,7 @@ public class MotionProfileBoxCar
 	public static void main(String[] args) {
 		long startTime = System.nanoTime();
 		
-		MotionProfileBoxCar mp = new MotionProfileBoxCar(0, 170, 450, 10);
+		MotionProfileBoxCar mp = new MotionProfileBoxCar(4.3, 170, 350, 10);
 		System.out.println("Time, Position, Velocity, Acceleration");
 		MotionProfilePoint point = new MotionProfilePoint();
 		while(mp.getNextPoint(point) != null) {
