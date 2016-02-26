@@ -5,6 +5,7 @@ public class MotionProfileBoxCar
 	static double DEFAULT_T1 = 200;	// millisecond
 	static double DEFAULT_T2 = 100; // millisecond
 	
+	private double startDistance;  // any distance unit
 	private double targetDistance;  // any distance unit
 	private double maxVelocity;		// velocity unit consistent with targetDistance
 	private double itp;	  			// millisecond
@@ -26,7 +27,8 @@ public class MotionProfileBoxCar
 	private int windowIndex;
 	private int pointIndex;
 
-	public MotionProfileBoxCar(double targetDistance, double maxVelocity, double itp) {
+	public MotionProfileBoxCar(double startDistance, double targetDistance, double maxVelocity, double itp) {
+		this.startDistance = startDistance;
 		this.targetDistance = targetDistance;
 		this.maxVelocity = maxVelocity;
 		this.itp = itp;
@@ -35,7 +37,7 @@ public class MotionProfileBoxCar
 	} 
 	
 	private void initializeProfile() {
-		t4 = targetDistance/maxVelocity * 1000;
+		t4 = Math.abs((targetDistance - startDistance)/maxVelocity) * 1000;
 		numFilter1Boxes = (int)Math.ceil(t1/itp);
 		numFilter2Boxes = (int)Math.ceil(t2/itp);
 		numPoints = (int)(t4/itp);
@@ -44,10 +46,14 @@ public class MotionProfileBoxCar
 		filter1 = 0;
 		filter2 = 0;
 		previousVelocity = 0;
+		previousPosition = startDistance;
 		deltaFilter1 = 1.0/numFilter1Boxes;
 		filter2Window = new double[numFilter2Boxes];
 		windowIndex = 0;
 		pointIndex = 0;
+		if (startDistance > targetDistance && maxVelocity > 0) {
+			maxVelocity = -maxVelocity;
+		}
 	}
 	
 	public MotionProfilePoint getNextPoint(MotionProfilePoint point) {
@@ -56,7 +62,7 @@ public class MotionProfileBoxCar
 		}
 		
 		if (pointIndex == 0) {
-			point.initialize();
+			point.initialize(startDistance);
 			pointIndex++;
 			return point;
 		}
@@ -128,11 +134,11 @@ public class MotionProfileBoxCar
 	public static void main(String[] args) {
 		long startTime = System.nanoTime();
 		
-		MotionProfileBoxCar mp = new MotionProfileBoxCar(4, 10, 10);
-//		System.out.println("Time, Position, Velocity, Acceleration");
+		MotionProfileBoxCar mp = new MotionProfileBoxCar(0, 170, 450, 10);
+		System.out.println("Time, Position, Velocity, Acceleration");
 		MotionProfilePoint point = new MotionProfilePoint();
 		while(mp.getNextPoint(point) != null) {
-//			System.out.println(point.time + ", " + point.position + ", " + point.velocity + ", " + point.acceleration);
+			System.out.println(point.time + ", " + point.position + ", " + point.velocity + ", " + point.acceleration);
 		}
 		
 		long deltaTime = System.nanoTime() - startTime;

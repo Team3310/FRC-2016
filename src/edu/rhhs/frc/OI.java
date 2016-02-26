@@ -13,10 +13,13 @@ import edu.rhhs.frc.commands.ManipulatorMoveMP;
 import edu.rhhs.frc.commands.ManipulatorResetZero;
 import edu.rhhs.frc.commands.ShooterCarriageState;
 import edu.rhhs.frc.commands.ShooterShotPosition;
+import edu.rhhs.frc.commands.ShooterWinchRetract;
 import edu.rhhs.frc.commands.ShooterWinchSpeed;
+import edu.rhhs.frc.commands.ShooterWinchSpoolOut;
 import edu.rhhs.frc.subsystems.DriveTrain.PTOShiftState;
 import edu.rhhs.frc.subsystems.DriveTrain.SpeedShiftState;
 import edu.rhhs.frc.subsystems.Intake.LiftState;
+import edu.rhhs.frc.subsystems.Manipulator;
 import edu.rhhs.frc.subsystems.Shooter.CarriageState;
 import edu.rhhs.frc.subsystems.Shooter.ShotPosition;
 import edu.wpi.first.wpilibj.Joystick;
@@ -90,11 +93,11 @@ public class OI
 		
 		// Motors
 		Button manipulatorArmPositive = new InternalButton();
-		manipulatorArmPositive.whenPressed(new ManipulatorArmSpeed(0.06));
+		manipulatorArmPositive.whenPressed(new ManipulatorArmSpeed(0.2));
 		SmartDashboard.putData("Manipulator speed positive", manipulatorArmPositive);
 
 		Button manipulatorArmNegative = new InternalButton();
-		manipulatorArmNegative.whenPressed(new ManipulatorArmSpeed(-0.06));
+		manipulatorArmNegative.whenPressed(new ManipulatorArmSpeed(-0.2));
 		SmartDashboard.putData("Manipulator speed negative", manipulatorArmNegative);
 		
 		Button manipulatorArmOff = new InternalButton();
@@ -129,9 +132,25 @@ public class OI
 		shooterWinchOff.whenPressed(new ShooterWinchSpeed(0.0));
 		SmartDashboard.putData("Shooter winch speed off", shooterWinchOff);
 		
-		Button drivePos = new InternalButton();
-		drivePos.whenPressed(new DriveTrainSpeed(0.5));
-		SmartDashboard.putData("Drive positive", drivePos);
+		Button shooterWinchRetract = new InternalButton();
+		shooterWinchRetract.whenPressed(new ShooterWinchRetract());
+		SmartDashboard.putData("Shooter winch retract", shooterWinchRetract);
+		
+		Button shooterWinchSpoolOut = new InternalButton();
+		shooterWinchSpoolOut.whenPressed(new ShooterWinchSpoolOut());
+		SmartDashboard.putData("Shooter winch spool out", shooterWinchSpoolOut);
+		
+		Button drivePos05 = new InternalButton();
+		drivePos05.whenPressed(new DriveTrainSpeed(0.5));
+		SmartDashboard.putData("Drive positive 0.5", drivePos05);
+		
+		Button drivePos08 = new InternalButton();
+		drivePos08.whenPressed(new DriveTrainSpeed(0.8));
+		SmartDashboard.putData("Drive positive 0.8", drivePos08);
+		
+		Button drivePos10 = new InternalButton();
+		drivePos10 .whenPressed(new DriveTrainSpeed(1.0));
+		SmartDashboard.putData("Drive positive 1.0", drivePos10 );
 		
 		Button driveOff = new InternalButton();
 		driveOff.whenPressed(new DriveTrainSpeed(0.0));
@@ -141,9 +160,13 @@ public class OI
 		driveMP.whenPressed(new DriveTrainStraightMP(48, 15, false, 0));
 		SmartDashboard.putData("MotionProfile Drive", driveMP);
 		
-		Button armMP = new InternalButton();
-		armMP.whenPressed(new ManipulatorMoveMP(45, 5));
-		SmartDashboard.putData("MotionProfile Arm", armMP);
+		Button armMPDeploy = new InternalButton();
+		armMPDeploy.whenPressed(new ManipulatorMoveMP(Manipulator.ArmState.DEPLOY));
+		SmartDashboard.putData("MotionProfile Arm Deploy", armMPDeploy);
+
+		Button armMPRetract = new InternalButton();
+		armMPRetract.whenPressed(new ManipulatorMoveMP(Manipulator.ArmState.RETRACT));
+		SmartDashboard.putData("MotionProfile Arm Retract", armMPRetract);
 
 		Button resetArmZero = new InternalButton();
 		resetArmZero.whenPressed(new ManipulatorResetZero());

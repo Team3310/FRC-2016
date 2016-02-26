@@ -2,7 +2,6 @@ package edu.rhhs.frc.utility;
 
 import java.util.ArrayList;
 
-import edu.rhhs.frc.RobotMain;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 
 public class MotionProfileController
@@ -30,22 +29,29 @@ public class MotionProfileController
 		}
 	}
 	
-	public void setMPTarget(double targetValue, double maxVelocity) {
-		setMPTarget(targetValue, maxVelocity, false, 0);
+	public void setMPTarget(double startValue, double targetValue, double maxVelocity, boolean resetEncoder) {
+		setMPTarget(startValue, targetValue, maxVelocity, false, 0, resetEncoder);
 	}
 
-	public void setMPTarget(double targetValue, double maxVelocity, boolean useGyroLock, double desiredAngle) {
+	public void setMPTarget(double startValue, double targetValue, double maxVelocity, boolean useGyroLock, double desiredAngle, boolean resetEncoder) {
 		// Set up the motion profile 
-		mp = new MotionProfileBoxCar(targetValue, maxVelocity, periodMs);
+		mp = new MotionProfileBoxCar(startValue, targetValue, maxVelocity, periodMs);
+		System.err.println("MP start = " + startValue + ", MP target = " + targetValue );
 		for (CANTalonEncoder motorController : motorControllers) {
-			motorController.setPosition(0);
-			motorController.set(0);
+			if (resetEncoder) {
+				motorController.setPosition(0);
+			}
+			motorController.set(startValue);
 			motorController.changeControlMode(TalonControlMode.Position);
 		}
 	}
 	
 	public void setZeroPosition() {
-		
+		for (CANTalonEncoder motorController : motorControllers) {
+			motorController.setPosition(0);
+			motorController.set(0);
+			motorController.changeControlMode(TalonControlMode.Position);
+		}
 	}
 
 	public boolean controlLoopUpdate() {
@@ -78,8 +84,13 @@ public class MotionProfileController
 				motorController.setF(KfLeft);
 			}
 			motorController.setWorld(mpPoint.position);
+			System.err.println("Position = " + mpPoint.position);
 		}
 		
 		return false;
+	}
+	
+	public MotionProfilePoint getCurrentPoint() {
+		return mpPoint;
 	}
 }

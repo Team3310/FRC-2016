@@ -82,11 +82,11 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 
 	public DriveTrain() {
 		try {
-			leftDrive1 = new CANTalonEncoder(RobotMap.DRIVETRAIN_LEFT_MOTOR1_CAN_ID, ENCODER_TICKS_TO_INCHES, false, FeedbackDevice.CtreMagEncoder_Relative);
+			leftDrive1 = new CANTalonEncoder(RobotMap.DRIVETRAIN_LEFT_MOTOR1_CAN_ID, ENCODER_TICKS_TO_INCHES, false, FeedbackDevice.QuadEncoder);
 			leftDrive2 = new CANTalon(RobotMap.DRIVETRAIN_LEFT_MOTOR2_CAN_ID);
 			leftDrive3 = new CANTalon(RobotMap.DRIVETRAIN_LEFT_MOTOR3_CAN_ID);
 			
-			rightDrive1 = new CANTalonEncoder(RobotMap.DRIVETRAIN_RIGHT_MOTOR1_CAN_ID, ENCODER_TICKS_TO_INCHES, true, FeedbackDevice.CtreMagEncoder_Relative);
+			rightDrive1 = new CANTalonEncoder(RobotMap.DRIVETRAIN_RIGHT_MOTOR1_CAN_ID, ENCODER_TICKS_TO_INCHES, true, FeedbackDevice.QuadEncoder);
 			rightDrive2 = new CANTalon(RobotMap.DRIVETRAIN_RIGHT_MOTOR2_CAN_ID);
 			rightDrive3 = new CANTalon(RobotMap.DRIVETRAIN_RIGHT_MOTOR3_CAN_ID);
 			
@@ -140,7 +140,7 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 //	}
 	
 	public void setStraightMP(double distanceInches, double maxVelocity, boolean useGyroLock, double desiredAbsoluteAngle) {
-		mpStraightController.setMPTarget(distanceInches, maxVelocity, useGyroLock, desiredAbsoluteAngle); 
+		mpStraightController.setMPTarget(0, distanceInches, maxVelocity, useGyroLock, desiredAbsoluteAngle, true); 
 		setControlMode(DriveTrainControlMode.MP_STRAIGHT);
 	}
 	

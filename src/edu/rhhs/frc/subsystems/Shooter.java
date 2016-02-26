@@ -14,7 +14,11 @@ public class Shooter extends Subsystem implements ControlLoopable
 {
 	public static enum CarriageState { RELEASED, LOCKED };
 	public static enum ShotPosition { SHORT, LONG };
-	private static final double ENCODER_TICKS_TO_WORLD = 0; //MAJOR TODO:
+	private static final double ENCODER_TICKS_TO_WORLD = 4096 / (0.8 * Math.PI) * (54.0 / 11.0); 
+	public static final double WINCH_RETRACT_SPEED = 1.0;
+	public static final double WINCH_SPOOLOUT_SPEED = -0.5;
+	public static final double MAX_WINCH_CURRENT = 35.0;
+	public static final double WINCH_SPOOLOUT_DISTANCE = -11.2;
 
 	private CANTalonEncoder winch;
 	private Solenoid shotPosition, carriageRelease;
@@ -22,8 +26,9 @@ public class Shooter extends Subsystem implements ControlLoopable
 	
 	public Shooter() {
 		try {
-			winch = new CANTalonEncoder(RobotMap.SHOOTER_WINCH_MOTOR_CAN_ID, ENCODER_TICKS_TO_WORLD, FeedbackDevice.CtreMagEncoder_Relative);
+			winch = new CANTalonEncoder(RobotMap.SHOOTER_WINCH_MOTOR_CAN_ID, ENCODER_TICKS_TO_WORLD, FeedbackDevice.QuadEncoder);
 			winch.enableBrakeMode(true);
+			winch.reverseSensor(true);
 			
 			shotPosition = new Solenoid(RobotMap.SHOOTER_POSITION_PCM_ID);
 			carriageRelease = new Solenoid(RobotMap.CARRIAGE_RELEASE_PCM_ID);
@@ -35,26 +40,26 @@ public class Shooter extends Subsystem implements ControlLoopable
 		}
 	}
 	
-	public void retractWinch() {
-		//Set winch to a value.
-		if (!isRetracted()) {
-			winch.set(0.5);
-		}
+	public boolean isCarriageRetracted() {
+		return !carriageRetracted.get();
+	}
+	
+	public boolean isWinchCurrentAtMax() {
+		return winch.getOutputCurrent() > MAX_WINCH_CURRENT;
 	}
 
-	public boolean isRetracted() {
-		return carriageRetracted.get();
-	}
-	
-	public void spoolOutWinch() {
-		//Set winch to a value.
-		winch.set(-0.5);
-	}
-	
 	public void setWinchSpeed(double speed) {
 		winch.set(-speed);
 	}
 	
+	public void resetWinchEncoder() {
+		winch.setPosition(0);
+	}
+	
+	public boolean isWinchSpooledOut() {
+		return winch.getPositionWorld() < WINCH_SPOOLOUT_DISTANCE;
+	}
+
 	public void setCarriageRelease(CarriageState state) {
 		if(state == CarriageState.LOCKED) {
 			carriageRelease.set(false);
@@ -90,7 +95,10 @@ public class Shooter extends Subsystem implements ControlLoopable
 	
 	public void updateStatus(RobotMain.OperationMode operationMode) {
 		if (operationMode == RobotMain.OperationMode.TEST) {
-			SmartDashboard.putNumber("Winch Pos", winch.getPosition());
+			SmartDashboard.putNumber("Winch Pos", winch.getPositionWorld());
+			SmartDashboard.putNumber("Winch Output Current", winch.getOutputCurrent());
+			SmartDashboard.putBoolean("Winch is retracted", isCarriageRetracted());
+			SmartDashboard.putBoolean("Winch current at max", isWinchCurrentAtMax());
 		}
 	}
 }

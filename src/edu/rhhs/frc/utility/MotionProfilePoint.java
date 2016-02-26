@@ -6,9 +6,9 @@ public class MotionProfilePoint {
 	public double velocity;
 	public double acceleration;
 	
-	public void initialize() {
+	public void initialize(double startPosition) {
 		time = 0;
-		position = 0;
+		position = startPosition;
 		velocity = 0;
 		acceleration = 0;
 	}
