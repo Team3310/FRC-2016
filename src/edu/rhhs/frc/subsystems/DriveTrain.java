@@ -9,7 +9,6 @@ import edu.rhhs.frc.utility.CANTalonEncoder;
 import edu.rhhs.frc.utility.ControlLoopable;
 import edu.rhhs.frc.utility.MotionProfileController;
 import edu.rhhs.frc.utility.PIDParams;
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
@@ -230,8 +229,8 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 		// OI.getInstance().getDriveTrainController().getLeftYAxis();
 		// m_steerInput =
 		// OI.getInstance().getDriveTrainController().getRightXAxis();
-		m_moveInput = OI.getInstance().getJoystick1().getY();
-		m_steerInput = OI.getInstance().getJoystick2().getX();
+		m_moveInput = OI.getInstance().getDriverJoystick1().getY();
+		m_steerInput = OI.getInstance().getDriverJoystick2().getX();
 
 		m_moveOutput = adjustForSensitivity(m_moveScale, m_moveTrim,
 				m_moveInput, m_moveNonLinear, MOVE_NON_LINEARITY);
@@ -347,12 +346,12 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 		if (operationMode == RobotMain.OperationMode.TEST) {
 			SmartDashboard.putNumber("Right Drive", rightDrive1.getPositionWorld());
 			SmartDashboard.putNumber("Left Drive", leftDrive1.getPositionWorld());
-			SmartDashboard.putNumber("Left Drive 1 Current", leftDrive1.getOutputCurrent());
-			SmartDashboard.putNumber("Left Drive 2 Current", leftDrive2.getOutputCurrent());
-			SmartDashboard.putNumber("Left Drive 3 Current", leftDrive3.getOutputCurrent());
-			SmartDashboard.putNumber("Right Drive 1 Current", rightDrive1.getOutputCurrent());
-			SmartDashboard.putNumber("Right Drive 2 Current", rightDrive2.getOutputCurrent());
-			SmartDashboard.putNumber("Right Drive 3 Current", rightDrive3.getOutputCurrent());
+			SmartDashboard.putNumber("Left Drive 1 Current", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR1_CAN_ID-2));
+			SmartDashboard.putNumber("Left Drive 2 Current", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR2_CAN_ID-2));
+			SmartDashboard.putNumber("Left Drive 3 Current", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR3_CAN_ID-2));
+			SmartDashboard.putNumber("Right Drive 1 Current", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR1_CAN_ID-2));
+			SmartDashboard.putNumber("Right Drive 2 Current", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR2_CAN_ID-2));
+			SmartDashboard.putNumber("Right Drive 3 Current", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR3_CAN_ID-2));
 		}
 	}	
 }

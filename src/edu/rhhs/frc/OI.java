@@ -1,21 +1,32 @@
 package edu.rhhs.frc;
 
+import edu.rhhs.frc.buttons.XBoxDPadTriggerButton;
+import edu.rhhs.frc.buttons.XBoxTriggerButton;
 import edu.rhhs.frc.commands.DriveTrainPTOShift;
 import edu.rhhs.frc.commands.DriveTrainSpeed;
 import edu.rhhs.frc.commands.DriveTrainSpeedShift;
 import edu.rhhs.frc.commands.DriveTrainStraightMP;
+import edu.rhhs.frc.commands.IntakeEject;
+import edu.rhhs.frc.commands.IntakeFullyDeploy;
+import edu.rhhs.frc.commands.IntakeFullyRetract;
 import edu.rhhs.frc.commands.IntakeInnerPosition;
 import edu.rhhs.frc.commands.IntakeInnerSpeed;
+import edu.rhhs.frc.commands.IntakeLowBarPosition;
+import edu.rhhs.frc.commands.IntakeOff;
 import edu.rhhs.frc.commands.IntakeOuterPosition;
 import edu.rhhs.frc.commands.IntakeOuterSpeed;
 import edu.rhhs.frc.commands.ManipulatorArmSpeed;
 import edu.rhhs.frc.commands.ManipulatorMoveMP;
 import edu.rhhs.frc.commands.ManipulatorResetZero;
 import edu.rhhs.frc.commands.ShooterCarriageState;
+import edu.rhhs.frc.commands.ShooterShootAndRetract;
 import edu.rhhs.frc.commands.ShooterShotPosition;
 import edu.rhhs.frc.commands.ShooterWinchRetract;
+import edu.rhhs.frc.commands.ShooterWinchSafeRelease;
 import edu.rhhs.frc.commands.ShooterWinchSpeed;
 import edu.rhhs.frc.commands.ShooterWinchSpoolOut;
+import edu.rhhs.frc.controller.XboxController;
+import edu.rhhs.frc.subsystems.DriveTrain;
 import edu.rhhs.frc.subsystems.DriveTrain.PTOShiftState;
 import edu.rhhs.frc.subsystems.DriveTrain.SpeedShiftState;
 import edu.rhhs.frc.subsystems.Intake.LiftState;
@@ -25,6 +36,7 @@ import edu.rhhs.frc.subsystems.Shooter.ShotPosition;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.InternalButton;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -35,14 +47,92 @@ public class OI
 {
 	private static OI instance;
 
-	private Joystick m_joystick1;
-	private Joystick m_joystick2;
+	private Joystick m_driverJoystick1;
+	private Joystick m_driverJoystick2;
+	private XboxController m_operatorXBox;
 
 	private OI() {
-		m_joystick1 = new Joystick(0);
-		m_joystick2 = new Joystick(1);
-				
-		// Pneumatics Test
+		m_driverJoystick1 = new Joystick(RobotMap.DRIVER_JOYSTICK_1_USB_ID);
+		m_driverJoystick2 = new Joystick(RobotMap.DRIVER_JOYSTICK_2_USB_ID);
+		m_operatorXBox = new XboxController(RobotMap.OPERATOR_XBOX_USB_ID);
+		
+		// Driver's sticks
+        JoystickButton shiftDrivetrain = new JoystickButton(m_driverJoystick1, 1);
+        shiftDrivetrain.whenPressed(new DriveTrainSpeedShift(DriveTrain.SpeedShiftState.HI));
+        shiftDrivetrain.whenReleased(new DriveTrainSpeedShift(DriveTrain.SpeedShiftState.LO));
+
+        JoystickButton manipulatorDeploy1 = new JoystickButton(m_driverJoystick1, 3);
+        manipulatorDeploy1.whenPressed(new ManipulatorMoveMP(Manipulator.ArmState.DEPLOY));
+
+        JoystickButton manipulatorRetract1 = new JoystickButton(m_driverJoystick1, 4);
+        manipulatorRetract1.whenPressed(new ManipulatorMoveMP(Manipulator.ArmState.RETRACT));
+
+        JoystickButton intakeFullyDeploy1 = new JoystickButton(m_driverJoystick1, 5);
+        intakeFullyDeploy1.whenPressed(new IntakeFullyDeploy());
+        intakeFullyDeploy1.whenReleased(new IntakeOff());
+
+        JoystickButton intakeFullyRetract1 = new JoystickButton(m_driverJoystick1, 6);
+        intakeFullyRetract1.whenPressed(new IntakeFullyRetract());
+
+        JoystickButton shooterLongPosition1 = new JoystickButton(m_driverJoystick2, 3);
+        shooterLongPosition1.whenPressed(new ShooterShotPosition(ShotPosition.LONG));
+
+        JoystickButton shooterShortPosition1 = new JoystickButton(m_driverJoystick2, 4);
+        shooterShortPosition1.whenPressed(new ShooterShotPosition(ShotPosition.SHORT));
+
+        JoystickButton intakeLowBarPosition1 = new JoystickButton(m_driverJoystick2, 5);
+        intakeLowBarPosition1.whenPressed(new IntakeLowBarPosition());
+
+        JoystickButton intakeEject1 = new JoystickButton(m_driverJoystick2, 6);
+        intakeEject1.whenPressed(new IntakeEject());
+        intakeEject1.whenReleased(new IntakeOff());
+        
+        JoystickButton shooterShoot1 = new JoystickButton(m_driverJoystick2, 2);
+        shooterShoot1.whenPressed(new ShooterShootAndRetract());
+
+        JoystickButton retractWinch1 = new JoystickButton(m_driverJoystick2, 11);
+        retractWinch1.whenPressed(new ShooterWinchRetract());
+
+        JoystickButton safeReleaseWinch1 = new JoystickButton(m_driverJoystick2, 12);
+        safeReleaseWinch1.whenPressed(new ShooterWinchSafeRelease());
+        
+        // Operator's controller
+        JoystickButton manipulatorDeploy = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.Y_BUTTON);
+        manipulatorDeploy.whenPressed(new ManipulatorMoveMP(Manipulator.ArmState.DEPLOY));
+
+        JoystickButton manipulatorRetract = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.A_BUTTON);
+        manipulatorRetract.whenPressed(new ManipulatorMoveMP(Manipulator.ArmState.RETRACT));
+
+        JoystickButton shooterLongPosition = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.B_BUTTON);
+        shooterLongPosition.whenPressed(new ShooterShotPosition(ShotPosition.LONG));
+
+        JoystickButton shooterShortPosition = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.X_BUTTON);
+        shooterShortPosition.whenPressed(new ShooterShotPosition(ShotPosition.SHORT));
+
+        XBoxDPadTriggerButton intakeFullyRetract = new XBoxDPadTriggerButton(m_operatorXBox, XBoxDPadTriggerButton.UP);
+        intakeFullyRetract.whenPressed(new IntakeFullyRetract());
+
+        XBoxDPadTriggerButton intakeLowBarPosition = new XBoxDPadTriggerButton(m_operatorXBox, XBoxDPadTriggerButton.DOWN);
+        intakeLowBarPosition.whenPressed(new IntakeLowBarPosition());
+
+        JoystickButton intakeFullyDeploy = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.RIGHT_BUMPER_BUTTON);
+        intakeFullyDeploy.whenPressed(new IntakeFullyDeploy());
+        intakeFullyDeploy.whenReleased(new IntakeOff());
+
+        JoystickButton intakeEject = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.LEFT_BUMPER_BUTTON);
+        intakeEject.whenPressed(new IntakeEject());
+        intakeEject.whenReleased(new IntakeOff());
+        
+        XBoxTriggerButton shooterShoot = new XBoxTriggerButton(m_operatorXBox, XBoxTriggerButton.RIGHT_TRIGGER);
+        shooterShoot.whenPressed(new ShooterShootAndRetract());
+
+        JoystickButton retractWinch = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.BACK_BUTTON);
+        retractWinch.whenPressed(new ShooterWinchRetract());
+
+        JoystickButton safeReleaseWinch = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.START_BUTTON);
+        safeReleaseWinch.whenPressed(new ShooterWinchSafeRelease());
+
+        // Pneumatics Test
 		Button drivetrainSpeedShiftHi = new InternalButton();
 		drivetrainSpeedShiftHi.whenPressed(new DriveTrainSpeedShift(SpeedShiftState.HI));
 		SmartDashboard.putData("Drivetrain speed shift HI", drivetrainSpeedShiftHi);
@@ -173,12 +263,16 @@ public class OI
 		SmartDashboard.putData("Reset Arm Zero", resetArmZero);
 	}
 	
-	public Joystick getJoystick1() {
-		return m_joystick1;
+	public Joystick getDriverJoystick1() {
+		return m_driverJoystick1;
 	}
 	
-	public Joystick getJoystick2() {
-		return m_joystick2;
+	public Joystick getDriverJoystick2() {
+		return m_driverJoystick2;
+	}
+
+	public XboxController getOperatorXBox() {
+		return m_operatorXBox;
 	}
 
 	public static OI getInstance() {

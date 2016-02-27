@@ -6,9 +6,8 @@ import edu.rhhs.frc.subsystems.Intake;
 import edu.rhhs.frc.subsystems.Manipulator;
 import edu.rhhs.frc.subsystems.Shooter;
 import edu.rhhs.frc.utility.ControlLooper;
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
-import edu.wpi.first.wpilibj.ControllerPower;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -29,6 +28,7 @@ public class RobotMain extends IterativeRobot
 	public static final Intake intake = new Intake();
 	public static final Manipulator manipulator = new Manipulator();	
 	public static final ControlLooper controlLoop = new ControlLooper("Main control loop", 10);
+	public static final PowerDistributionPanel pdp = new PowerDistributionPanel();
 
 	public static OI oi;
 	

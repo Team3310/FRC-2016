@@ -105,10 +105,9 @@ public class Manipulator extends Subsystem implements ControlLoopable
 		if (operationMode == RobotMain.OperationMode.TEST) {
 			SmartDashboard.putNumber("Left Arm", leftArm.getPositionWorld());
 			SmartDashboard.putNumber("Right Arm", rightArm.getPositionWorld());
-			MotionProfilePoint mpPoint = mpController.getCurrentPoint(); 
-			double delta = mpPoint != null ? rightArm.getPositionWorld() - mpController.getCurrentPoint().position : 0;
-			SmartDashboard.putNumber("Right Arm Delta", delta);
-			SmartDashboard.putNumber("Right Arm Target", rightArm.getSetpoint());
+//			MotionProfilePoint mpPoint = mpController.getCurrentPoint(); 
+//			double delta = mpPoint != null ? rightArm.getPositionWorld() - mpController.getCurrentPoint().position : 0;
+//			SmartDashboard.putNumber("Right Arm Delta", delta);
 		}
 	}
 

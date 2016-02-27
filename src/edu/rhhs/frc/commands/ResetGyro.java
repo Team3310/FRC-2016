@@ -1,6 +1,5 @@
 package edu.rhhs.frc.commands;
 
-import edu.rhhs.frc.RobotMain;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class ResetGyro extends Command

@@ -9,6 +9,11 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class Intake extends Subsystem
 {
 	public static enum LiftState { UP, DOWN };
+	public static final double OUTER_INTAKE_LOAD_SPEED = 1.0;
+	public static final double INNER_INTAKE_LOAD_SPEED = 0.8;
+	public static final double OUTER_INTAKE_EJECT_SPEED = -1.0;
+	public static final double INNER_INTAKE_EJECT_SPEED = -1.0;
+
 	private Solenoid outerLift, innerLift;
 	private CANTalon outerRoller, innerRoller;
 	
