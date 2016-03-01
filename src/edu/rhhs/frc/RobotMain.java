@@ -35,6 +35,7 @@ public class RobotMain extends IterativeRobot
 	public static enum OperationMode { TEST, COMPETITION };
 	private SendableChooser operationModeChooser;
 	private static OperationMode operationMode = OperationMode.TEST;
+	private SendableChooser manipulatorChooser;
 
     private Command autonomousCommand;
 
@@ -52,17 +53,22 @@ public class RobotMain extends IterativeRobot
 	    operationModeChooser.addObject ("Competition", OperationMode.COMPETITION);
 		SmartDashboard.putData("Operation Mode", operationModeChooser);
 		
+		manipulatorChooser = new SendableChooser();
+		manipulatorChooser.addDefault ("Cheval de Frise", Manipulator.Attachment.CHEVAL_DE_FRISE);
+		manipulatorChooser.addObject ("Portcullis", Manipulator.Attachment.PORTCULLIS);
+		SmartDashboard.putData("Manipulator", manipulatorChooser);
+		
         updateStatus();
     }
 	
 	public void disabledPeriodic() {
-		operationMode = (OperationMode)operationModeChooser.getSelected();
-		
 		Scheduler.getInstance().run();
 		updateStatus();
 	}
 
     public void autonomousInit() {
+    	updateChoosers();
+    	
         // Schedule the autonomous command (example)
     	controlLoop.start();
         if (autonomousCommand != null) autonomousCommand.start();
@@ -77,7 +83,9 @@ public class RobotMain extends IterativeRobot
     }
 
     public void teleopInit() {
-		// This makes sure that the autonomous stops running when
+    	updateChoosers();
+
+    	// This makes sure that the autonomous stops running when
         // teleop starts running. If you want the autonomous to 
         // continue until interrupted by another command, remove
         // this line or comment it out.
@@ -103,6 +111,11 @@ public class RobotMain extends IterativeRobot
     /** This function is called periodically during test mode */
     public void testPeriodic() {
         LiveWindow.run();
+    }
+    
+    private void updateChoosers() {
+		operationMode = (OperationMode)operationModeChooser.getSelected();
+		manipulator.setAttachment((Manipulator.Attachment)manipulatorChooser.getSelected());
     }
     
     public void updateStatus() {
