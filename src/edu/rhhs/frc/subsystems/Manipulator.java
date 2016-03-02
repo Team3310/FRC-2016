@@ -18,9 +18,19 @@ public class Manipulator extends Subsystem implements ControlLoopable
 {
 	private static final double ENCODER_TICKS_TO_WORLD = (4096.0 / 360.0) * (18.0 / 16.0);  
 	public static enum ArmState { RETRACT, DEPLOY };
+	public static enum Attachment { CHEVAL_DE_FRISE, PORTCULLIS };
+	public static enum PresetPositions { RETRACTED, ZERO, PARTIALLY_DEPLOYED, FULLY_DEPLOYED };
 	
-	public static final double RETRACTED_ANGLE_DEG = 0;
-	public static final double DEPLOYED_ANGLE_DEG = 170;
+	public static final double PORTCULLIS_RETRACTED_ANGLE_DEG = -10;
+	public static final double PORTCULLIS_ZERO_ANGLE_DEG = 0;
+	public static final double PORTCULLIS_PARTIALLY_DEPLOYED_ANGLE_DEG = 170;
+	public static final double PORTCULLIS_FULLY_DEPLOYED_ANGLE_DEG = 175;
+
+	public static final double CHEVAL_DE_FRISE_RETRACTED_ANGLE_DEG = -10;
+	public static final double CHEVAL_DE_FRISE_ZERO_ANGLE_DEG = 0;
+	public static final double CHEVAL_DE_FRISE_PARTIALLY_DEPLOYED_ANGLE_DEG = 170;
+	public static final double CHEVAL_DE_FRISE_FULLY_DEPLOYED_ANGLE_DEG = 175;
+
 	public static final double RETRACT_MAX_RATE_DEG_PER_SEC = 450;
 	public static final double DEPLOY_MAX_RATE_DEG_PER_SEC = 450;
 	
@@ -29,6 +39,7 @@ public class Manipulator extends Subsystem implements ControlLoopable
 	private MotionProfileController mpController;
 	private PIDParams mpPIDParams = new PIDParams(5.0, 0.0, 0, 0.0, 0.2);
 	private boolean isAtTarget = true;
+	private Attachment attachment;
 	
 	public Manipulator() {
 		try {
@@ -52,6 +63,35 @@ public class Manipulator extends Subsystem implements ControlLoopable
 		catch (Exception e) {
 			System.err.println("An error occurred in the Manipulator constructor");
 		}
+	}
+	
+	public Attachment getAttachment() {
+		return attachment;
+	}
+
+	public void setAttachment(Attachment attachment) {
+		this.attachment = attachment;
+	}
+
+	public void setPresetPosition(PresetPositions position) {
+		double targetAngleDegrees = 0;
+		if (position == PresetPositions.RETRACTED) {
+			targetAngleDegrees = (attachment == Attachment.PORTCULLIS) ? PORTCULLIS_RETRACTED_ANGLE_DEG : CHEVAL_DE_FRISE_RETRACTED_ANGLE_DEG;
+		}
+		else if (position == PresetPositions.ZERO) {
+			targetAngleDegrees = (attachment == Attachment.PORTCULLIS) ? PORTCULLIS_ZERO_ANGLE_DEG : CHEVAL_DE_FRISE_ZERO_ANGLE_DEG;
+		}
+		else if (position == PresetPositions.PARTIALLY_DEPLOYED) {
+			targetAngleDegrees = (attachment == Attachment.PORTCULLIS) ? PORTCULLIS_PARTIALLY_DEPLOYED_ANGLE_DEG : CHEVAL_DE_FRISE_PARTIALLY_DEPLOYED_ANGLE_DEG;
+		}
+		else if (position == PresetPositions.FULLY_DEPLOYED) {
+			targetAngleDegrees = (attachment == Attachment.PORTCULLIS) ? PORTCULLIS_FULLY_DEPLOYED_ANGLE_DEG : CHEVAL_DE_FRISE_FULLY_DEPLOYED_ANGLE_DEG;
+		}
+		
+		double startAngleDegrees = (rightArm.getPositionWorld() + leftArm.getPositionWorld())/2;
+		double maxVelocityDegreePerSec = (targetAngleDegrees > startAngleDegrees) ? DEPLOY_MAX_RATE_DEG_PER_SEC : RETRACT_MAX_RATE_DEG_PER_SEC;
+		mpController.setMPTarget(startAngleDegrees, targetAngleDegrees, maxVelocityDegreePerSec, false); 
+		isAtTarget = false;
 	}
 	
 	public void setPositionMP(double targetAngleDegrees, double maxVelocityDegreePerSec) {
