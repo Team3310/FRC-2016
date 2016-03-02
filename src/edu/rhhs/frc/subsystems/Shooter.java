@@ -17,7 +17,7 @@ public class Shooter extends Subsystem implements ControlLoopable
 	private static final double ENCODER_TICKS_TO_WORLD = 4096 / (0.8 * Math.PI) * (54.0 / 11.0); 
 	public static final double WINCH_RETRACT_SPEED = 1.0;
 	public static final double WINCH_SPOOLOUT_SPEED = -0.5;
-	public static final double MAX_WINCH_CURRENT = 35.0;
+	public static final double MAX_WINCH_CURRENT = 50.0;
 	public static final double WINCH_SPOOLOUT_DISTANCE = -11.2;
 
 	private CANTalonEncoder winch;

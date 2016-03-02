@@ -14,8 +14,8 @@ public class RobotMap
 	public static final int OPERATOR_XBOX_USB_ID = 2;
 	
 	// MOTORS (Software CAN IDs are the PDP ID + 2)
-	public static final int DRIVETRAIN_LEFT_MOTOR1_CAN_ID = 3;
-	public static final int DRIVETRAIN_LEFT_MOTOR2_CAN_ID = 4;
+	public static final int DRIVETRAIN_LEFT_MOTOR1_CAN_ID = 4;
+	public static final int DRIVETRAIN_LEFT_MOTOR2_CAN_ID = 3;
 	public static final int DRIVETRAIN_LEFT_MOTOR3_CAN_ID = 5;
 	public static final int DRIVETRAIN_RIGHT_MOTOR1_CAN_ID = 16;
 	public static final int DRIVETRAIN_RIGHT_MOTOR2_CAN_ID = 15;
