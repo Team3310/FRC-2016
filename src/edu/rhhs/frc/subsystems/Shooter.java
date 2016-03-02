@@ -15,9 +15,11 @@ public class Shooter extends Subsystem implements ControlLoopable
 	public static enum CarriageState { RELEASED, LOCKED };
 	public static enum ShotPosition { SHORT, LONG };
 	private static final double ENCODER_TICKS_TO_WORLD = 4096 / (0.8 * Math.PI) * (54.0 / 11.0); 
+	public static final double WINCH_SAFE_RELEASE_SPEED = 0.5;
 	public static final double WINCH_RETRACT_SPEED = 1.0;
 	public static final double WINCH_SPOOLOUT_SPEED = -0.5;
 	public static final double MAX_WINCH_CURRENT = 50.0;
+	public static final double SAFE_RELEASE_WINCH_CURRENT = 10.0;
 	public static final double WINCH_SPOOLOUT_DISTANCE = -11.2;
 
 	private CANTalonEncoder winch;
@@ -46,6 +48,10 @@ public class Shooter extends Subsystem implements ControlLoopable
 	
 	public boolean isWinchCurrentAtMax() {
 		return winch.getOutputCurrent() > MAX_WINCH_CURRENT;
+	}
+
+	public boolean isWinchCurrentAtSafeRelease() {
+		return winch.getOutputCurrent() > SAFE_RELEASE_WINCH_CURRENT;
 	}
 
 	public void setWinchSpeed(double speed) {

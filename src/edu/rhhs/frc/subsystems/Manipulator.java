@@ -6,7 +6,7 @@ import edu.rhhs.frc.RobotMain;
 import edu.rhhs.frc.RobotMap;
 import edu.rhhs.frc.utility.CANTalonEncoder;
 import edu.rhhs.frc.utility.ControlLoopable;
-import edu.rhhs.frc.utility.MotionProfileController;
+import edu.rhhs.frc.utility.MPTalonPIDController;
 import edu.rhhs.frc.utility.MotionProfilePoint;
 import edu.rhhs.frc.utility.PIDParams;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
@@ -36,8 +36,8 @@ public class Manipulator extends Subsystem implements ControlLoopable
 	
 	private ArrayList<CANTalonEncoder> motorControllers = new ArrayList<CANTalonEncoder>();	
 	private CANTalonEncoder leftArm, rightArm;
-	private MotionProfileController mpController;
-	private PIDParams mpPIDParams = new PIDParams(5.0, 0.0, 0, 0.02, 0.2);
+	private MPTalonPIDController mpController;
+	private PIDParams mpPIDParams = new PIDParams(5.0, 0.0, 0, 0.0, 0.2);
 	private boolean isAtTarget = true;
 	private Attachment attachment;
 	
@@ -90,13 +90,13 @@ public class Manipulator extends Subsystem implements ControlLoopable
 		
 		double startAngleDegrees = (rightArm.getPositionWorld() + leftArm.getPositionWorld())/2;
 		double maxVelocityDegreePerSec = (targetAngleDegrees > startAngleDegrees) ? DEPLOY_MAX_RATE_DEG_PER_SEC : RETRACT_MAX_RATE_DEG_PER_SEC;
-		mpController.setMPTarget(startAngleDegrees, targetAngleDegrees, maxVelocityDegreePerSec, false); 
+		mpController.setMPTarget(startAngleDegrees, targetAngleDegrees, maxVelocityDegreePerSec); 
 		isAtTarget = false;
 	}
 	
 	public void setPositionMP(double targetAngleDegrees, double maxVelocityDegreePerSec) {
 		double startAngleDegrees = (rightArm.getPositionWorld() + leftArm.getPositionWorld())/2;
-		mpController.setMPTarget(startAngleDegrees, targetAngleDegrees, maxVelocityDegreePerSec, false); 
+		mpController.setMPTarget(startAngleDegrees, targetAngleDegrees, maxVelocityDegreePerSec); 
 		isAtTarget = false;
 	}
 	
@@ -135,7 +135,7 @@ public class Manipulator extends Subsystem implements ControlLoopable
 
 	@Override
 	public void setPeriodMs(long periodMs) {
-		mpController = new MotionProfileController(periodMs, mpPIDParams, motorControllers);
+		mpController = new MPTalonPIDController(periodMs, mpPIDParams, motorControllers);
 		
 		// Set the startup position to zero
 		setZeroPosition();

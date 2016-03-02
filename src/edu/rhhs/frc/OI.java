@@ -6,6 +6,7 @@ import edu.rhhs.frc.commands.DriveTrainPTOShift;
 import edu.rhhs.frc.commands.DriveTrainSpeed;
 import edu.rhhs.frc.commands.DriveTrainSpeedShift;
 import edu.rhhs.frc.commands.DriveTrainStraightMP;
+import edu.rhhs.frc.commands.DriveTrainTurnMP;
 import edu.rhhs.frc.commands.IntakeEject;
 import edu.rhhs.frc.commands.IntakeFullyDeploy;
 import edu.rhhs.frc.commands.IntakeFullyRetract;
@@ -33,6 +34,7 @@ import edu.rhhs.frc.subsystems.Intake.LiftState;
 import edu.rhhs.frc.subsystems.Manipulator.PresetPositions;
 import edu.rhhs.frc.subsystems.Shooter.CarriageState;
 import edu.rhhs.frc.subsystems.Shooter.ShotPosition;
+import edu.rhhs.frc.utility.MPTalonPIDController.MPTurnType;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.InternalButton;
@@ -249,6 +251,10 @@ public class OI
 		Button driveMP = new InternalButton();
 		driveMP.whenPressed(new DriveTrainStraightMP(48, 15, false, 0));
 		SmartDashboard.putData("MotionProfile Drive", driveMP);
+		
+		Button turnMP = new InternalButton();
+		turnMP.whenPressed(new DriveTrainTurnMP(90, 45, MPTurnType.TANK));
+		SmartDashboard.putData("MotionProfile Turn", turnMP);
 		
 		Button armMPDeploy = new InternalButton();
 		armMPDeploy.whenPressed(new ManipulatorMoveMP(PresetPositions.FULLY_DEPLOYED));
