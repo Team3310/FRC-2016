@@ -2,7 +2,7 @@ package edu.rhhs.frc.utility;
 
 public class MotionProfileBoxCar
 {
-	static double DEFAULT_T1 = 200;	// millisecond
+	static double DEFAULT_T1 = 100;	// millisecond
 	static double DEFAULT_T2 = 100; // millisecond
 	
 	private double startDistance;  // any distance unit
@@ -37,12 +37,30 @@ public class MotionProfileBoxCar
 	} 
 	
 	private void initializeProfile() {
-		t4 = Math.abs((targetDistance - startDistance)/maxVelocity) * 100;
-		
-		// When there is a remainder on t4, we need to adjust maxVelocity slightly to get the correct end point
-		int t5 = (int)Math.ceil(t4);
-		maxVelocity = Math.abs((targetDistance - startDistance) / t5) * 100;
+		// t4 is the time in ms it takes to get to the end point when at max velocity
 		t4 = Math.abs((targetDistance - startDistance)/maxVelocity) * 1000;
+		
+		// We need to make t4 an even multiple of itp
+		t4 = (int)(itp * Math.ceil(t4/itp));
+		
+		// In the case where t4 is less than the accel times, we need to adjust the
+		// accel times down so the filters works out.  Lots of ways to do this but
+		// to keep things simple we will make t4 slightly larger than the sum of 
+		// the accel times.
+		if (t4 < t1 + t2) {
+			double total = t1 + t2 + t4;
+			double t1t2Ratio = t1/t2;
+			double t2Adjusted = Math.floor(total / 2 / (1 + t1t2Ratio) / itp);
+			if (t2Adjusted % 2 != 0) {
+				t2Adjusted -= 1;
+			}
+			t2 = t2Adjusted * itp;
+			t1 = t2 * t1t2Ratio;
+			t4 = total - t1 - t2;
+		}
+		
+		// Adjust max velocity so that the end point works out to the correct position.
+		maxVelocity = Math.abs((targetDistance - startDistance) / t4) * 1000;
 
 		numFilter1Boxes = (int)Math.ceil(t1/itp);
 		numFilter2Boxes = (int)Math.ceil(t2/itp);
@@ -140,7 +158,7 @@ public class MotionProfileBoxCar
 	public static void main(String[] args) {
 		long startTime = System.nanoTime();
 		
-		MotionProfileBoxCar mp = new MotionProfileBoxCar(4.3, 170, 350, 10);
+		MotionProfileBoxCar mp = new MotionProfileBoxCar(170, 175, 450, 10);
 		System.out.println("Time, Position, Velocity, Acceleration");
 		MotionProfilePoint point = new MotionProfilePoint();
 		while(mp.getNextPoint(point) != null) {
