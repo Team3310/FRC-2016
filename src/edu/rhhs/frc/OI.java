@@ -21,7 +21,7 @@ import edu.rhhs.frc.commands.ManipulatorResetZero;
 import edu.rhhs.frc.commands.ShooterCarriageState;
 import edu.rhhs.frc.commands.ShooterShootAndRetract;
 import edu.rhhs.frc.commands.ShooterShotPosition;
-import edu.rhhs.frc.commands.ShooterWinchRetract;
+import edu.rhhs.frc.commands.ShooterWinchRetractAndSpoolOut;
 import edu.rhhs.frc.commands.ShooterWinchSafeRelease;
 import edu.rhhs.frc.commands.ShooterWinchSpeed;
 import edu.rhhs.frc.commands.ShooterWinchSpoolOut;
@@ -30,7 +30,7 @@ import edu.rhhs.frc.subsystems.DriveTrain;
 import edu.rhhs.frc.subsystems.DriveTrain.PTOShiftState;
 import edu.rhhs.frc.subsystems.DriveTrain.SpeedShiftState;
 import edu.rhhs.frc.subsystems.Intake.LiftState;
-import edu.rhhs.frc.subsystems.Manipulator;
+import edu.rhhs.frc.subsystems.Manipulator.PresetPositions;
 import edu.rhhs.frc.subsystems.Shooter.CarriageState;
 import edu.rhhs.frc.subsystems.Shooter.ShotPosition;
 import edu.wpi.first.wpilibj.Joystick;
@@ -62,10 +62,10 @@ public class OI
         shiftDrivetrain.whenReleased(new DriveTrainSpeedShift(DriveTrain.SpeedShiftState.LO));
 
         JoystickButton manipulatorDeploy1 = new JoystickButton(m_driverJoystick1, 3);
-        manipulatorDeploy1.whenPressed(new ManipulatorMoveMP(Manipulator.ArmState.DEPLOY));
+        manipulatorDeploy1.whenPressed(new ManipulatorMoveMP(PresetPositions.FULLY_DEPLOYED));
 
         JoystickButton manipulatorRetract1 = new JoystickButton(m_driverJoystick1, 4);
-        manipulatorRetract1.whenPressed(new ManipulatorMoveMP(Manipulator.ArmState.RETRACT));
+        manipulatorRetract1.whenPressed(new ManipulatorMoveMP(PresetPositions.RETRACTED));
 
         JoystickButton intakeFullyDeploy1 = new JoystickButton(m_driverJoystick1, 5);
         intakeFullyDeploy1.whenPressed(new IntakeFullyDeploy());
@@ -91,17 +91,17 @@ public class OI
         shooterShoot1.whenPressed(new ShooterShootAndRetract());
 
         JoystickButton retractWinch1 = new JoystickButton(m_driverJoystick2, 11);
-        retractWinch1.whenPressed(new ShooterWinchRetract());
+        retractWinch1.whenPressed(new ShooterWinchRetractAndSpoolOut());
 
         JoystickButton safeReleaseWinch1 = new JoystickButton(m_driverJoystick2, 12);
         safeReleaseWinch1.whenPressed(new ShooterWinchSafeRelease());
         
         // Operator's controller
         JoystickButton manipulatorDeploy = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.Y_BUTTON);
-        manipulatorDeploy.whenPressed(new ManipulatorMoveMP(Manipulator.ArmState.DEPLOY));
+        manipulatorDeploy.whenPressed(new ManipulatorMoveMP(PresetPositions.FULLY_DEPLOYED));
 
         JoystickButton manipulatorRetract = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.A_BUTTON);
-        manipulatorRetract.whenPressed(new ManipulatorMoveMP(Manipulator.ArmState.RETRACT));
+        manipulatorRetract.whenPressed(new ManipulatorMoveMP(PresetPositions.RETRACTED));
 
         JoystickButton shooterLongPosition = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.B_BUTTON);
         shooterLongPosition.whenPressed(new ShooterShotPosition(ShotPosition.LONG));
@@ -127,7 +127,7 @@ public class OI
         shooterShoot.whenPressed(new ShooterShootAndRetract());
 
         JoystickButton retractWinch = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.BACK_BUTTON);
-        retractWinch.whenPressed(new ShooterWinchRetract());
+        retractWinch.whenPressed(new ShooterWinchRetractAndSpoolOut());
 
         JoystickButton safeReleaseWinch = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.START_BUTTON);
         safeReleaseWinch.whenPressed(new ShooterWinchSafeRelease());
@@ -223,7 +223,7 @@ public class OI
 		SmartDashboard.putData("Shooter winch speed off", shooterWinchOff);
 		
 		Button shooterWinchRetract = new InternalButton();
-		shooterWinchRetract.whenPressed(new ShooterWinchRetract());
+		shooterWinchRetract.whenPressed(new ShooterWinchRetractAndSpoolOut());
 		SmartDashboard.putData("Shooter winch retract", shooterWinchRetract);
 		
 		Button shooterWinchSpoolOut = new InternalButton();
@@ -251,11 +251,19 @@ public class OI
 		SmartDashboard.putData("MotionProfile Drive", driveMP);
 		
 		Button armMPDeploy = new InternalButton();
-		armMPDeploy.whenPressed(new ManipulatorMoveMP(Manipulator.ArmState.DEPLOY));
+		armMPDeploy.whenPressed(new ManipulatorMoveMP(PresetPositions.FULLY_DEPLOYED));
 		SmartDashboard.putData("MotionProfile Arm Deploy", armMPDeploy);
 
+		Button armMPPartialDeploy = new InternalButton();
+		armMPPartialDeploy.whenPressed(new ManipulatorMoveMP(PresetPositions.PARTIALLY_DEPLOYED));
+		SmartDashboard.putData("MotionProfile Arm Partial Deploy", armMPPartialDeploy);
+
+		Button armMPZero = new InternalButton();
+		armMPZero.whenPressed(new ManipulatorMoveMP(PresetPositions.ZERO));
+		SmartDashboard.putData("MotionProfile Arm Zero Position", armMPZero);
+
 		Button armMPRetract = new InternalButton();
-		armMPRetract.whenPressed(new ManipulatorMoveMP(Manipulator.ArmState.RETRACT));
+		armMPRetract.whenPressed(new ManipulatorMoveMP(PresetPositions.RETRACTED));
 		SmartDashboard.putData("MotionProfile Arm Retract", armMPRetract);
 
 		Button resetArmZero = new InternalButton();
