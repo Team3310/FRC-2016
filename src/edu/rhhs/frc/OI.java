@@ -76,8 +76,8 @@ public class OI
         JoystickButton intakeFullyRetract1 = new JoystickButton(m_driverJoystick1, 6);
         intakeFullyRetract1.whenPressed(new IntakeFullyRetract());
 
-        JoystickButton shooterLongPosition1 = new JoystickButton(m_driverJoystick2, 3);
-        shooterLongPosition1.whenPressed(new ShooterShotPosition(ShotPosition.LONG));
+        JoystickButton manipulatorPartiallyDeploy1 = new JoystickButton(m_driverJoystick2, 3);
+        manipulatorPartiallyDeploy1.whenPressed(new ManipulatorMoveMP(PresetPositions.PARTIALLY_DEPLOYED));
 
         JoystickButton shooterShortPosition1 = new JoystickButton(m_driverJoystick2, 4);
         shooterShortPosition1.whenPressed(new ShooterShotPosition(ShotPosition.SHORT));
@@ -102,11 +102,11 @@ public class OI
         JoystickButton manipulatorDeploy = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.Y_BUTTON);
         manipulatorDeploy.whenPressed(new ManipulatorMoveMP(PresetPositions.FULLY_DEPLOYED));
 
+        JoystickButton manipulatorPartialDeploy = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.B_BUTTON);
+        manipulatorPartialDeploy.whenPressed(new ManipulatorMoveMP(PresetPositions.PARTIALLY_DEPLOYED));
+
         JoystickButton manipulatorRetract = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.A_BUTTON);
         manipulatorRetract.whenPressed(new ManipulatorMoveMP(PresetPositions.RETRACTED));
-
-        JoystickButton shooterLongPosition = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.B_BUTTON);
-        shooterLongPosition.whenPressed(new ShooterShotPosition(ShotPosition.LONG));
 
         JoystickButton shooterShortPosition = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.X_BUTTON);
         shooterShortPosition.whenPressed(new ShooterShotPosition(ShotPosition.SHORT));

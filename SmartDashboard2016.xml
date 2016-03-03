@@ -1,21 +1,25 @@
 <xml version="1.0">
 <dashboard>
-	<widget field="Winch Output Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
-		<location x="9" y="91"/>
-		<width>541</width>
-		<height>176</height>
+	<widget field="Right Arm" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="140" y="326"/>
+	</widget>
+	<widget field="Winch Output Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="360" y="297"/>
+	</widget>
+	<widget field="MotionProfile Turn" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="468" y="407"/>
 	</widget>
 	<widget field="MotionProfile Arm Zero Position" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
-		<location x="422" y="379"/>
+		<location x="254" y="351"/>
 	</widget>
 	<widget field="MotionProfile Arm Partial Deploy" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
-		<location x="421" y="350"/>
+		<location x="438" y="351"/>
 	</widget>
 	<widget field="Manipulator" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
 		<location x="0" y="0"/>
 	</widget>
 	<widget field="MotionProfile Arm Retract" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
-		<location x="437" y="407"/>
+		<location x="280" y="324"/>
 		<width>155</width>
 		<height>23</height>
 	</widget>
@@ -81,11 +85,8 @@
 	<widget field="Winch Pos" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="38" y="295"/>
 	</widget>
-	<widget field="Right Arm" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="302" y="324"/>
-	</widget>
 	<widget field="Left Arm" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="166" y="323"/>
+		<location x="10" y="326"/>
 	</widget>
 	<widget field="Left Drive" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="820" y="436"/>

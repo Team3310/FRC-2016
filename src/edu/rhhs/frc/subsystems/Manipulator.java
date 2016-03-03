@@ -24,20 +24,20 @@ public class Manipulator extends Subsystem implements ControlLoopable
 	public static final double PORTCULLIS_RETRACTED_ANGLE_DEG = -10;
 	public static final double PORTCULLIS_ZERO_ANGLE_DEG = 0;
 	public static final double PORTCULLIS_PARTIALLY_DEPLOYED_ANGLE_DEG = 150;
-	public static final double PORTCULLIS_FULLY_DEPLOYED_ANGLE_DEG = 175;
+	public static final double PORTCULLIS_FULLY_DEPLOYED_ANGLE_DEG = 180;
 
 	public static final double CHEVAL_DE_FRISE_RETRACTED_ANGLE_DEG = -10;
 	public static final double CHEVAL_DE_FRISE_ZERO_ANGLE_DEG = 0;
-	public static final double CHEVAL_DE_FRISE_PARTIALLY_DEPLOYED_ANGLE_DEG = 150;
-	public static final double CHEVAL_DE_FRISE_FULLY_DEPLOYED_ANGLE_DEG = 175;
+	public static final double CHEVAL_DE_FRISE_PARTIALLY_DEPLOYED_ANGLE_DEG = 165;
+	public static final double CHEVAL_DE_FRISE_FULLY_DEPLOYED_ANGLE_DEG = 180;
 
-	public static final double RETRACT_MAX_RATE_DEG_PER_SEC = 450;
-	public static final double DEPLOY_MAX_RATE_DEG_PER_SEC = 450;
+	public static final double RETRACT_MAX_RATE_DEG_PER_SEC = 650;
+	public static final double DEPLOY_MAX_RATE_DEG_PER_SEC = 650;
 	
 	private ArrayList<CANTalonEncoder> motorControllers = new ArrayList<CANTalonEncoder>();	
 	private CANTalonEncoder leftArm, rightArm;
 	private MPTalonPIDController mpController;
-	private PIDParams mpPIDParams = new PIDParams(5.0, 0.0, 0, 0.0, 0.2);
+	private PIDParams mpPIDParams = new PIDParams(4.0, 0.0, 0, 0.0, 0.2);
 	private boolean isAtTarget = true;
 	private Attachment attachment;
 	

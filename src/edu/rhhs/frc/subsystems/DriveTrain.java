@@ -80,7 +80,7 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 	private MPTalonPIDController mpStraightController;
 	private PIDParams mpStraightPIDParams = new PIDParams(1, 0, 0, .01, 0.18);
 
-//	private ADXRS450_Gyro gyro = new ADXRS450_Gyro();
+	private ADXRS450_Gyro gyro = new ADXRS450_Gyro();
 
 	public DriveTrain() {
 		try {
@@ -136,18 +136,16 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 	public void initDefaultCommand() {
 	}
 	
-//	public ADXRS450_Gyro getGyro() {
-//		return gyro;
-//	}
+	public ADXRS450_Gyro getGyro() {
+		return gyro;
+	}
 	
 	public double getGyroAngleDeg() {
-//		return gyro.getAngle();
-		return 0;
+		return gyro.getAngle();
 	}
 	
 	public double getGyroRateDegPerSec() {
-//		return gyro.getRate();
-		return 0;
+		return gyro.getRate();
 	}
 	
 	public void setStraightMP(double distanceInches, double maxVelocity, boolean useGyroLock, double desiredAbsoluteAngle) {
@@ -369,6 +367,7 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 			SmartDashboard.putNumber("Right Drive 1 Current", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR1_CAN_ID-2));
 			SmartDashboard.putNumber("Right Drive 2 Current", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR2_CAN_ID-2));
 			SmartDashboard.putNumber("Right Drive 3 Current", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR3_CAN_ID-2));
+			SmartDashboard.putNumber("Yaw Angle", getGyroAngleDeg());
 		}
 	}	
 }
