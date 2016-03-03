@@ -1,0 +1,182 @@
+<xml version="1.0">
+<dashboard>
+	<widget field="Winch Output Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="9" y="91"/>
+		<width>541</width>
+		<height>176</height>
+	</widget>
+	<widget field="MotionProfile Arm Zero Position" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="422" y="379"/>
+	</widget>
+	<widget field="MotionProfile Arm Partial Deploy" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="421" y="350"/>
+	</widget>
+	<widget field="Manipulator" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="0" y="0"/>
+	</widget>
+	<widget field="MotionProfile Arm Retract" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="437" y="407"/>
+		<width>155</width>
+		<height>23</height>
+	</widget>
+	<widget field="MotionProfile Arm Deploy" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="439" y="323"/>
+	</widget>
+	<widget field="Shooter winch spool out" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="556" y="268"/>
+		<height>23</height>
+	</widget>
+	<widget field="Winch current at max" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="168" y="272"/>
+	</widget>
+	<widget field="Shooter winch retract" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="558" y="296"/>
+	</widget>
+	<widget field="Winch is retracted" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="186" y="295"/>
+	</widget>
+	<widget field="Drive positive 1.0" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="971" y="404"/>
+	</widget>
+	<widget field="Drive positive 0.8" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="850" y="406"/>
+	</widget>
+	<widget field="Drive positive 0.5" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="728" y="408"/>
+		<height>23</height>
+	</widget>
+	<widget field="Right Drive" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="966" y="433"/>
+	</widget>
+	<widget field="Reset Arm Zero" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="597" y="323"/>
+	</widget>
+	<widget field="Operation Mode" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="187" y="13"/>
+	</widget>
+	<widget field="Right Drive 3 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="500" y="61"/>
+	</widget>
+	<widget field="Right Drive 2 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="500" y="37"/>
+	</widget>
+	<widget field="Right Drive 1 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="501" y="14"/>
+	</widget>
+	<widget field="Left Drive 3 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="308" y="62"/>
+	</widget>
+	<widget field="Left Drive 2 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="308" y="37"/>
+	</widget>
+	<widget field="Left Drive 1 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="307" y="13"/>
+	</widget>
+	<widget field="MotionProfile Drive" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="596" y="410"/>
+	</widget>
+	<widget field="Drive off" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="1094" y="403"/>
+	</widget>
+	<widget field="Winch Pos" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="38" y="295"/>
+	</widget>
+	<widget field="Right Arm" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="302" y="324"/>
+	</widget>
+	<widget field="Left Arm" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="166" y="323"/>
+	</widget>
+	<widget field="Left Drive" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="820" y="436"/>
+	</widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Label">
+		<location x="933" y="263"/>
+		<property name="Text" value="Motor Tests"/>
+	</static-widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Label">
+		<location x="789" y="12"/>
+		<width>355</width>
+		<height>14</height>
+		<property name="Text" value="Pneumatics"/>
+	</static-widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Label">
+		<location x="1004" y="35"/>
+		<property name="Text" value="Activated"/>
+	</static-widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Label">
+		<location x="834" y="35"/>
+		<property name="Text" value="Default"/>
+	</static-widget>
+	<widget field="Shooter winch speed off" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="873" y="294"/>
+	</widget>
+	<widget field="Shooter winch speed negative" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="1022" y="294"/>
+	</widget>
+	<widget field="Shooter winch speed positive" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="698" y="296"/>
+	</widget>
+	<widget field="Intake inner roller off" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="899" y="378"/>
+	</widget>
+	<widget field="Intake inner roller on" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="721" y="379"/>
+	</widget>
+	<widget field="Intake outer roller off" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="894" y="349"/>
+	</widget>
+	<widget field="Intake outer roller on" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="722" y="351"/>
+	</widget>
+	<widget field="Manipulator speed off" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="1047" y="320"/>
+	</widget>
+	<widget field="Manipulator speed negative" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="874" y="320"/>
+	</widget>
+	<widget field="Manipulator speed positive" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="706" y="323"/>
+		<height>23</height>
+	</widget>
+	<widget field="Shooter carriage LOCKED" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="804" y="172"/>
+	</widget>
+	<widget field="Shooter carriage RELEASED" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="1006" y="172"/>
+	</widget>
+	<widget field="Shooter shot position SHORT" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="805" y="142"/>
+	</widget>
+	<widget field="Shooter shot position LONG" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="1004" y="142"/>
+	</widget>
+	<widget field="Intake inner DOWN" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="805" y="112"/>
+	</widget>
+	<widget field="Intake inner UP" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="1005" y="114"/>
+	</widget>
+	<widget field="Intake outer DOWN" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="1005" y="84"/>
+	</widget>
+	<widget field="Intake outer UP" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="806" y="81"/>
+	</widget>
+	<widget field="Drivetrain PTO shift DISENGAGED" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="805" y="202"/>
+	</widget>
+	<widget field="Drivetrain PTO shift ENGAGED" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="1004" y="201"/>
+	</widget>
+	<widget field="Drivetrain speed shift LO" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="804" y="53"/>
+	</widget>
+	<widget field="Drivetrain speed shift HI" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="1004" y="54"/>
+		<height>23</height>
+	</widget>
+</dashboard>
+<live-window>
+</live-window>
+</xml>
