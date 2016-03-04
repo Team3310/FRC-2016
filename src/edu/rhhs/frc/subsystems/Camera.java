@@ -8,6 +8,7 @@ import com.ni.vision.NIVision.ShapeMode;
 import edu.rhhs.frc.RobotMain;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.image.ColorImage;
 import edu.wpi.first.wpilibj.vision.USBCamera;
 
 public class Camera extends Subsystem

@@ -64,7 +64,7 @@ public class ImageProcessor {
             }
         } 
         catch (NIVisionException e) {
-            System.out.println("NIVision error = " + e.getMessage());            
+            System.err.println("NIVision error = " + e.getMessage());            
         } 
         finally {
             try {
@@ -76,7 +76,7 @@ public class ImageProcessor {
                 }
             }
             catch (NIVisionException e) {
-                System.out.println("Error freeing image = " + e.getMessage());            
+                System.err.println("Error freeing image = " + e.getMessage());            
             }
         }
 

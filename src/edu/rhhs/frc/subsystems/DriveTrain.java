@@ -94,6 +94,9 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 	private PIDParams mpStraightPIDParams = new PIDParams(0.1, 0, 0, 0.005, 0.03, 0.1);
 
 	private ADXRS450_Gyro gyro = new ADXRS450_Gyro();
+	private boolean useGyroLock;
+	private double gyroLockAngleDeg;
+	private double kPGyro = 0.1;
 
 	public DriveTrain() {
 		try {
@@ -204,6 +207,16 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 			leftDrive1.set(speed);
 		}
 	}
+	
+	public void setGyroLock(boolean useGyroLock, boolean snapToAbsolute0or180) {
+		if (snapToAbsolute0or180) {
+			gyroLockAngleDeg = BHRMathUtils.adjustAccumAngleToClosest180(getGyroAngleDeg());
+		}
+		else {
+			gyroLockAngleDeg = getGyroAngleDeg();
+		}
+		this.useGyroLock = useGyroLock;
+	}
 
 	public void driveWithJoystick() {
 		if(controlMode != DriveTrainControlMode.JOYSTICK || m_drive == null) return;
@@ -256,13 +269,18 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 		// OI.getInstance().getDriveTrainController().getLeftYAxis();
 		// m_steerInput =
 		// OI.getInstance().getDriveTrainController().getRightXAxis();
-		m_moveInput = OI.getInstance().getDriverJoystick1().getY();
-		m_steerInput = OI.getInstance().getDriverJoystick2().getX();
+		m_moveInput = OI.getInstance().getDriverJoystickPower().getY();
+		m_steerInput = OI.getInstance().getDriverJoystickTurn().getX();
 
 		m_moveOutput = adjustForSensitivity(m_moveScale, m_moveTrim,
 				m_moveInput, m_moveNonLinear, MOVE_NON_LINEARITY);
 		m_steerOutput = adjustForSensitivity(m_steerScale, m_steerTrim,
 				m_steerInput, m_steerNonLinear, STEER_NON_LINEARITY);
+		
+		if (useGyroLock) {
+			double yawError = gyroLockAngleDeg - getGyroAngleDeg();
+			m_steerOutput = m_steerOutput * 0.1 + kPGyro * yawError;
+		}
 		
 		m_drive.arcadeDrive(m_moveOutput, m_steerOutput);
 		// break;

@@ -3,6 +3,7 @@ package edu.rhhs.frc;
 import edu.rhhs.frc.buttons.XBoxDPadTriggerButton;
 import edu.rhhs.frc.buttons.XBoxTriggerButton;
 import edu.rhhs.frc.commands.DriveTrainAbsoluteTurnMP;
+import edu.rhhs.frc.commands.DriveTrainGyroLock;
 import edu.rhhs.frc.commands.DriveTrainPTOShift;
 import edu.rhhs.frc.commands.DriveTrainRelativeTurnMP;
 import edu.rhhs.frc.commands.DriveTrainSpeed;
@@ -50,53 +51,57 @@ public class OI
 {
 	private static OI instance;
 
-	private Joystick m_driverJoystick1;
-	private Joystick m_driverJoystick2;
+	private Joystick m_driverJoystickPower;
+	private Joystick m_driverJoystickTurn;
 	private XboxController m_operatorXBox;
 
 	private OI() {
-		m_driverJoystick1 = new Joystick(RobotMap.DRIVER_JOYSTICK_1_USB_ID);
-		m_driverJoystick2 = new Joystick(RobotMap.DRIVER_JOYSTICK_2_USB_ID);
+		m_driverJoystickPower = new Joystick(RobotMap.DRIVER_JOYSTICK_1_USB_ID);
+		m_driverJoystickTurn = new Joystick(RobotMap.DRIVER_JOYSTICK_2_USB_ID);
 		m_operatorXBox = new XboxController(RobotMap.OPERATOR_XBOX_USB_ID);
 		
 		// Driver's sticks
-        JoystickButton shiftDrivetrain = new JoystickButton(m_driverJoystick1, 1);
+        JoystickButton shiftDrivetrain = new JoystickButton(m_driverJoystickPower, 1);
         shiftDrivetrain.whenPressed(new DriveTrainSpeedShift(DriveTrain.SpeedShiftState.HI));
         shiftDrivetrain.whenReleased(new DriveTrainSpeedShift(DriveTrain.SpeedShiftState.LO));
 
-        JoystickButton manipulatorDeploy1 = new JoystickButton(m_driverJoystick1, 3);
+        JoystickButton manipulatorDeploy1 = new JoystickButton(m_driverJoystickPower, 3);
         manipulatorDeploy1.whenPressed(new ManipulatorMoveMP(PresetPositions.FULLY_DEPLOYED));
 
-        JoystickButton manipulatorRetract1 = new JoystickButton(m_driverJoystick1, 4);
+        JoystickButton manipulatorRetract1 = new JoystickButton(m_driverJoystickPower, 4);
         manipulatorRetract1.whenPressed(new ManipulatorMoveMP(PresetPositions.RETRACTED));
 
-        JoystickButton intakeFullyDeploy1 = new JoystickButton(m_driverJoystick1, 5);
+        JoystickButton intakeFullyDeploy1 = new JoystickButton(m_driverJoystickPower, 5);
         intakeFullyDeploy1.whenPressed(new IntakeFullyDeploy());
         intakeFullyDeploy1.whenReleased(new IntakeOff());
 
-        JoystickButton intakeFullyRetract1 = new JoystickButton(m_driverJoystick1, 6);
+        JoystickButton intakeFullyRetract1 = new JoystickButton(m_driverJoystickPower, 6);
         intakeFullyRetract1.whenPressed(new IntakeFullyRetract());
 
-        JoystickButton manipulatorPartiallyDeploy1 = new JoystickButton(m_driverJoystick2, 3);
+        JoystickButton gyroLock = new JoystickButton(m_driverJoystickTurn, 1);
+        gyroLock.whenPressed(new DriveTrainGyroLock(true, false));
+        gyroLock.whenReleased(new DriveTrainGyroLock(false, false));
+
+        JoystickButton manipulatorPartiallyDeploy1 = new JoystickButton(m_driverJoystickTurn, 3);
         manipulatorPartiallyDeploy1.whenPressed(new ManipulatorMoveMP(PresetPositions.PARTIALLY_DEPLOYED));
 
-        JoystickButton shooterShortPosition1 = new JoystickButton(m_driverJoystick2, 4);
+        JoystickButton shooterShortPosition1 = new JoystickButton(m_driverJoystickTurn, 4);
         shooterShortPosition1.whenPressed(new ShooterShotPosition(ShotPosition.SHORT));
 
-        JoystickButton intakeLowBarPosition1 = new JoystickButton(m_driverJoystick2, 5);
+        JoystickButton intakeLowBarPosition1 = new JoystickButton(m_driverJoystickTurn, 5);
         intakeLowBarPosition1.whenPressed(new IntakeLowBarPosition());
 
-        JoystickButton intakeEject1 = new JoystickButton(m_driverJoystick2, 6);
+        JoystickButton intakeEject1 = new JoystickButton(m_driverJoystickTurn, 6);
         intakeEject1.whenPressed(new IntakeEject());
         intakeEject1.whenReleased(new IntakeOff());
         
-        JoystickButton shooterShoot1 = new JoystickButton(m_driverJoystick2, 2);
+        JoystickButton shooterShoot1 = new JoystickButton(m_driverJoystickTurn, 2);
         shooterShoot1.whenPressed(new ShooterShootAndRetract());
 
-        JoystickButton retractWinch1 = new JoystickButton(m_driverJoystick2, 11);
+        JoystickButton retractWinch1 = new JoystickButton(m_driverJoystickTurn, 11);
         retractWinch1.whenPressed(new ShooterWinchRetractAndSpoolOut());
 
-        JoystickButton safeReleaseWinch1 = new JoystickButton(m_driverJoystick2, 12);
+        JoystickButton safeReleaseWinch1 = new JoystickButton(m_driverJoystickTurn, 12);
         safeReleaseWinch1.whenPressed(new ShooterWinchSafeRelease());
         
         // Operator's controller
@@ -250,15 +255,15 @@ public class OI
 		SmartDashboard.putData("Drive off", driveOff);
 		
 		Button driveMP = new InternalButton();
-		driveMP.whenPressed(new DriveTrainStraightMP(96, 30, true, 0));
+		driveMP.whenPressed(new DriveTrainStraightMP(96, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, 0));
 		SmartDashboard.putData("MotionProfile Drive", driveMP);
 		
 		Button turnRelativeMP = new InternalButton();
-		turnRelativeMP.whenPressed(new DriveTrainRelativeTurnMP(90, 45, MPTurnType.TANK));
+		turnRelativeMP.whenPressed(new DriveTrainRelativeTurnMP(90, DriveTrain.MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC, MPTurnType.TANK));
 		SmartDashboard.putData("MotionProfile Turn Relative", turnRelativeMP);
 		
 		Button turnAbsoluteMP = new InternalButton();
-		turnAbsoluteMP.whenPressed(new DriveTrainAbsoluteTurnMP(0, 45, MPTurnType.TANK));
+		turnAbsoluteMP.whenPressed(new DriveTrainAbsoluteTurnMP(0, DriveTrain.MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC, MPTurnType.TANK));
 		SmartDashboard.putData("MotionProfile Turn Absolute", turnAbsoluteMP);
 		
 		Button armMPDeploy = new InternalButton();
@@ -282,12 +287,12 @@ public class OI
 		SmartDashboard.putData("Reset Arm Zero", resetArmZero);
 	}
 	
-	public Joystick getDriverJoystick1() {
-		return m_driverJoystick1;
+	public Joystick getDriverJoystickPower() {
+		return m_driverJoystickPower;
 	}
 	
-	public Joystick getDriverJoystick2() {
-		return m_driverJoystick2;
+	public Joystick getDriverJoystickTurn() {
+		return m_driverJoystickTurn;
 	}
 
 	public XboxController getOperatorXBox() {

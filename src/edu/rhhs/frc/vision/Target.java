@@ -14,53 +14,33 @@ import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
  */
 public class Target {
     
-    public static final int LEFT = 0;
-    public static final int RIGHT = 1;
-    public static final int BOTTOM = 2;
-    public static final int TOP = 3;
-    
-    public static final String[] LOCATION_NAMES = {"Left", "Right", "Bottom", "Top"};
-    
-    public static final double TARGET_HEIGHT_FT = 1.5;
-    public static final double TARGET_WIDTH_FT = 2.0;
+    public static final double TARGET_HEIGHT_FT = 1.0;
+    public static final double TARGET_WIDTH_FT = 20.0/12.0;
     public static final double TARGET_ASPECT_RATIO = TARGET_HEIGHT_FT / TARGET_WIDTH_FT;
-    public static final double TARGET_RIGHT_LEFT_OFFSET_FT = 27.375 / 12;
-    public static final double OVERALL_TARGET_HEIGHT_FT = 88.0 / 12.0;
-    public static final double OVERALL_TARGET_WIDTH_FT = 78.75 / 12.0;
-        
-    /* 
-     * This aray contains the x-distance from one target to the other targets.  It is used 
-     * to calculate angle from the "best" identified target and the target we are shooting at.
-     * 
-     * Left target to Left, Right, Bottom, Top
-     * Right target to Left, Right, Bottom, Top
-     * Bottom target to Left, Right, Bottom, Top
-     * Top target to Left, Right, Bottom, Top
-     */
-    public static final double[] TARGET_OFFSETS_FT = {
-                0, TARGET_RIGHT_LEFT_OFFSET_FT * 2, TARGET_RIGHT_LEFT_OFFSET_FT, TARGET_RIGHT_LEFT_OFFSET_FT,
-                -TARGET_RIGHT_LEFT_OFFSET_FT * 2, 0, -TARGET_RIGHT_LEFT_OFFSET_FT, -TARGET_RIGHT_LEFT_OFFSET_FT,
-                -TARGET_RIGHT_LEFT_OFFSET_FT, TARGET_RIGHT_LEFT_OFFSET_FT, 0, 0,
-                -TARGET_RIGHT_LEFT_OFFSET_FT, TARGET_RIGHT_LEFT_OFFSET_FT, 0, 0};
+            
+    public static final double OPTIMAL_RECT = 0.2;
+    public static final double OPTIMAL_AR = TARGET_ASPECT_RATIO;
+    public static final double OPTIMAL_XX = 0.9;
+    public static final double OPTIMAL_YY = 0.11;
+    public static final double WEIGHT_FACTOR_RECT = 1;
+    public static final double WEIGHT_FACTOR_AR = 1;
+    public static final double WEIGHT_FACTOR_XX = 10;
+    public static final double WEIGHT_FACTOR_YY = 10;
     
     private static final double VALID_COMPOSITE_SCORE_MAX = 10;
 
     private double m_cameraFOVHorizontalAngleDeg;  // M206 54 deg actual
-    
     private double m_cameraDistanceFt;
     private double m_horizontalAngleToSelectedTargetDeg;
-    private double m_xCenterSelectedTargetPixels;
     
-    private int m_targetLocation = TOP;
-    private int m_selectedTargetLocation = TOP;
-    
-    private boolean m_calculationsPerformed = false;
+    private boolean m_calculationsPerformed;
 
     private ParticleAnalysisReport m_report;
     
     public Target(ParticleAnalysisReport report, double cameraFOVHorizontalAngleDeg) {
         this.m_cameraFOVHorizontalAngleDeg = cameraFOVHorizontalAngleDeg;       
         this.m_report = report;
+        this.m_calculationsPerformed = false;
     }
     
     public ParticleAnalysisReport getReport() {
@@ -68,27 +48,27 @@ public class Target {
     }
     
     public double getRectangleScore() {
-        return m_report.particleArea / ((double)m_report.boundingRectWidth * (double)m_report.boundingRectHeight) * 100;
+        return (m_report.particleArea / ((double)m_report.boundingRectWidth * (double)m_report.boundingRectHeight) - OPTIMAL_RECT) * WEIGHT_FACTOR_RECT;
     } 
     
+    public double getXXRatioScore() {
+        return (m_report.center_mass_x_normalized - OPTIMAL_XX) * WEIGHT_FACTOR_XX;
+    }
+    
+    public double getYYRatioScore() {
+        return (m_report.center_mass_x_normalized - OPTIMAL_YY) * WEIGHT_FACTOR_YY;
+    }
+    
     public double getAspectRatioScore() {
-        return (double)m_report.boundingRectWidth / (double)m_report.boundingRectHeight * 100 * TARGET_ASPECT_RATIO;
+        return (m_report.boundingRectHeight / (double)m_report.boundingRectWidth - OPTIMAL_AR) * WEIGHT_FACTOR_AR;
     }
     
     public double getCompositeScore() {
-        return Math.abs(getRectangleScore() - 100) + Math.abs(getAspectRatioScore() - 100);
+        return Math.abs(getRectangleScore()) + Math.abs(getXXRatioScore()) + Math.abs(getYYRatioScore()) + Math.abs(getAspectRatioScore());
     }
     
     public boolean isValid() {
-        double ar = getAspectRatioScore();
-        double rect = getRectangleScore();
-        double composite = getCompositeScore();
         return (getCompositeScore() < VALID_COMPOSITE_SCORE_MAX);
-    }
-    
-    public void setTargetLocations(int thisTargetLocation, int selectedTargetLocation) {
-        this.m_targetLocation = thisTargetLocation;
-        this.m_selectedTargetLocation = selectedTargetLocation;
     }
     
     public double getCameraDistanceFt() {
@@ -99,15 +79,6 @@ public class Target {
     public double getHorizontalAngleToSelectedTargetDeg() {
         updateCalculations();
         return m_horizontalAngleToSelectedTargetDeg;
-    }
-    
-    public double getXCenterSelectedTargetPixels() {
-        updateCalculations();
-        return m_xCenterSelectedTargetPixels;
-    }
-    
-    public int getLocation() {
-        return m_targetLocation;
     }
     
     private void updateCalculations() {
@@ -128,15 +99,8 @@ public class Target {
 
         // Calculate the angle from the center of the image to the selected target
         double targetOffsetFt = imageWidthFt * targetOffsetPixels / (double)m_report.imageWidth;
-        double offsetThisTargetToSelectedTargetFt = getTargetOffset();
-        double centerOffsetFt = targetOffsetFt + offsetThisTargetToSelectedTargetFt;
-        m_xCenterSelectedTargetPixels = targetCenterPixels + (double)m_report.boundingRectWidth * offsetThisTargetToSelectedTargetFt / imageWidthFt;
-        m_horizontalAngleToSelectedTargetDeg = Math.atan2(centerOffsetFt, m_cameraDistanceFt) * 180.0 / Math.PI;
+        m_horizontalAngleToSelectedTargetDeg = Math.atan2(targetOffsetFt, m_cameraDistanceFt) * 180.0 / Math.PI;
         
         m_calculationsPerformed = true;
-    }
-    
-    private double getTargetOffset() {
-            return TARGET_OFFSETS_FT[m_targetLocation * 4 + m_selectedTargetLocation];
-    }
+    }   
 }
