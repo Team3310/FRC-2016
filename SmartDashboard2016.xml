@@ -1,5 +1,13 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="Left Drive Delta" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="5" y="436"/>
+		<width>808</width>
+		<height>241</height>
+	</widget>
+	<widget field="Yaw Angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="118" y="406"/>
+	</widget>
 	<widget field="Right Arm" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="140" y="326"/>
 	</widget>

@@ -249,7 +249,7 @@ public class OI
 		SmartDashboard.putData("Drive off", driveOff);
 		
 		Button driveMP = new InternalButton();
-		driveMP.whenPressed(new DriveTrainStraightMP(48, 15, false, 0));
+		driveMP.whenPressed(new DriveTrainStraightMP(96, 30, true, 0));
 		SmartDashboard.putData("MotionProfile Drive", driveMP);
 		
 		Button turnMP = new InternalButton();

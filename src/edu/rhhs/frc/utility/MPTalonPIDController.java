@@ -115,8 +115,8 @@ public class MPTalonPIDController
 		double gyroDelta = useGyroLock ? currentGyroAngle - startGyroAngle : 0;
 
 		if (Math.abs(mpPoint.position) > 0.001) {
-			KfLeft = (pidParams.kA * mpPoint.acceleration + pidParams.kV * mpPoint.velocity + pidParams.kG * gyroDelta) / mpPoint.position;
-			KfRight = (pidParams.kA * mpPoint.acceleration + pidParams.kV * mpPoint.velocity - pidParams.kG * gyroDelta) / mpPoint.position;
+			KfLeft = (pidParams.kA * mpPoint.acceleration + pidParams.kV * mpPoint.velocity - pidParams.kG * gyroDelta) / mpPoint.position;
+			KfRight = (pidParams.kA * mpPoint.acceleration + pidParams.kV * mpPoint.velocity + pidParams.kG * gyroDelta) / mpPoint.position;
 		}
 		
 		// Update the set points and Kf gains

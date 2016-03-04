@@ -9,6 +9,7 @@ import edu.rhhs.frc.utility.CANTalonEncoder;
 import edu.rhhs.frc.utility.ControlLoopable;
 import edu.rhhs.frc.utility.MPTalonPIDController;
 import edu.rhhs.frc.utility.MPTalonPIDController.MPTurnType;
+import edu.rhhs.frc.utility.MotionProfilePoint;
 import edu.rhhs.frc.utility.PIDParams;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.CANTalon;
@@ -78,7 +79,8 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 	private DriveTrainControlMode controlMode = DriveTrainControlMode.JOYSTICK;
 	
 	private MPTalonPIDController mpStraightController;
-	private PIDParams mpStraightPIDParams = new PIDParams(1, 0, 0, .01, 0.18);
+//	private PIDParams mpStraightPIDParams = new PIDParams(0.5, 0, 0, 0.003, 0.03);
+	private PIDParams mpStraightPIDParams = new PIDParams(0.1, 0, 0, 0.005, 0.03, 0.1);
 
 	private ADXRS450_Gyro gyro = new ADXRS450_Gyro();
 
@@ -149,6 +151,7 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 	}
 	
 	public void setStraightMP(double distanceInches, double maxVelocity, boolean useGyroLock, double desiredAbsoluteAngle) {
+		gyro.reset();
 		mpStraightController.setMPStraightTarget(0, distanceInches, maxVelocity, useGyroLock, desiredAbsoluteAngle, true); 
 		setControlMode(DriveTrainControlMode.MP_STRAIGHT);
 	}
@@ -168,9 +171,7 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 			leftDrive1.changeControlMode(TalonControlMode.PercentVbus);
 			rightDrive1.changeControlMode(TalonControlMode.PercentVbus);
 		}
-		else {
-			isFinished = false;
-		}
+		isFinished = false;
 	}
 	
 	public void controlLoopUpdate() {
@@ -178,7 +179,7 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 			driveWithJoystick();
 		}
 		else if (controlMode == DriveTrainControlMode.MP_STRAIGHT) {
-			isFinished = mpStraightController.controlLoopUpdate(0); //getGyro().getAngle()
+			isFinished = mpStraightController.controlLoopUpdate(getGyro().getAngle()); 
 		}
 	}
 	
@@ -359,15 +360,23 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 	
 	public void updateStatus(RobotMain.OperationMode operationMode) {
 		if (operationMode == RobotMain.OperationMode.TEST) {
-			SmartDashboard.putNumber("Right Drive", rightDrive1.getPositionWorld());
-			SmartDashboard.putNumber("Left Drive", leftDrive1.getPositionWorld());
-			SmartDashboard.putNumber("Left Drive 1 Current", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR1_CAN_ID-2));
-			SmartDashboard.putNumber("Left Drive 2 Current", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR2_CAN_ID-2));
-			SmartDashboard.putNumber("Left Drive 3 Current", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR3_CAN_ID-2));
-			SmartDashboard.putNumber("Right Drive 1 Current", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR1_CAN_ID-2));
-			SmartDashboard.putNumber("Right Drive 2 Current", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR2_CAN_ID-2));
-			SmartDashboard.putNumber("Right Drive 3 Current", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR3_CAN_ID-2));
-			SmartDashboard.putNumber("Yaw Angle", getGyroAngleDeg());
+			try {
+				SmartDashboard.putNumber("Right Drive", rightDrive1.getPositionWorld());
+				SmartDashboard.putNumber("Left Drive", leftDrive1.getPositionWorld());
+				SmartDashboard.putNumber("Left Drive 1 Current", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR1_CAN_ID-2));
+				SmartDashboard.putNumber("Left Drive 2 Current", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR2_CAN_ID-2));
+				SmartDashboard.putNumber("Left Drive 3 Current", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR3_CAN_ID-2));
+				SmartDashboard.putNumber("Right Drive 1 Current", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR1_CAN_ID-2));
+				SmartDashboard.putNumber("Right Drive 2 Current", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR2_CAN_ID-2));
+				SmartDashboard.putNumber("Right Drive 3 Current", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR3_CAN_ID-2));
+				SmartDashboard.putNumber("Yaw Angle", getGyroAngleDeg());
+				MotionProfilePoint mpPoint = mpStraightController.getCurrentPoint(); 
+				double delta = mpPoint != null ? leftDrive1.getPositionWorld() - mpStraightController.getCurrentPoint().position : 0;
+				SmartDashboard.putNumber("Left Drive Delta", delta);
+			}
+			catch (Exception e) {
+				System.err.println("Drivetrain update status error");
+			}
 		}
 	}	
 }
