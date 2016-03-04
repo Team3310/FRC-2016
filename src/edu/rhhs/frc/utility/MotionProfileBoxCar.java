@@ -2,8 +2,8 @@ package edu.rhhs.frc.utility;
 
 public class MotionProfileBoxCar
 {
-	static double DEFAULT_T1 = 100;	// millisecond
-	static double DEFAULT_T2 = 100; // millisecond
+	public static double DEFAULT_T1 = 200;	// millisecond
+	public static double DEFAULT_T2 = 100; // millisecond
 	
 	private double startDistance;  // any distance unit
 	private double targetDistance;  // any distance unit
@@ -28,10 +28,16 @@ public class MotionProfileBoxCar
 	private int pointIndex;
 
 	public MotionProfileBoxCar(double startDistance, double targetDistance, double maxVelocity, double itp) {
+		this(startDistance, targetDistance, maxVelocity, itp, DEFAULT_T1, DEFAULT_T2);
+	} 
+	
+	public MotionProfileBoxCar(double startDistance, double targetDistance, double maxVelocity, double itp, double t1, double t2) {
 		this.startDistance = startDistance;
 		this.targetDistance = targetDistance;
 		this.maxVelocity = maxVelocity;
 		this.itp = itp;
+		this.t1 = t1;
+		this.t2 = t2;
 		
 		initializeProfile();
 	} 
@@ -143,22 +149,14 @@ public class MotionProfileBoxCar
 		return t1;
 	}
 
-	public void setT1(double t1) {
-		this.t1 = t1;
-	}
-
 	public double getT2() {
 		return t2;
-	}
-
-	public void setT2(double t2) {
-		this.t2 = t2;
 	}
 
 	public static void main(String[] args) {
 		long startTime = System.nanoTime();
 		
-		MotionProfileBoxCar mp = new MotionProfileBoxCar(0, 48, 30, 10);
+		MotionProfileBoxCar mp = new MotionProfileBoxCar(0, 96, 30, 10, 200, 100);
 		System.out.println("Time, Position, Velocity, Acceleration");
 		MotionProfilePoint point = new MotionProfilePoint();
 		while(mp.getNextPoint(point) != null) {
@@ -168,5 +166,4 @@ public class MotionProfileBoxCar
 		long deltaTime = System.nanoTime() - startTime;
 		System.out.println("Time Box Car = " + (double)deltaTime * 1E-6 + " ms");
 	}
-
 }

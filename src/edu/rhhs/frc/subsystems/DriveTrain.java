@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import edu.rhhs.frc.OI;
 import edu.rhhs.frc.RobotMain;
 import edu.rhhs.frc.RobotMap;
+import edu.rhhs.frc.utility.BHRMathUtils;
 import edu.rhhs.frc.utility.CANTalonEncoder;
 import edu.rhhs.frc.utility.ControlLoopable;
 import edu.rhhs.frc.utility.MPTalonPIDController;
+import edu.rhhs.frc.utility.MotionProfileBoxCar;
 import edu.rhhs.frc.utility.MPTalonPIDController.MPTurnType;
 import edu.rhhs.frc.utility.MotionProfilePoint;
 import edu.rhhs.frc.utility.PIDParams;
@@ -30,6 +32,15 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 
 	public static final double TRACK_WIDTH_INCHES = 20;
 	public static final double ENCODER_TICKS_TO_INCHES = 4096 / (4.0 * Math.PI); 
+
+	// Motion profile max velocities and accel times
+	public static final double MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC = 60;
+	public static final double MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC = 60;
+	
+	public static final double MP_STRAIGHT_T1 = 600;
+	public static final double MP_STRAIGHT_T2 = 300;
+	public static final double MP_TURN_T1 = 600;
+	public static final double MP_TURN_T2 = 300;
 	
 	// Motor controllers
 	private ArrayList<CANTalonEncoder> motorControllers = new ArrayList<CANTalonEncoder>();	
@@ -78,7 +89,7 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 	private boolean isFinished;
 	private DriveTrainControlMode controlMode = DriveTrainControlMode.JOYSTICK;
 	
-	private MPTalonPIDController mpStraightController;
+	private MPTalonPIDController mpController;
 //	private PIDParams mpStraightPIDParams = new PIDParams(0.5, 0, 0, 0.003, 0.03);
 	private PIDParams mpStraightPIDParams = new PIDParams(0.1, 0, 0, 0.005, 0.03, 0.1);
 
@@ -138,10 +149,6 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 	public void initDefaultCommand() {
 	}
 	
-	public ADXRS450_Gyro getGyro() {
-		return gyro;
-	}
-	
 	public double getGyroAngleDeg() {
 		return gyro.getAngle();
 	}
@@ -151,13 +158,17 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 	}
 	
 	public void setStraightMP(double distanceInches, double maxVelocity, boolean useGyroLock, double desiredAbsoluteAngle) {
-		gyro.reset();
-		mpStraightController.setMPStraightTarget(0, distanceInches, maxVelocity, useGyroLock, desiredAbsoluteAngle, true); 
+		mpController.setMPStraightTarget(0, distanceInches, maxVelocity, MP_STRAIGHT_T1, MP_STRAIGHT_T2, useGyroLock, BHRMathUtils.adjustAccumAngleToDesired(getGyroAngleDeg(), desiredAbsoluteAngle), true); 
 		setControlMode(DriveTrainControlMode.MP_STRAIGHT);
 	}
 	
-	public void setTurnMP(double turnAngleDeg, double turnRateDegPerSec, MPTurnType turnType) {
-		mpStraightController.setMPTurnTarget(getGyroAngleDeg(), turnAngleDeg + getGyroAngleDeg(), turnRateDegPerSec, turnType, TRACK_WIDTH_INCHES);
+	public void setRelativeTurnMP(double relativeTurnAngleDeg, double turnRateDegPerSec, MPTurnType turnType) {
+		mpController.setMPTurnTarget(getGyroAngleDeg(), relativeTurnAngleDeg + getGyroAngleDeg(), turnRateDegPerSec, MP_TURN_T1, MP_TURN_T2, turnType, TRACK_WIDTH_INCHES);
+		setControlMode(DriveTrainControlMode.MP_TURN);
+	}
+	
+	public void setAbsoluteTurnMP(double absoluteTurnAngleDeg, double turnRateDegPerSec, MPTurnType turnType) {
+		mpController.setMPTurnTarget(getGyroAngleDeg(), BHRMathUtils.adjustAccumAngleToDesired(getGyroAngleDeg(), absoluteTurnAngleDeg), turnRateDegPerSec, MP_TURN_T1, MP_TURN_T2, turnType, TRACK_WIDTH_INCHES);
 		setControlMode(DriveTrainControlMode.MP_TURN);
 	}
 	
@@ -178,8 +189,8 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 		if (controlMode == DriveTrainControlMode.JOYSTICK) {
 			driveWithJoystick();
 		}
-		else if (controlMode == DriveTrainControlMode.MP_STRAIGHT) {
-			isFinished = mpStraightController.controlLoopUpdate(getGyro().getAngle()); 
+		else if (!isFinished && (controlMode == DriveTrainControlMode.MP_STRAIGHT || controlMode == DriveTrainControlMode.MP_TURN)) {
+			isFinished = mpController.controlLoopUpdate(getGyroAngleDeg()); 
 		}
 	}
 	
@@ -355,7 +366,7 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 	
 	@Override
 	public void setPeriodMs(long periodMs) {
-		mpStraightController = new MPTalonPIDController(periodMs, mpStraightPIDParams, motorControllers);
+		mpController = new MPTalonPIDController(periodMs, mpStraightPIDParams, motorControllers);
 	}
 	
 	public void updateStatus(RobotMain.OperationMode operationMode) {
@@ -370,8 +381,8 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 				SmartDashboard.putNumber("Right Drive 2 Current", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR2_CAN_ID-2));
 				SmartDashboard.putNumber("Right Drive 3 Current", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR3_CAN_ID-2));
 				SmartDashboard.putNumber("Yaw Angle", getGyroAngleDeg());
-				MotionProfilePoint mpPoint = mpStraightController.getCurrentPoint(); 
-				double delta = mpPoint != null ? leftDrive1.getPositionWorld() - mpStraightController.getCurrentPoint().position : 0;
+				MotionProfilePoint mpPoint = mpController.getCurrentPoint(); 
+				double delta = mpPoint != null ? leftDrive1.getPositionWorld() - mpController.getCurrentPoint().position : 0;
 				SmartDashboard.putNumber("Left Drive Delta", delta);
 			}
 			catch (Exception e) {
@@ -379,4 +390,5 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 			}
 		}
 	}	
+
 }

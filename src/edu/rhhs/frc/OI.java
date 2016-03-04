@@ -2,11 +2,12 @@ package edu.rhhs.frc;
 
 import edu.rhhs.frc.buttons.XBoxDPadTriggerButton;
 import edu.rhhs.frc.buttons.XBoxTriggerButton;
+import edu.rhhs.frc.commands.DriveTrainAbsoluteTurnMP;
 import edu.rhhs.frc.commands.DriveTrainPTOShift;
+import edu.rhhs.frc.commands.DriveTrainRelativeTurnMP;
 import edu.rhhs.frc.commands.DriveTrainSpeed;
 import edu.rhhs.frc.commands.DriveTrainSpeedShift;
 import edu.rhhs.frc.commands.DriveTrainStraightMP;
-import edu.rhhs.frc.commands.DriveTrainTurnMP;
 import edu.rhhs.frc.commands.IntakeEject;
 import edu.rhhs.frc.commands.IntakeFullyDeploy;
 import edu.rhhs.frc.commands.IntakeFullyRetract;
@@ -252,9 +253,13 @@ public class OI
 		driveMP.whenPressed(new DriveTrainStraightMP(96, 30, true, 0));
 		SmartDashboard.putData("MotionProfile Drive", driveMP);
 		
-		Button turnMP = new InternalButton();
-		turnMP.whenPressed(new DriveTrainTurnMP(90, 45, MPTurnType.TANK));
-		SmartDashboard.putData("MotionProfile Turn", turnMP);
+		Button turnRelativeMP = new InternalButton();
+		turnRelativeMP.whenPressed(new DriveTrainRelativeTurnMP(90, 45, MPTurnType.TANK));
+		SmartDashboard.putData("MotionProfile Turn Relative", turnRelativeMP);
+		
+		Button turnAbsoluteMP = new InternalButton();
+		turnAbsoluteMP.whenPressed(new DriveTrainAbsoluteTurnMP(0, 45, MPTurnType.TANK));
+		SmartDashboard.putData("MotionProfile Turn Absolute", turnAbsoluteMP);
 		
 		Button armMPDeploy = new InternalButton();
 		armMPDeploy.whenPressed(new ManipulatorMoveMP(PresetPositions.FULLY_DEPLOYED));

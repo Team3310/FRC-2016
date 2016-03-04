@@ -34,21 +34,21 @@ public class MPTalonPIDController
 		}
 	}
 	
-	public void setMPTarget(double startValue, double targetValue, double maxVelocity) {
-		setMPStraightTarget(startValue, targetValue, maxVelocity, false, 0, false);
+	public void setMPTarget(double startValue, double targetValue, double maxVelocity, double t1, double t2) {
+		setMPStraightTarget(startValue, targetValue, maxVelocity, t1, t2, false, 0, false);
 	}
 
-	public void setMPTarget(double startValue, double targetValue, double maxVelocity, boolean resetEncoder) {
-		setMPStraightTarget(startValue, targetValue, maxVelocity, false, 0, resetEncoder);
+	public void setMPTarget(double startValue, double targetValue, double maxVelocity, double t1, double t2, boolean resetEncoder) {
+		setMPStraightTarget(startValue, targetValue, maxVelocity, t1, t2, false, 0, resetEncoder);
 	}
 
-	public void setMPStraightTarget(double startValue, double targetValue, double maxVelocity, boolean useGyroLock, double desiredAngle, boolean resetEncoder) {
+	public void setMPStraightTarget(double startValue, double targetValue, double maxVelocity, double t1, double t2, boolean useGyroLock, double desiredAngle, boolean resetEncoder) {
 		controlMode = MPControlMode.STRAIGHT;
 		this.startGyroAngle = desiredAngle;
 		this.useGyroLock = useGyroLock;
 		
 		// Set up the motion profile 
-		mp = new MotionProfileBoxCar(startValue, targetValue, maxVelocity, periodMs);
+		mp = new MotionProfileBoxCar(startValue, targetValue, maxVelocity, periodMs, t1, t2);
 		for (CANTalonEncoder motorController : motorControllers) {
 			if (resetEncoder) {
 				motorController.setPosition(0);
@@ -58,7 +58,7 @@ public class MPTalonPIDController
 		}
 	}
 	
-	public void setMPTurnTarget(double startAngleDeg, double targetAngleDeg, double maxTurnRateDegPerSec, MPTurnType turnType, double trackWidth) {
+	public void setMPTurnTarget(double startAngleDeg, double targetAngleDeg, double maxTurnRateDegPerSec, double t1, double t2, MPTurnType turnType, double trackWidth) {
 		controlMode = MPControlMode.TURN;
 		this.turnType = turnType;
 		this.startGyroAngle = startAngleDeg;
@@ -67,7 +67,7 @@ public class MPTalonPIDController
 		double trackDistance = calcTrackDistance(targetAngleDeg - startAngleDeg, turnType, trackWidth);
 
 		// Set up the motion profile 
-		mp = new MotionProfileBoxCar(0, trackDistance, maxTurnRateDegPerSec, periodMs);
+		mp = new MotionProfileBoxCar(0, trackDistance, maxTurnRateDegPerSec, periodMs, t1, t2);
 		for (CANTalonEncoder motorController : motorControllers) {
 			motorController.setPosition(0);
 			motorController.set(0);

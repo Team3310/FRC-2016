@@ -31,9 +31,13 @@ public class Manipulator extends Subsystem implements ControlLoopable
 	public static final double CHEVAL_DE_FRISE_PARTIALLY_DEPLOYED_ANGLE_DEG = 165;
 	public static final double CHEVAL_DE_FRISE_FULLY_DEPLOYED_ANGLE_DEG = 180;
 
+	// Motion profile max velocities and accel times
 	public static final double RETRACT_MAX_RATE_DEG_PER_SEC = 650;
 	public static final double DEPLOY_MAX_RATE_DEG_PER_SEC = 650;
 	
+	public static final double MP_T1 = 200;
+	public static final double MP_T2 = 100;
+
 	private ArrayList<CANTalonEncoder> motorControllers = new ArrayList<CANTalonEncoder>();	
 	private CANTalonEncoder leftArm, rightArm;
 	private MPTalonPIDController mpController;
@@ -90,13 +94,13 @@ public class Manipulator extends Subsystem implements ControlLoopable
 		
 		double startAngleDegrees = (rightArm.getPositionWorld() + leftArm.getPositionWorld())/2;
 		double maxVelocityDegreePerSec = (targetAngleDegrees > startAngleDegrees) ? DEPLOY_MAX_RATE_DEG_PER_SEC : RETRACT_MAX_RATE_DEG_PER_SEC;
-		mpController.setMPTarget(startAngleDegrees, targetAngleDegrees, maxVelocityDegreePerSec); 
+		mpController.setMPTarget(startAngleDegrees, targetAngleDegrees, maxVelocityDegreePerSec, MP_T1, MP_T2); 
 		isAtTarget = false;
 	}
 	
 	public void setPositionMP(double targetAngleDegrees, double maxVelocityDegreePerSec) {
 		double startAngleDegrees = (rightArm.getPositionWorld() + leftArm.getPositionWorld())/2;
-		mpController.setMPTarget(startAngleDegrees, targetAngleDegrees, maxVelocityDegreePerSec); 
+		mpController.setMPTarget(startAngleDegrees, targetAngleDegrees, maxVelocityDegreePerSec, MP_T1, MP_T2); 
 		isAtTarget = false;
 	}
 	
@@ -124,7 +128,7 @@ public class Manipulator extends Subsystem implements ControlLoopable
 	
 	@Override
 	public void controlLoopUpdate() {
-		if (isAtTarget == false) {
+		if (!isAtTarget) {
 			isAtTarget = mpController.controlLoopUpdate();
 		}
 	}
