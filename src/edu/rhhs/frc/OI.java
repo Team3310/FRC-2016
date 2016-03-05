@@ -1,5 +1,6 @@
 package edu.rhhs.frc;
 
+import edu.rhhs.frc.buttons.DigitalIOSwitch;
 import edu.rhhs.frc.buttons.XBoxDPadTriggerButton;
 import edu.rhhs.frc.buttons.XBoxTriggerButton;
 import edu.rhhs.frc.commands.DriveTrainAbsoluteTurnMP;
@@ -36,7 +37,7 @@ import edu.rhhs.frc.subsystems.Intake.LiftState;
 import edu.rhhs.frc.subsystems.Manipulator.PresetPositions;
 import edu.rhhs.frc.subsystems.Shooter.CarriageState;
 import edu.rhhs.frc.subsystems.Shooter.ShotPosition;
-import edu.rhhs.frc.utility.MPTalonPIDController.MPTurnType;
+import edu.rhhs.frc.utility.MPSoftwarePIDController.MPTurnType;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.InternalButton;
@@ -79,7 +80,7 @@ public class OI
         intakeFullyRetract1.whenPressed(new IntakeFullyRetract());
 
         JoystickButton gyroLock = new JoystickButton(m_driverJoystickTurn, 1);
-        gyroLock.whenPressed(new DriveTrainGyroLock(true, false));
+        gyroLock.whenPressed(new DriveTrainGyroLock(true, true));
         gyroLock.whenReleased(new DriveTrainGyroLock(false, false));
 
         JoystickButton manipulatorPartiallyDeploy1 = new JoystickButton(m_driverJoystickTurn, 3);
@@ -285,6 +286,9 @@ public class OI
 		Button resetArmZero = new InternalButton();
 		resetArmZero.whenPressed(new ManipulatorResetZero());
 		SmartDashboard.putData("Reset Arm Zero", resetArmZero);
+		
+		DigitalIOSwitch cdfSwitch = new DigitalIOSwitch(RobotMap.CDF_SENSOR_DIO_PORT_ID);
+		cdfSwitch.whenPressed(new ManipulatorMoveMP(PresetPositions.FULLY_DEPLOYED, true));
 	}
 	
 	public Joystick getDriverJoystickPower() {

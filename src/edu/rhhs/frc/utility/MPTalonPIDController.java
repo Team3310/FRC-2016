@@ -16,6 +16,8 @@ public class MPTalonPIDController
 	protected MotionProfilePoint mpPoint;
 	protected boolean useGyroLock;
 	protected double startGyroAngle;
+	protected double targetGyroAngle;
+	protected double trackDistance;
 	protected MPControlMode controlMode;
 	protected MPTurnType turnType;
 	
@@ -62,9 +64,10 @@ public class MPTalonPIDController
 		controlMode = MPControlMode.TURN;
 		this.turnType = turnType;
 		this.startGyroAngle = startAngleDeg;
+		this.targetGyroAngle = targetAngleDeg;
 		this.useGyroLock = true;
 		
-		double trackDistance = calcTrackDistance(targetAngleDeg - startAngleDeg, turnType, trackWidth);
+		trackDistance = calcTrackDistance(targetAngleDeg - startAngleDeg, turnType, trackWidth);
 
 		// Set up the motion profile 
 		mp = new MotionProfileBoxCar(0, trackDistance, maxTurnRateDegPerSec, periodMs, t1, t2);
@@ -72,6 +75,10 @@ public class MPTalonPIDController
 			motorController.setPosition(0);
 			motorController.set(0);
 			motorController.changeControlMode(TalonControlMode.Position);
+		}
+		
+		if (Math.abs(trackDistance) < 0.0001) {
+			trackDistance = 1;
 		}
 	}
 	
@@ -112,28 +119,36 @@ public class MPTalonPIDController
 		// Calculate the motion profile feed forward and gyro feedback terms
 		double KfLeft = 0.0;
 		double KfRight = 0.0;
-		double gyroDelta = useGyroLock ? currentGyroAngle - startGyroAngle : 0;
 
-		if (Math.abs(mpPoint.position) > 0.001) {
-			KfLeft = (pidParams.kA * mpPoint.acceleration + pidParams.kV * mpPoint.velocity - pidParams.kG * gyroDelta) / mpPoint.position;
-			KfRight = (pidParams.kA * mpPoint.acceleration + pidParams.kV * mpPoint.velocity + pidParams.kG * gyroDelta) / mpPoint.position;
-		}
-		
 		// Update the set points and Kf gains
 		if (controlMode == MPControlMode.STRAIGHT) {
+			double gyroDelta = useGyroLock ? startGyroAngle - currentGyroAngle: 0;
+			if (Math.abs(mpPoint.position) > 0.001) {
+				KfLeft = (pidParams.kA * mpPoint.acceleration + pidParams.kV * mpPoint.velocity + pidParams.kG * gyroDelta) / mpPoint.position;
+				KfRight = (pidParams.kA * mpPoint.acceleration + pidParams.kV * mpPoint.velocity - pidParams.kG * gyroDelta) / mpPoint.position;
+			}
+			
 			// Update the controllers Kf and set point.
 			for (CANTalonEncoder motorController : motorControllers) {
 				if (motorController.isRight()) {
 					motorController.setF(KfRight);
+					motorController.setWorld(mpPoint.position);
 				}
 				else {
 					motorController.setF(KfLeft);
+					motorController.setWorld(mpPoint.position);
 				}
-				motorController.setWorld(mpPoint.position);
 			}
 		}
 		
 		else {
+			double mpAngle = startGyroAngle + ((targetGyroAngle - startGyroAngle) * mpPoint.position / trackDistance);
+			double gyroDelta = mpAngle - currentGyroAngle;
+			if (Math.abs(mpPoint.position) > 0.001) {
+				KfLeft = (pidParams.kA * mpPoint.acceleration + pidParams.kV * mpPoint.velocity + pidParams.kG * gyroDelta) / mpPoint.position;
+				KfRight = (pidParams.kA * mpPoint.acceleration + pidParams.kV * mpPoint.velocity + pidParams.kG * gyroDelta) / mpPoint.position;
+			}
+			
 			for (CANTalonEncoder motorController : motorControllers) {
 				if (turnType == MPTurnType.TANK) {
 					if (motorController.isRight()) {
@@ -154,7 +169,7 @@ public class MPTalonPIDController
 				else if (turnType == MPTurnType.RIGHT_SIDE_ONLY) {
 					if (motorController.isRight()) {
 						motorController.setF(KfRight);
-						motorController.setWorld(mpPoint.position);
+						motorController.setWorld(-mpPoint.position);
 					}
 				}
 			}

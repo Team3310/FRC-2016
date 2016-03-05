@@ -18,7 +18,7 @@ public class Shooter extends Subsystem implements ControlLoopable
 	public static final double WINCH_SAFE_RELEASE_SPEED = 0.5;
 	public static final double WINCH_RETRACT_SPEED = 1.0;
 	public static final double WINCH_SPOOLOUT_SPEED = -1.0;
-	public static final double MAX_WINCH_CURRENT = 50.0;
+	public static final double MAX_WINCH_CURRENT = 30.0;
 	public static final double SAFE_RELEASE_WINCH_CURRENT = 10.0;
 	public static final double WINCH_SPOOLOUT_DISTANCE = -11.2;
 

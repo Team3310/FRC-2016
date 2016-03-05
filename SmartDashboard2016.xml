@@ -1,9 +1,18 @@
 <xml version="1.0">
 <dashboard>
-	<widget field="Left Drive Delta" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
-		<location x="5" y="436"/>
-		<width>808</width>
-		<height>241</height>
+	<widget field="Gyro Delta" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="1" y="437"/>
+		<width>810</width>
+		<height>252</height>
+	</widget>
+	<widget field="CDF Sensor" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="67"/>
+	</widget>
+	<widget field="MotionProfile Turn Absolute" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="425" y="382"/>
+	</widget>
+	<widget field="MotionProfile Turn Relative" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="429" y="408"/>
 	</widget>
 	<widget field="Yaw Angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="118" y="406"/>
@@ -13,9 +22,6 @@
 	</widget>
 	<widget field="Winch Output Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="360" y="297"/>
-	</widget>
-	<widget field="MotionProfile Turn" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
-		<location x="468" y="407"/>
 	</widget>
 	<widget field="MotionProfile Arm Zero Position" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
 		<location x="254" y="351"/>
@@ -188,4 +194,6 @@
 </dashboard>
 <live-window>
 </live-window>
+	<hidden field="MotionProfile Turn"/>
+	<hidden field="Left Drive Delta"/>
 </xml>

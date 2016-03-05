@@ -11,6 +11,7 @@ import edu.rhhs.frc.utility.MotionProfilePoint;
 import edu.rhhs.frc.utility.PIDParams;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -44,6 +45,7 @@ public class Manipulator extends Subsystem implements ControlLoopable
 	private PIDParams mpPIDParams = new PIDParams(4.0, 0.0, 0, 0.0, 0.2);
 	private boolean isAtTarget = true;
 	private Attachment attachment;
+//	private DigitalInput cdfSensor;
 	
 	public Manipulator() {
 		try {
@@ -61,6 +63,8 @@ public class Manipulator extends Subsystem implements ControlLoopable
 	
 			motorControllers.add(leftArm);
 			motorControllers.add(rightArm);
+			
+//			cdfSensor = new DigitalInput(RobotMap.CDF_SENSOR_DIO_PORT_ID);
 			
 			mpPIDParams.iZone = 128;
 		}
@@ -108,12 +112,12 @@ public class Manipulator extends Subsystem implements ControlLoopable
 		mpController.setZeroPosition();
 	}
 	
-	public void getRightArmAngle() {
-		rightArm.getPositionWorld();
+	public double getRightArmAngle() {
+		return rightArm.getPositionWorld();
 	}
 	
-	public void getLeftArmAngle() {
-		leftArm.getPositionWorld();
+	public double getLeftArmAngle() {
+		return leftArm.getPositionWorld();
 	}
 	
 	public void setArmSpeed(double speed) {
@@ -149,6 +153,7 @@ public class Manipulator extends Subsystem implements ControlLoopable
 		if (operationMode == RobotMain.OperationMode.TEST) {
 			SmartDashboard.putNumber("Left Arm", leftArm.getPositionWorld());
 			SmartDashboard.putNumber("Right Arm", rightArm.getPositionWorld());
+//			SmartDashboard.putBoolean("CDF Sensor", cdfSensor.get());
 //			MotionProfilePoint mpPoint = mpController.getCurrentPoint(); 
 //			double delta = mpPoint != null ? rightArm.getPositionWorld() - mpController.getCurrentPoint().position : 0;
 //			SmartDashboard.putNumber("Right Arm Delta", delta);
