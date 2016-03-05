@@ -9,7 +9,7 @@ import edu.rhhs.frc.utility.BHRMathUtils;
 import edu.rhhs.frc.utility.CANTalonEncoder;
 import edu.rhhs.frc.utility.ControlLoopable;
 import edu.rhhs.frc.utility.MPSoftwarePIDController;
-import edu.rhhs.frc.utility.MPSoftwarePIDController.MPTurnType;
+import edu.rhhs.frc.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 import edu.rhhs.frc.utility.MPTalonPIDController;
 import edu.rhhs.frc.utility.MotionProfilePoint;
 import edu.rhhs.frc.utility.PIDParams;
@@ -26,12 +26,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DriveTrain extends Subsystem implements ControlLoopable
 {
-	public static enum DriveTrainControlMode { JOYSTICK, MP_STRAIGHT, MP_TURN, TEST };
+	public static enum DriveTrainControlMode { JOYSTICK, MP_STRAIGHT, MP_TURN, HOLD, TEST };
 	public static enum SpeedShiftState { HI, LO };
 	public static enum PTOShiftState { ENGAGED, DISENGAGED };
 
 	public static final double TRACK_WIDTH_INCHES = 20;
 	public static final double ENCODER_TICKS_TO_INCHES = 4096 / (4.0 * Math.PI); 
+	
+	public static final double VOLTAGE_RAMP_RATE = 24;  // Volts per second
 
 	// Motion profile max velocities and accel times
 	public static final double MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC = 60;
@@ -122,9 +124,11 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 	
 			leftDrive1.reverseSensor(true);
 			leftDrive1.reverseOutput(false);
+			leftDrive1.setVoltageRampRate(VOLTAGE_RAMP_RATE);
 			
 			rightDrive1.reverseSensor(false);
 			rightDrive1.reverseOutput(true);
+			rightDrive1.setVoltageRampRate(VOLTAGE_RAMP_RATE);
 			
 			leftDrive1.enableBrakeMode(true);
 			leftDrive2.enableBrakeMode(true);
@@ -162,19 +166,39 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 		return gyro.getRate();
 	}
 	
+	public void resetGyro() {
+		gyro.reset();
+	}
+	
+	public void calibrateGyro() {
+		System.err.println("Gyro starting calibration");
+		gyro.reset();
+		gyro.calibrate();
+		System.err.println("Gyro finished calibration");
+	}
+	
 	public void setStraightMP(double distanceInches, double maxVelocity, boolean useGyroLock, double desiredAbsoluteAngle) {
 		mpStraightController.setMPStraightTarget(0, distanceInches, maxVelocity, MP_STRAIGHT_T1, MP_STRAIGHT_T2, useGyroLock, BHRMathUtils.adjustAccumAngleToDesired(getGyroAngleDeg(), desiredAbsoluteAngle), true); 
 		setControlMode(DriveTrainControlMode.MP_STRAIGHT);
 	}
 	
-	public void setRelativeTurnMP(double relativeTurnAngleDeg, double turnRateDegPerSec, MPTurnType turnType) {
+	public void setRelativeTurnMP(double relativeTurnAngleDeg, double turnRateDegPerSec, MPSoftwareTurnType turnType) {
 		mpTurnController.setMPTurnTarget(getGyroAngleDeg(), relativeTurnAngleDeg + getGyroAngleDeg(), turnRateDegPerSec, MP_TURN_T1, MP_TURN_T2, turnType, TRACK_WIDTH_INCHES);
 		setControlMode(DriveTrainControlMode.MP_TURN);
 	}
 	
-	public void setAbsoluteTurnMP(double absoluteTurnAngleDeg, double turnRateDegPerSec, MPTurnType turnType) {
+	public void setAbsoluteTurnMP(double absoluteTurnAngleDeg, double turnRateDegPerSec, MPSoftwareTurnType turnType) {
 		mpTurnController.setMPTurnTarget(getGyroAngleDeg(), BHRMathUtils.adjustAccumAngleToDesired(getGyroAngleDeg(), absoluteTurnAngleDeg), turnRateDegPerSec, MP_TURN_T1, MP_TURN_T2, turnType, TRACK_WIDTH_INCHES);
 		setControlMode(DriveTrainControlMode.MP_TURN);
+	}
+	
+	public void setDriveHold(boolean status) {
+		if (status) {
+			setControlMode(DriveTrainControlMode.HOLD);
+		}
+		else {
+			setControlMode(DriveTrainControlMode.JOYSTICK);
+		}
 	}
 	
 	public void setControlMode(DriveTrainControlMode controlMode) {
@@ -186,6 +210,14 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 		else if (controlMode == DriveTrainControlMode.TEST) {
 			leftDrive1.changeControlMode(TalonControlMode.PercentVbus);
 			rightDrive1.changeControlMode(TalonControlMode.PercentVbus);
+		}
+		else if (controlMode == DriveTrainControlMode.HOLD) {
+			leftDrive1.changeControlMode(TalonControlMode.Position);
+			leftDrive1.setPosition(0);
+			leftDrive1.set(0);
+			rightDrive1.changeControlMode(TalonControlMode.Position);
+			rightDrive1.setPosition(0);
+			rightDrive1.set(0);
 		}
 		isFinished = false;
 	}
@@ -286,7 +318,7 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 		
 		if (useGyroLock) {
 			double yawError = gyroLockAngleDeg - getGyroAngleDeg();
-			m_steerOutput = m_steerOutput * 0.1 + kPGyro * yawError;
+			m_steerOutput = kPGyro * yawError;
 		}
 		
 		m_drive.arcadeDrive(m_moveOutput, m_steerOutput);
@@ -400,6 +432,8 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 			try {
 				SmartDashboard.putNumber("Right Drive", rightDrive1.getPositionWorld());
 				SmartDashboard.putNumber("Left Drive", leftDrive1.getPositionWorld());
+				SmartDashboard.putNumber("Right Drive ft/sec", rightDrive1.getVelocityWorld() / 12);
+				SmartDashboard.putNumber("Left Drive ft/sec", leftDrive1.getVelocityWorld() / 12);
 				SmartDashboard.putNumber("Left Drive 1 Current", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR1_CAN_ID-2));
 				SmartDashboard.putNumber("Left Drive 2 Current", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR2_CAN_ID-2));
 				SmartDashboard.putNumber("Left Drive 3 Current", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR3_CAN_ID-2));

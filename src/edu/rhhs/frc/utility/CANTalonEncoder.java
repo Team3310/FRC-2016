@@ -1,5 +1,6 @@
 package edu.rhhs.frc.utility;
 
+import edu.rhhs.frc.RobotMap;
 import edu.wpi.first.wpilibj.CANTalon;
 
 public class CANTalonEncoder extends CANTalon
@@ -44,5 +45,9 @@ public class CANTalonEncoder extends CANTalon
     
     public double getPositionWorld() {
     	return convertEncoderTicksToWorld(this.getPosition());
+    }
+    
+    public double getVelocityWorld() {
+    	return convertEncoderTicksToWorld(this.getSpeed() * 0.1);
     }
 }

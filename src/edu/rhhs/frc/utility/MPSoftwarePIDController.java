@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 
 public class MPSoftwarePIDController
 {	
-	public static enum MPTurnType { TANK, LEFT_SIDE_ONLY, RIGHT_SIDE_ONLY };
+	public static enum MPSoftwareTurnType { TANK, LEFT_SIDE_ONLY, RIGHT_SIDE_ONLY };
 
 	protected ArrayList<CANTalonEncoder> motorControllers;	
 	protected long periodMs;
@@ -16,7 +16,7 @@ public class MPSoftwarePIDController
 	protected boolean useGyroLock;
 	protected double startGyroAngle;
 	protected double targetGyroAngle;
-	protected MPTurnType turnType;
+	protected MPSoftwareTurnType turnType;
 	
 	public MPSoftwarePIDController(long periodMs, PIDParams pidParams, ArrayList<CANTalonEncoder> motorControllers) 
 	{
@@ -29,7 +29,7 @@ public class MPSoftwarePIDController
 		this.pidParams = pidParams;
 	}
 	
-	public void setMPTurnTarget(double startAngleDeg, double targetAngleDeg, double maxTurnRateDegPerSec, double t1, double t2, MPTurnType turnType, double trackWidth) {
+	public void setMPTurnTarget(double startAngleDeg, double targetAngleDeg, double maxTurnRateDegPerSec, double t1, double t2, MPSoftwareTurnType turnType, double trackWidth) {
 		this.turnType = turnType;
 		this.startGyroAngle = startAngleDeg;
 		this.targetGyroAngle = targetAngleDeg;
@@ -54,15 +54,35 @@ public class MPSoftwarePIDController
 			return true;
 		}
 		
-		// Update the set points and Kf gains
+		// Calculate the motion profile feed forward and error feedback terms
 		double error = mpPoint.position - currentGyroAngle;
-
-		// Calculate the motion profile feed forward and gyro feedback terms
 		double output =  pidParams.kP * error + pidParams.kA * mpPoint.acceleration + pidParams.kV * mpPoint.velocity;
 		
-		// Update the controllers Kf and set point.
-		for (CANTalonEncoder motorController : motorControllers) {
-			motorController.set(-output);
+		// Update the controllers set point.
+		if (turnType == MPSoftwareTurnType.TANK) {
+			for (CANTalonEncoder motorController : motorControllers) {
+				motorController.set(-output);
+			}
+		}
+		else if (turnType == MPSoftwareTurnType.LEFT_SIDE_ONLY) {
+			for (CANTalonEncoder motorController : motorControllers) {
+				if (motorController.isRight()) {
+					motorController.set(0);
+				}
+				else {
+					motorController.set(-2.0 * output);					
+				}
+			}
+		}
+		else if (turnType == MPSoftwareTurnType.RIGHT_SIDE_ONLY) {
+			for (CANTalonEncoder motorController : motorControllers) {
+				if (motorController.isRight()) {
+					motorController.set(-2.0 * output);
+				}
+				else {
+					motorController.set(0);					
+				}
+			}
 		}
 		
 		return false;

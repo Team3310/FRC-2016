@@ -2,15 +2,15 @@ package edu.rhhs.frc.commands;
 
 import edu.rhhs.frc.RobotMain;
 import edu.rhhs.frc.subsystems.DriveTrain.DriveTrainControlMode;
-import edu.rhhs.frc.utility.MPSoftwarePIDController.MPTurnType;
+import edu.rhhs.frc.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class DriveTrainAbsoluteTurnMP extends Command
 {
 	private double absoluteTurnAngleDeg, maxTurnRateDegPerSec;
-	private MPTurnType turnType;
+	private MPSoftwareTurnType turnType;
 
-	public DriveTrainAbsoluteTurnMP(double absoluteTurnAngleDeg, double maxTurnRateDegPerSec, MPTurnType turnType) {
+	public DriveTrainAbsoluteTurnMP(double absoluteTurnAngleDeg, double maxTurnRateDegPerSec, MPSoftwareTurnType turnType) {
 		requires(RobotMain.driveTrain);
 		this.absoluteTurnAngleDeg = absoluteTurnAngleDeg;
 		this.maxTurnRateDegPerSec = maxTurnRateDegPerSec;

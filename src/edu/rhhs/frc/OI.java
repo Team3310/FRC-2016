@@ -4,7 +4,10 @@ import edu.rhhs.frc.buttons.DigitalIOSwitch;
 import edu.rhhs.frc.buttons.XBoxDPadTriggerButton;
 import edu.rhhs.frc.buttons.XBoxTriggerButton;
 import edu.rhhs.frc.commands.DriveTrainAbsoluteTurnMP;
+import edu.rhhs.frc.commands.DriveTrainGyroCalibrate;
 import edu.rhhs.frc.commands.DriveTrainGyroLock;
+import edu.rhhs.frc.commands.DriveTrainGyroReset;
+import edu.rhhs.frc.commands.DriveTrainHold;
 import edu.rhhs.frc.commands.DriveTrainPTOShift;
 import edu.rhhs.frc.commands.DriveTrainRelativeTurnMP;
 import edu.rhhs.frc.commands.DriveTrainSpeed;
@@ -37,7 +40,7 @@ import edu.rhhs.frc.subsystems.Intake.LiftState;
 import edu.rhhs.frc.subsystems.Manipulator.PresetPositions;
 import edu.rhhs.frc.subsystems.Shooter.CarriageState;
 import edu.rhhs.frc.subsystems.Shooter.ShotPosition;
-import edu.rhhs.frc.utility.MPSoftwarePIDController.MPTurnType;
+import edu.rhhs.frc.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.InternalButton;
@@ -260,11 +263,11 @@ public class OI
 		SmartDashboard.putData("MotionProfile Drive", driveMP);
 		
 		Button turnRelativeMP = new InternalButton();
-		turnRelativeMP.whenPressed(new DriveTrainRelativeTurnMP(90, DriveTrain.MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC, MPTurnType.TANK));
+		turnRelativeMP.whenPressed(new DriveTrainRelativeTurnMP(90, DriveTrain.MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC, MPSoftwareTurnType.TANK));
 		SmartDashboard.putData("MotionProfile Turn Relative", turnRelativeMP);
 		
 		Button turnAbsoluteMP = new InternalButton();
-		turnAbsoluteMP.whenPressed(new DriveTrainAbsoluteTurnMP(0, DriveTrain.MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC, MPTurnType.TANK));
+		turnAbsoluteMP.whenPressed(new DriveTrainAbsoluteTurnMP(0, DriveTrain.MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC, MPSoftwareTurnType.TANK));
 		SmartDashboard.putData("MotionProfile Turn Absolute", turnAbsoluteMP);
 		
 		Button armMPDeploy = new InternalButton();
@@ -286,6 +289,22 @@ public class OI
 		Button resetArmZero = new InternalButton();
 		resetArmZero.whenPressed(new ManipulatorResetZero());
 		SmartDashboard.putData("Reset Arm Zero", resetArmZero);
+		
+		Button gyroReset = new InternalButton();
+		gyroReset.whenPressed(new DriveTrainGyroReset());
+		SmartDashboard.putData("Gyro Reset", gyroReset);
+		
+		Button gyroCalibrate = new InternalButton();
+		gyroCalibrate.whenPressed(new DriveTrainGyroCalibrate());
+		SmartDashboard.putData("Gyro Calibrate", gyroCalibrate);
+		
+		Button drivetrainHoldOn = new InternalButton();
+		drivetrainHoldOn.whenPressed(new DriveTrainHold(true));
+		SmartDashboard.putData("Drive Hold On", drivetrainHoldOn);
+		
+		Button drivetrainHoldOff = new InternalButton();
+		drivetrainHoldOff.whenPressed(new DriveTrainHold(false));
+		SmartDashboard.putData("Drive Hold Off", drivetrainHoldOff);
 		
 		DigitalIOSwitch cdfSwitch = new DigitalIOSwitch(RobotMap.CDF_SENSOR_DIO_PORT_ID);
 		cdfSwitch.whenPressed(new ManipulatorMoveMP(PresetPositions.FULLY_DEPLOYED, true));

@@ -7,11 +7,9 @@ import edu.rhhs.frc.RobotMap;
 import edu.rhhs.frc.utility.CANTalonEncoder;
 import edu.rhhs.frc.utility.ControlLoopable;
 import edu.rhhs.frc.utility.MPTalonPIDController;
-import edu.rhhs.frc.utility.MotionProfilePoint;
 import edu.rhhs.frc.utility.PIDParams;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 

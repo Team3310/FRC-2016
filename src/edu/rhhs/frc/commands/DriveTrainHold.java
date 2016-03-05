@@ -3,19 +3,18 @@ package edu.rhhs.frc.commands;
 import edu.rhhs.frc.RobotMain;
 import edu.wpi.first.wpilibj.command.Command;
 
-public class DriveTrainGyroLock extends Command
+public class DriveTrainHold extends Command
 {
-	private boolean useLock, snapToAbsolute0or180;
+	private boolean status;
 	
-	public DriveTrainGyroLock(boolean useLock, boolean snapToAbsolute0or180) {
+	public DriveTrainHold(boolean status) {
 		requires(RobotMain.driveTrain);
-		this.useLock = useLock;
-		this.snapToAbsolute0or180 = snapToAbsolute0or180;
+		this.status = status;
 	}
 
 	@Override
 	protected void initialize() {
-		RobotMain.driveTrain.setGyroLock(useLock, snapToAbsolute0or180);;
+		RobotMain.driveTrain.setDriveHold(status);
 	}
 
 	@Override

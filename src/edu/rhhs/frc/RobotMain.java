@@ -1,6 +1,8 @@
 
 package edu.rhhs.frc;
 
+import edu.rhhs.frc.commands.auton.LowBarCrossAndReturn;
+import edu.rhhs.frc.commands.auton.LowBarShootOneHigh;
 import edu.rhhs.frc.subsystems.DriveTrain;
 import edu.rhhs.frc.subsystems.Intake;
 import edu.rhhs.frc.subsystems.Manipulator;
@@ -36,6 +38,7 @@ public class RobotMain extends IterativeRobot
 	private SendableChooser operationModeChooser;
 	private static OperationMode operationMode = OperationMode.TEST;
 	private SendableChooser manipulatorChooser;
+	private SendableChooser autonoumousChooser;
 
     private Command autonomousCommand;
 
@@ -49,16 +52,21 @@ public class RobotMain extends IterativeRobot
     	controlLoop.addLoopable(shooter);
 
 	    operationModeChooser = new SendableChooser();
-	    operationModeChooser.addDefault ("Test", OperationMode.TEST);
+	    operationModeChooser.addDefault("Test", OperationMode.TEST);
 	    operationModeChooser.addObject ("Competition", OperationMode.COMPETITION);
 		SmartDashboard.putData("Operation Mode", operationModeChooser);
 		
 		manipulatorChooser = new SendableChooser();
-		manipulatorChooser.addDefault ("Cheval de Frise", Manipulator.Attachment.CHEVAL_DE_FRISE);
+		manipulatorChooser.addDefault("Cheval de Frise", Manipulator.Attachment.CHEVAL_DE_FRISE);
 		manipulatorChooser.addObject ("Portcullis", Manipulator.Attachment.PORTCULLIS);
 		SmartDashboard.putData("Manipulator", manipulatorChooser);
 		
-        updateStatus();
+		autonoumousChooser = new SendableChooser();
+		autonoumousChooser.addDefault("Low bar shoot 1 high", new LowBarShootOneHigh());
+		autonoumousChooser.addObject ("Low bar cross and return", new LowBarCrossAndReturn());
+		SmartDashboard.putData("Autonomous", autonoumousChooser);
+		
+       updateStatus();
     }
 	
 	public void disabledPeriodic() {
@@ -83,13 +91,12 @@ public class RobotMain extends IterativeRobot
     }
 
     public void teleopInit() {
-    	updateChoosers();
-
     	// This makes sure that the autonomous stops running when
         // teleop starts running. If you want the autonomous to 
         // continue until interrupted by another command, remove
         // this line or comment it out.
         if (autonomousCommand != null) autonomousCommand.cancel();
+    	updateChoosers();
         controlLoop.start();
         updateStatus();
     }
@@ -116,6 +123,7 @@ public class RobotMain extends IterativeRobot
     private void updateChoosers() {
 		operationMode = (OperationMode)operationModeChooser.getSelected();
 		manipulator.setAttachment((Manipulator.Attachment)manipulatorChooser.getSelected());
+		autonomousCommand = (Command)autonoumousChooser.getSelected();
     }
     
     public void updateStatus() {

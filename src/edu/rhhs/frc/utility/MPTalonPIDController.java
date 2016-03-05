@@ -6,8 +6,8 @@ import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 
 public class MPTalonPIDController
 {	
-	public static enum MPControlMode { STRAIGHT, TURN };
-	public static enum MPTurnType { TANK, LEFT_SIDE_ONLY, RIGHT_SIDE_ONLY };
+	protected static enum MPControlMode { STRAIGHT, TURN };
+	public static enum MPTalonTurnType { TANK, LEFT_SIDE_ONLY, RIGHT_SIDE_ONLY };
 
 	protected ArrayList<CANTalonEncoder> motorControllers;	
 	protected long periodMs;
@@ -19,7 +19,7 @@ public class MPTalonPIDController
 	protected double targetGyroAngle;
 	protected double trackDistance;
 	protected MPControlMode controlMode;
-	protected MPTurnType turnType;
+	protected MPTalonTurnType turnType;
 	
 	public MPTalonPIDController(long periodMs, PIDParams pidParams, ArrayList<CANTalonEncoder> motorControllers) 
 	{
@@ -60,7 +60,7 @@ public class MPTalonPIDController
 		}
 	}
 	
-	public void setMPTurnTarget(double startAngleDeg, double targetAngleDeg, double maxTurnRateDegPerSec, double t1, double t2, MPTurnType turnType, double trackWidth) {
+	public void setMPTurnTarget(double startAngleDeg, double targetAngleDeg, double maxTurnRateDegPerSec, double t1, double t2, MPTalonTurnType turnType, double trackWidth) {
 		controlMode = MPControlMode.TURN;
 		this.turnType = turnType;
 		this.startGyroAngle = startAngleDeg;
@@ -82,15 +82,15 @@ public class MPTalonPIDController
 		}
 	}
 	
-	private double calcTrackDistance(double deltaAngleDeg, MPTurnType turnType, double trackWidth) {
+	private double calcTrackDistance(double deltaAngleDeg, MPTalonTurnType turnType, double trackWidth) {
 		double trackDistance = deltaAngleDeg / 360.0 * Math.PI * trackWidth;
-		if (turnType == MPTurnType.TANK) {
+		if (turnType == MPTalonTurnType.TANK) {
 			return trackDistance;
 		}
-		else if (turnType == MPTurnType.LEFT_SIDE_ONLY) {
+		else if (turnType == MPTalonTurnType.LEFT_SIDE_ONLY) {
 			return trackDistance * 2.0;
 		}
-		else if (turnType == MPTurnType.RIGHT_SIDE_ONLY) {
+		else if (turnType == MPTalonTurnType.RIGHT_SIDE_ONLY) {
 			return -trackDistance * 2.0;
 		}
 		return 0.0;
@@ -150,7 +150,7 @@ public class MPTalonPIDController
 			}
 			
 			for (CANTalonEncoder motorController : motorControllers) {
-				if (turnType == MPTurnType.TANK) {
+				if (turnType == MPTalonTurnType.TANK) {
 					if (motorController.isRight()) {
 						motorController.setF(KfRight);
 						motorController.setWorld(-mpPoint.position);
@@ -160,13 +160,13 @@ public class MPTalonPIDController
 						motorController.setWorld(mpPoint.position);
 					}
 				}
-				else if (turnType == MPTurnType.LEFT_SIDE_ONLY) {
+				else if (turnType == MPTalonTurnType.LEFT_SIDE_ONLY) {
 					if (!motorController.isRight()) {
 						motorController.setF(KfLeft);
 						motorController.setWorld(mpPoint.position);
 					}
 				}
-				else if (turnType == MPTurnType.RIGHT_SIDE_ONLY) {
+				else if (turnType == MPTalonTurnType.RIGHT_SIDE_ONLY) {
 					if (motorController.isRight()) {
 						motorController.setF(KfRight);
 						motorController.setWorld(-mpPoint.position);
