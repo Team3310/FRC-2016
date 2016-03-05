@@ -6,6 +6,7 @@ import com.ni.vision.NIVision.Image;
 import com.ni.vision.NIVision.ShapeMode;
 
 import edu.rhhs.frc.RobotMain;
+import edu.rhhs.frc.vision.ImageProcessor;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.vision.USBCamera;
@@ -43,6 +44,13 @@ public class Camera extends Subsystem
                 DrawMode.DRAW_VALUE, ShapeMode.SHAPE_OVAL, 0.0f);
         
         CameraServer.getInstance().setImage(currentImage);
+	}
+	
+	public void locateBestTarget() {
+		targetCam.getImage(currentImage);
+		
+        ImageProcessor imageProcessor = new ImageProcessor();
+//        imageProcessor.findBestTarget(currentImage, null);
 	}
 	
 	public void updateStatus(RobotMain.OperationMode operationMode) {
