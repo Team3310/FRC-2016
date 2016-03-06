@@ -2,6 +2,7 @@ package edu.rhhs.frc.vision;
 
 import com.ni.vision.NIVision;
 import com.ni.vision.NIVision.Image;
+import com.ni.vision.NIVision.ImageType;
 import com.ni.vision.NIVision.ParticleFilterCriteria2;
 
 import edu.wpi.first.wpilibj.image.BinaryImage;
@@ -51,7 +52,7 @@ public class ImageProcessor {
     	
     }
 
-    public TargetInfo findBestTarget(ColorImage cameraImage, String outputFilename) { 
+    public TargetInfo findBestTarget(Image cameraImage, String outputFilename) { 
     	ParticleAnalysisReport[] reports = identifyRectangularTargets(cameraImage, outputFilename);
     	
     	ParticleAnalysisReport bestTarget = null;
@@ -68,21 +69,21 @@ public class ImageProcessor {
     }
  
     
-    private ParticleAnalysisReport[] identifyRectangularTargets(ColorImage originalImage, String outputFilename) {
-        if (originalImage == null) {
+    private ParticleAnalysisReport[] identifyRectangularTargets(Image cameraImage, String outputFilename) {
+        if (cameraImage == null) {
             return null;
         }
 
-        BinaryImage thresholdImage = null;
-        BinaryImage bigObjectsImage = null;
+        Image thresholdImage = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
+        Image bigObjectsImage = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
         ParticleAnalysisReport[] reports = null;
         try {
-            thresholdImage = originalImage.thresholdHSL(THRESHOLD_HUE_MIN, THRESHOLD_HUE_MAX, THRESHOLD_SATURATION_MIN, THRESHOLD_SATURATION_MAX, THRESHOLD_LUMINANCE_MIN, THRESHOLD_LUMINANCE_MAX);
+//        	NIVision.imaqColorThreshold(thresholdImage, cameraImage, THRESHOLD_HUE_MIN, THRESHOLD_HUE_MAX, THRESHOLD_SATURATION_MIN, THRESHOLD_SATURATION_MAX, THRESHOLD_LUMINANCE_MIN, THRESHOLD_LUMINANCE_MAX);
             if (thresholdImage == null) {
                 return null;
             }
             
-            bigObjectsImage = thresholdImage.removeSmallObjects(true, NUM_SMALL_OBJECT_EROSIONS);
+//            bigObjectsImage = thresholdImage.removeSmallObjects(true, NUM_SMALL_OBJECT_EROSIONS);
             if (bigObjectsImage == null) {
                 return null;
             }
@@ -91,31 +92,31 @@ public class ImageProcessor {
             ParticleFilterCriteria2[] particleSearchCriteriaCollection = new ParticleFilterCriteria2[2];
             particleSearchCriteriaCollection[0] = new ParticleFilterCriteria2(NIVision.MeasurementType.MT_BOUNDING_RECT_WIDTH, PARTICLE_SEARCH_WIDTH_MIN, PARTICLE_SEARCH_WIDTH_MAX, 0, 0);
             particleSearchCriteriaCollection[1] = new ParticleFilterCriteria2(NIVision.MeasurementType.MT_BOUNDING_RECT_HEIGHT, PARTICLE_SEARCH_HEIGHT_MIN, PARTICLE_SEARCH_HEIGHT_MAX, 0, 0);
-            bigObjectsImage.particleFilter(particleSearchCriteriaCollection);
+//            bigObjectsImage.particleFilter(particleSearchCriteriaCollection);
 
             // Get the particle reports
-            reports = bigObjectsImage.getOrderedParticleAnalysisReports();
+//            reports = bigObjectsImage.getOrderedParticleAnalysisReports();
            
             if (outputFilename != null) {
-            	bigObjectsImage.write(outputFilename);
-                System.out.println("Processed Image Saved = " + outputFilename + ", size = " + bigObjectsImage.getHeight() + "X" + bigObjectsImage.getWidth());
+//            	bigObjectsImage.write(outputFilename);
+//                System.out.println("Processed Image Saved = " + outputFilename + ", size = " + bigObjectsImage.getHeight() + "X" + bigObjectsImage.getWidth());
             }
         } 
-        catch (NIVisionException e) {
-            System.err.println("NIVision error = " + e.getMessage());            
-        } 
+//        catch (NIVisionException e) {
+//            System.err.println("NIVision error = " + e.getMessage());            
+//        } 
         finally {
-            try {
-                if (thresholdImage != null) {
-                    thresholdImage.free();
-                }
-                if (bigObjectsImage != null) {
-                    bigObjectsImage.free();
-                }
-            }
-            catch (NIVisionException e) {
-                System.err.println("Error freeing image = " + e.getMessage());            
-            }
+//            try {
+//                if (thresholdImage != null) {
+//                    thresholdImage.free();
+//                }
+//                if (bigObjectsImage != null) {
+//                    bigObjectsImage.free();
+//                }
+//            }
+//            catch (NIVisionException e) {
+//                System.err.println("Error freeing image = " + e.getMessage());            
+//            }
         }
 
         return reports;

@@ -3,6 +3,8 @@ package edu.rhhs.frc;
 import edu.rhhs.frc.buttons.DigitalIOSwitch;
 import edu.rhhs.frc.buttons.XBoxDPadTriggerButton;
 import edu.rhhs.frc.buttons.XBoxTriggerButton;
+import edu.rhhs.frc.commands.CameraSaveImage;
+import edu.rhhs.frc.commands.CameraUpdateDashboard;
 import edu.rhhs.frc.commands.DriveTrainAbsoluteTurnMP;
 import edu.rhhs.frc.commands.DriveTrainGyroCalibrate;
 import edu.rhhs.frc.commands.DriveTrainGyroLock;
@@ -83,7 +85,7 @@ public class OI
         intakeFullyRetract1.whenPressed(new IntakeFullyRetract());
 
         JoystickButton gyroLock = new JoystickButton(m_driverJoystickTurn, 1);
-        gyroLock.whenPressed(new DriveTrainGyroLock(true, true));
+        gyroLock.whenPressed(new DriveTrainGyroLock(true, false));
         gyroLock.whenReleased(new DriveTrainGyroLock(false, false));
 
         JoystickButton manipulatorPartiallyDeploy1 = new JoystickButton(m_driverJoystickTurn, 3);
@@ -263,7 +265,7 @@ public class OI
 		SmartDashboard.putData("MotionProfile Drive", driveMP);
 		
 		Button turnRelativeMP = new InternalButton();
-		turnRelativeMP.whenPressed(new DriveTrainRelativeTurnMP(90, DriveTrain.MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC, MPSoftwareTurnType.TANK));
+		turnRelativeMP.whenPressed(new DriveTrainRelativeTurnMP(-90, DriveTrain.MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC, MPSoftwareTurnType.RIGHT_SIDE_ONLY));
 		SmartDashboard.putData("MotionProfile Turn Relative", turnRelativeMP);
 		
 		Button turnAbsoluteMP = new InternalButton();
@@ -305,6 +307,14 @@ public class OI
 		Button drivetrainHoldOff = new InternalButton();
 		drivetrainHoldOff.whenPressed(new DriveTrainHold(false));
 		SmartDashboard.putData("Drive Hold Off", drivetrainHoldOff);
+		
+		Button cameraUpdateDashboard = new InternalButton();
+		cameraUpdateDashboard.whenPressed(new CameraUpdateDashboard());
+		SmartDashboard.putData("Camera Update Dashboard", cameraUpdateDashboard);
+		
+		Button cameraSaveImage = new InternalButton();
+		cameraSaveImage.whenPressed(new CameraSaveImage());
+		SmartDashboard.putData("Camera Save Image", cameraSaveImage);
 		
 		DigitalIOSwitch cdfSwitch = new DigitalIOSwitch(RobotMap.CDF_SENSOR_DIO_PORT_ID);
 		cdfSwitch.whenPressed(new ManipulatorMoveMP(PresetPositions.FULLY_DEPLOYED, true));

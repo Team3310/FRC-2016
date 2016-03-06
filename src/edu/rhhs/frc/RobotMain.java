@@ -3,6 +3,8 @@ package edu.rhhs.frc;
 
 import edu.rhhs.frc.commands.auton.LowBarCrossAndReturn;
 import edu.rhhs.frc.commands.auton.LowBarShootOneHigh;
+import edu.rhhs.frc.commands.auton.MoatCrossAndReturn;
+import edu.rhhs.frc.subsystems.Camera;
 import edu.rhhs.frc.subsystems.DriveTrain;
 import edu.rhhs.frc.subsystems.Intake;
 import edu.rhhs.frc.subsystems.Manipulator;
@@ -31,6 +33,7 @@ public class RobotMain extends IterativeRobot
 	public static final Manipulator manipulator = new Manipulator();	
 	public static final ControlLooper controlLoop = new ControlLooper("Main control loop", 10);
 	public static final PowerDistributionPanel pdp = new PowerDistributionPanel();
+	public static final Camera camera = new Camera();
 
 	public static OI oi;
 	
@@ -64,6 +67,7 @@ public class RobotMain extends IterativeRobot
 		autonoumousChooser = new SendableChooser();
 		autonoumousChooser.addDefault("Low bar shoot 1 high", new LowBarShootOneHigh());
 		autonoumousChooser.addObject ("Low bar cross and return", new LowBarCrossAndReturn());
+		autonoumousChooser.addObject ("Moat cross and return", new MoatCrossAndReturn());
 		SmartDashboard.putData("Autonomous", autonoumousChooser);
 		
        updateStatus();
@@ -131,5 +135,6 @@ public class RobotMain extends IterativeRobot
     	intake.updateStatus(operationMode);
     	manipulator.updateStatus(operationMode);
     	shooter.updateStatus(operationMode);
+    	camera.updateStatus(operationMode);
     }
 }

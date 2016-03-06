@@ -1,12 +1,33 @@
 <xml version="1.0">
 <dashboard>
-	<widget field="Gyro Delta" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
-		<location x="1" y="437"/>
-		<width>810</width>
-		<height>252</height>
+	<widget field="MotionProfile Turn" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="0" y="184"/>
 	</widget>
-	<widget field="CDF Sensor" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="67"/>
+	<widget field="Gyro Delta" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="6" y="439"/>
+		<width>805</width>
+		<height>253</height>
+	</widget>
+	<widget field="Left Drive ft-sec" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="816" y="460"/>
+	</widget>
+	<widget field="Right Drive ft-sec" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="994" y="460"/>
+	</widget>
+	<widget field="Drive Hold Off" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="0" y="160"/>
+	</widget>
+	<widget field="Drive Hold On" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="0" y="136"/>
+	</widget>
+	<widget field="Gyro Calibrate" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="0" y="112"/>
+	</widget>
+	<widget field="Gyro Reset" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="0" y="88"/>
+	</widget>
+	<widget field="Autonomous" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="217" y="93"/>
 	</widget>
 	<widget field="MotionProfile Turn Absolute" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
 		<location x="425" y="382"/>
@@ -64,7 +85,7 @@
 		<height>23</height>
 	</widget>
 	<widget field="Right Drive" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="966" y="433"/>
+		<location x="1023" y="434"/>
 	</widget>
 	<widget field="Reset Arm Zero" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
 		<location x="597" y="323"/>
@@ -103,7 +124,7 @@
 		<location x="10" y="326"/>
 	</widget>
 	<widget field="Left Drive" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="820" y="436"/>
+		<location x="846" y="436"/>
 	</widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Label">
 		<location x="933" y="263"/>
@@ -194,6 +215,5 @@
 </dashboard>
 <live-window>
 </live-window>
-	<hidden field="MotionProfile Turn"/>
-	<hidden field="Left Drive Delta"/>
+	<hidden field="CDF Sensor"/>
 </xml>
