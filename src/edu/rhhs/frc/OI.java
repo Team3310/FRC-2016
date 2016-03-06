@@ -3,6 +3,7 @@ package edu.rhhs.frc;
 import edu.rhhs.frc.buttons.DigitalIOSwitch;
 import edu.rhhs.frc.buttons.XBoxDPadTriggerButton;
 import edu.rhhs.frc.buttons.XBoxTriggerButton;
+import edu.rhhs.frc.commands.CameraReadAndProcessImage;
 import edu.rhhs.frc.commands.CameraSaveImage;
 import edu.rhhs.frc.commands.CameraUpdateDashboard;
 import edu.rhhs.frc.commands.DriveTrainAbsoluteTurnMP;
@@ -315,6 +316,10 @@ public class OI
 		Button cameraSaveImage = new InternalButton();
 		cameraSaveImage.whenPressed(new CameraSaveImage());
 		SmartDashboard.putData("Camera Save Image", cameraSaveImage);
+		
+		Button cameraReadImage = new InternalButton();
+		cameraReadImage.whenPressed(new CameraReadAndProcessImage());
+		SmartDashboard.putData("Camera Read Image", cameraReadImage);
 		
 		DigitalIOSwitch cdfSwitch = new DigitalIOSwitch(RobotMap.CDF_SENSOR_DIO_PORT_ID);
 		cdfSwitch.whenPressed(new ManipulatorMoveMP(PresetPositions.FULLY_DEPLOYED, true));
