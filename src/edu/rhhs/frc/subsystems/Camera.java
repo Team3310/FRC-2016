@@ -7,9 +7,9 @@ import com.ni.vision.NIVision.ShapeMode;
 
 import edu.rhhs.frc.RobotMain;
 import edu.rhhs.frc.vision.ImageProcessor;
+import edu.rhhs.frc.vision.ImageProcessor.TargetInfo;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.image.NIVisionException;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.vision.USBCamera;
 
@@ -17,6 +17,8 @@ public class Camera extends Subsystem
 {	
     private USBCamera targetCam;
     private int imageCounter = 0;
+    private ImageProcessor imageProcessor;
+    private TargetInfo bestTarget;
 
     public Camera() {
 		try {
@@ -25,6 +27,8 @@ public class Camera extends Subsystem
 	    	targetCam.setExposureManual(0);
 	    	targetCam.updateSettings();
 	    	targetCam.startCapture();
+	    	
+	    	imageProcessor = new ImageProcessor();
 		} 
 		catch (Exception e) {
 			System.err.println("An error occurred in the Camera constructor");
@@ -51,6 +55,20 @@ public class Camera extends Subsystem
         }
 	}
 	
+	public void readAndProcessImage() {
+    	Image fileImage = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
+		NIVision.imaqReadFile(fileImage, "/home/lvuser/image" + imageCounter + ".jpg");
+		
+        bestTarget = imageProcessor.findBestTarget(fileImage);
+        CameraServer.getInstance().setImage(fileImage);
+        
+		imageCounter++;
+
+		if (fileImage != null) {
+        	fileImage.free();
+        }
+	}
+	
 	public void writeImage() {
     	Image currentImage = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
 		targetCam.getImage(currentImage);
@@ -65,16 +83,12 @@ public class Camera extends Subsystem
         }
 	}
 	
-	public void locateBestTarget() {
-//		targetCam.getImage(currentImage);
-		
-        ImageProcessor imageProcessor = new ImageProcessor();
-//        imageProcessor.findBestTarget(currentImage, null);
-	}
-	
 	public void updateStatus(RobotMain.OperationMode operationMode) {
 		if (operationMode == RobotMain.OperationMode.TEST) {
 			SmartDashboard.putNumber("Image counter", imageCounter);
+			SmartDashboard.putNumber("Camera distance", bestTarget == null ? 0.0 : bestTarget.distanceToTargetFt);
+			SmartDashboard.putNumber("Camera angle",  bestTarget == null ? 0.0 : bestTarget.angleToTargetDeg);
+			SmartDashboard.putNumber("Camera score",  bestTarget == null ? 0.0 : bestTarget.compositeScore);
 		}
 	}
 }
