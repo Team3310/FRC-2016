@@ -1,5 +1,20 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="Image counter" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="256"/>
+	</widget>
+	<widget field="Camera Save Image" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="0" y="232"/>
+	</widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.WebcamViewerExtension">
+		<location x="830" y="431"/>
+	</static-widget>
+	<widget field="Camera Update Dashboard" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="0" y="208"/>
+	</widget>
+	<widget field="Drivetrain Hold On" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="67"/>
+	</widget>
 	<widget field="MotionProfile Turn" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
 		<location x="0" y="184"/>
 	</widget>
@@ -215,5 +230,4 @@
 </dashboard>
 <live-window>
 </live-window>
-	<hidden field="CDF Sensor"/>
 </xml>
