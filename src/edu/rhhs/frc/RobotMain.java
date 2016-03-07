@@ -5,6 +5,8 @@ import java.util.Hashtable;
 
 import edu.rhhs.frc.commands.auton.LowBarCrossAndReturn;
 import edu.rhhs.frc.commands.auton.LowBarShootHigh;
+import edu.rhhs.frc.commands.auton.MoatPosition2CenterShootLeft;
+import edu.rhhs.frc.commands.auton.MoatPosition3CenterShootCenter;
 import edu.rhhs.frc.subsystems.Camera;
 import edu.rhhs.frc.subsystems.DriveTrain;
 import edu.rhhs.frc.subsystems.Intake;
@@ -44,7 +46,7 @@ public class RobotMain extends IterativeRobot
 
 	public static enum AutonPosition { LOW_BAR, TWO, THREE, FOUR, FIVE };
 	public static enum AutonDefense { LOW_BAR, PORTCULLIS, RAMPARTS, MOAT, ROCKWALL, ROUGH_TERRAIN };
-	public static enum AutonTask { SHOOT_HIGH, CROSS_AND_RETURN };
+	public static enum AutonTask { SHOOT_LEFT_HIGH, SHOOT_CENTER_HIGH, SHOOT_RIGHT_HIGH, CROSS_AND_RETURN };
 	
 	private Hashtable<String, Command> autonCommandTable = new Hashtable<String, Command>();
 
@@ -92,7 +94,9 @@ public class RobotMain extends IterativeRobot
 		SmartDashboard.putData("AutonDefense", autonDefenseChooser);
 				
 		autonTaskChooser = new SendableChooser();
-		autonTaskChooser.addDefault("Shoot high", AutonTask.SHOOT_HIGH);
+		autonTaskChooser.addDefault("Shoot left high", AutonTask.SHOOT_LEFT_HIGH);
+		autonTaskChooser.addDefault("Shoot center high", AutonTask.SHOOT_CENTER_HIGH);
+		autonTaskChooser.addDefault("Shoot right high", AutonTask.SHOOT_RIGHT_HIGH);
 		autonTaskChooser.addObject ("Cross and return", AutonTask.CROSS_AND_RETURN);
 		SmartDashboard.putData("AutonTask", autonTaskChooser);
 
@@ -164,10 +168,14 @@ public class RobotMain extends IterativeRobot
     }
     
     private void setupAutonTable() {
-    	autonCommandTable.put(buildAutonKey(AutonPosition.LOW_BAR, AutonDefense.LOW_BAR, AutonTask.SHOOT_HIGH), 
+    	autonCommandTable.put(buildAutonKey(AutonPosition.LOW_BAR, AutonDefense.LOW_BAR, AutonTask.SHOOT_CENTER_HIGH), 
     			new LowBarShootHigh());
     	autonCommandTable.put(buildAutonKey(AutonPosition.LOW_BAR, AutonDefense.LOW_BAR, AutonTask.CROSS_AND_RETURN), 
     			new LowBarCrossAndReturn());
+    	autonCommandTable.put(buildAutonKey(AutonPosition.TWO, AutonDefense.MOAT, AutonTask.SHOOT_LEFT_HIGH), 
+    			new MoatPosition2CenterShootLeft());
+    	autonCommandTable.put(buildAutonKey(AutonPosition.THREE, AutonDefense.MOAT, AutonTask.SHOOT_CENTER_HIGH), 
+    			new MoatPosition3CenterShootCenter());
    }
     
     private String buildAutonKey(AutonPosition position, AutonDefense defense, AutonTask task) {
