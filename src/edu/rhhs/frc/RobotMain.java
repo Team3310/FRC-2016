@@ -1,15 +1,16 @@
 
 package edu.rhhs.frc;
 
+import java.util.Hashtable;
+
 import edu.rhhs.frc.commands.auton.LowBarCrossAndReturn;
-import edu.rhhs.frc.commands.auton.LowBarShootOneHigh;
-import edu.rhhs.frc.commands.auton.MoatCrossAndReturn;
+import edu.rhhs.frc.commands.auton.LowBarShootHigh;
 import edu.rhhs.frc.subsystems.Camera;
 import edu.rhhs.frc.subsystems.DriveTrain;
 import edu.rhhs.frc.subsystems.Intake;
 import edu.rhhs.frc.subsystems.Manipulator;
-import edu.rhhs.frc.subsystems.Shooter;
 import edu.rhhs.frc.subsystems.Manipulator.PresetPositions;
+import edu.rhhs.frc.subsystems.Shooter;
 import edu.rhhs.frc.utility.ControlLooper;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -32,17 +33,26 @@ public class RobotMain extends IterativeRobot
 	public static final Shooter shooter = new Shooter();
 	public static final Intake intake = new Intake();
 	public static final Manipulator manipulator = new Manipulator();	
+	public static final Camera camera = new Camera();
 	public static final ControlLooper controlLoop = new ControlLooper("Main control loop", 10);
 	public static final PowerDistributionPanel pdp = new PowerDistributionPanel();
-	public static final Camera camera = new Camera();
 
 	public static OI oi;
 	
 	public static enum OperationMode { TEST, COMPETITION };
-	private SendableChooser operationModeChooser;
 	private static OperationMode operationMode = OperationMode.TEST;
+
+	public static enum AutonPosition { LOW_BAR, TWO, THREE, FOUR, FIVE };
+	public static enum AutonDefense { LOW_BAR, PORTCULLIS, RAMPARTS, MOAT, ROCKWALL, ROUGH_TERRAIN };
+	public static enum AutonTask { SHOOT_HIGH, CROSS_AND_RETURN };
+	
+	private Hashtable<String, Command> autonCommandTable = new Hashtable<String, Command>();
+
+	private SendableChooser operationModeChooser;
 	private SendableChooser manipulatorChooser;
-	private SendableChooser autonoumousChooser;
+	private SendableChooser autonPositionChooser;
+	private SendableChooser autonDefenseChooser;
+	private SendableChooser autonTaskChooser;
 
     private Command autonomousCommand;
 
@@ -53,7 +63,6 @@ public class RobotMain extends IterativeRobot
     public void robotInit() {
     	controlLoop.addLoopable(driveTrain);
     	controlLoop.addLoopable(manipulator);
-    	controlLoop.addLoopable(shooter);
 
 	    operationModeChooser = new SendableChooser();
 	    operationModeChooser.addDefault("Test", OperationMode.TEST);
@@ -65,13 +74,31 @@ public class RobotMain extends IterativeRobot
 		manipulatorChooser.addObject ("Portcullis", Manipulator.Attachment.PORTCULLIS);
 		SmartDashboard.putData("Manipulator", manipulatorChooser);
 		
-		autonoumousChooser = new SendableChooser();
-		autonoumousChooser.addDefault("Low bar shoot 1 high", new LowBarShootOneHigh());
-		autonoumousChooser.addObject ("Low bar cross and return", new LowBarCrossAndReturn());
-		autonoumousChooser.addObject ("Moat cross and return", new MoatCrossAndReturn());
-		SmartDashboard.putData("Autonomous", autonoumousChooser);
+		autonPositionChooser = new SendableChooser();
+		autonPositionChooser.addDefault("Low bar", AutonPosition.LOW_BAR);
+		autonPositionChooser.addObject ("Position 2", AutonPosition.TWO);
+		autonPositionChooser.addObject ("Position 3", AutonPosition.THREE);
+		autonPositionChooser.addObject ("Position 4", AutonPosition.FOUR);
+		autonPositionChooser.addObject ("Position 5", AutonPosition.FIVE);
+		SmartDashboard.putData("AutonPosition", autonPositionChooser);
 		
-       updateStatus();
+		autonDefenseChooser = new SendableChooser();
+		autonDefenseChooser.addDefault("Low bar", AutonDefense.LOW_BAR);
+		autonDefenseChooser.addObject ("Portcullis", AutonDefense.PORTCULLIS);
+		autonDefenseChooser.addObject ("Ramparts", AutonDefense.RAMPARTS);
+		autonDefenseChooser.addObject ("Moat", AutonDefense.MOAT);
+		autonDefenseChooser.addObject ("Rockwall", AutonDefense.ROCKWALL);
+		autonDefenseChooser.addObject ("Rough Terrain", AutonDefense.ROUGH_TERRAIN);
+		SmartDashboard.putData("AutonDefense", autonDefenseChooser);
+				
+		autonTaskChooser = new SendableChooser();
+		autonTaskChooser.addDefault("Shoot high", AutonTask.SHOOT_HIGH);
+		autonTaskChooser.addObject ("Cross and return", AutonTask.CROSS_AND_RETURN);
+		SmartDashboard.putData("AutonTask", autonTaskChooser);
+
+		setupAutonTable();
+		
+		updateStatus();
     }
 	
 	public void disabledPeriodic() {
@@ -105,6 +132,7 @@ public class RobotMain extends IterativeRobot
         if (autonomousCommand != null) autonomousCommand.cancel();
     	updateChoosers();
         controlLoop.start();
+    	manipulator.setPresetPosition(PresetPositions.RETRACTED);
         updateStatus();
     }
 
@@ -113,7 +141,6 @@ public class RobotMain extends IterativeRobot
      * You can use it to reset subsystems before shutting down.
      */
     public void disabledInit(){
-    	System.out.println("DisabledInit");
     }
 
     /** This function is called periodically during operator control */
@@ -130,7 +157,21 @@ public class RobotMain extends IterativeRobot
     private void updateChoosers() {
 		operationMode = (OperationMode)operationModeChooser.getSelected();
 		manipulator.setAttachment((Manipulator.Attachment)manipulatorChooser.getSelected());
-		autonomousCommand = (Command)autonoumousChooser.getSelected();
+		AutonPosition autonPosition = (AutonPosition)autonPositionChooser.getSelected();
+		AutonDefense autonDefense = (AutonDefense)autonDefenseChooser.getSelected();
+		AutonTask autonTask = (AutonTask)autonTaskChooser.getSelected();
+		autonomousCommand = autonCommandTable.get(buildAutonKey(autonPosition, autonDefense, autonTask));
+    }
+    
+    private void setupAutonTable() {
+    	autonCommandTable.put(buildAutonKey(AutonPosition.LOW_BAR, AutonDefense.LOW_BAR, AutonTask.SHOOT_HIGH), 
+    			new LowBarShootHigh());
+    	autonCommandTable.put(buildAutonKey(AutonPosition.LOW_BAR, AutonDefense.LOW_BAR, AutonTask.CROSS_AND_RETURN), 
+    			new LowBarCrossAndReturn());
+   }
+    
+    private String buildAutonKey(AutonPosition position, AutonDefense defense, AutonTask task) {
+    	return position.toString() + defense.toString() + task.toString();
     }
     
     public void updateStatus() {

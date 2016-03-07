@@ -14,9 +14,9 @@ import edu.wpi.first.wpilibj.command.WaitCommand;
 /**
  *
  */
-public class LowBarShootOneHigh extends CommandGroup {
+public class LowBarShootHigh extends CommandGroup {
     
-    public LowBarShootOneHigh() {
+    public LowBarShootHigh() {
         addParallel(new IntakeDelayedDeploy());
         addSequential(new DriveTrainStraightMP(215, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, 0));
         addSequential(new DriveTrainAbsoluteTurnMP(60, DriveTrain.MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC, MPSoftwareTurnType.TANK));

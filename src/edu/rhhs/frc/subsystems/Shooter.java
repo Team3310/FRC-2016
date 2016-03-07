@@ -3,14 +3,13 @@ package edu.rhhs.frc.subsystems;
 import edu.rhhs.frc.RobotMain;
 import edu.rhhs.frc.RobotMap;
 import edu.rhhs.frc.utility.CANTalonEncoder;
-import edu.rhhs.frc.utility.ControlLoopable;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class Shooter extends Subsystem implements ControlLoopable
+public class Shooter extends Subsystem
 {
 	public static enum CarriageState { RELEASED, LOCKED };
 	public static enum ShotPosition { SHORT, LONG };
@@ -89,22 +88,12 @@ public class Shooter extends Subsystem implements ControlLoopable
 		
 	}
 	
-	@Override
-	public void controlLoopUpdate() {
-		
-	}
-
-	@Override
-	public void setPeriodMs(long periodMs) {
-		
-	}
-	
 	public void updateStatus(RobotMain.OperationMode operationMode) {
+		SmartDashboard.putBoolean("Winch Retracted", isCarriageRetracted());
 		if (operationMode == RobotMain.OperationMode.TEST) {
 			SmartDashboard.putNumber("Winch Pos", winch.getPositionWorld());
-			SmartDashboard.putNumber("Winch Output Current", winch.getOutputCurrent());
-			SmartDashboard.putBoolean("Winch is retracted", isCarriageRetracted());
-			SmartDashboard.putBoolean("Winch current at max", isWinchCurrentAtMax());
+			SmartDashboard.putNumber("Winch Amps", winch.getOutputCurrent());
+			SmartDashboard.putBoolean("Winch Max Amps", isWinchCurrentAtMax());
 		}
 	}
 }

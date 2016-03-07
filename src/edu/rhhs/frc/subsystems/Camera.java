@@ -95,11 +95,11 @@ public class Camera extends Subsystem
 	
 	public void updateStatus(RobotMain.OperationMode operationMode) {
 		if (operationMode == RobotMain.OperationMode.TEST) {
-			SmartDashboard.putNumber("Image counter", imageCounter);
-			SmartDashboard.putNumber("Camera distance", bestTarget == null ? 0.0 : bestTarget.distanceToTargetFt);
-			SmartDashboard.putNumber("Camera angle",  bestTarget == null ? 0.0 : bestTarget.angleToTargetDeg);
-			SmartDashboard.putNumber("Camera score",  bestTarget == null ? 0.0 : bestTarget.compositeScore);
-			SmartDashboard.putNumber("Camera process time",  processTimeMs);
+			SmartDashboard.putNumber("Image Counter", imageCounter);
+			SmartDashboard.putNumber("Camera Distance", bestTarget == null ? 0.0 : bestTarget.distanceToTargetFt);
+			SmartDashboard.putNumber("Camera Angle",  bestTarget == null ? 0.0 : bestTarget.angleToTargetDeg);
+			SmartDashboard.putNumber("Camera Score",  bestTarget == null ? 0.0 : bestTarget.compositeScore);
+			SmartDashboard.putNumber("Camera Time ms",  processTimeMs);
 		}
 	}
 }

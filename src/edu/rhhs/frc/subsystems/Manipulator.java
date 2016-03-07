@@ -153,9 +153,9 @@ public class Manipulator extends Subsystem implements ControlLoopable
 	}
 	
 	public void updateStatus(RobotMain.OperationMode operationMode) {
+		SmartDashboard.putNumber("Left Arm deg", leftArm.getPositionWorld());
+		SmartDashboard.putNumber("Right Arm deg", rightArm.getPositionWorld());
 		if (operationMode == RobotMain.OperationMode.TEST) {
-			SmartDashboard.putNumber("Left Arm", leftArm.getPositionWorld());
-			SmartDashboard.putNumber("Right Arm", rightArm.getPositionWorld());
 //			SmartDashboard.putBoolean("CDF Sensor", cdfSensor.get());
 //			MotionProfilePoint mpPoint = mpController.getCurrentPoint(); 
 //			double delta = mpPoint != null ? rightArm.getPositionWorld() - mpController.getCurrentPoint().position : 0;

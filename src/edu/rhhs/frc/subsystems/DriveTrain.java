@@ -446,20 +446,20 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 	}
 	
 	public void updateStatus(RobotMain.OperationMode operationMode) {
+		SmartDashboard.putNumber("Yaw Angle Deg", getGyroAngleDeg());
 		if (operationMode == RobotMain.OperationMode.TEST) {
 			try {
-				SmartDashboard.putNumber("Right Drive", rightDrive1.getPositionWorld());
-				SmartDashboard.putNumber("Left Drive", leftDrive1.getPositionWorld());
-				SmartDashboard.putNumber("Right Drive ft-sec", rightDrive1.getVelocityWorld() / 12);
-				SmartDashboard.putNumber("Left Drive ft-sec", leftDrive1.getVelocityWorld() / 12);
-				SmartDashboard.putNumber("Left Drive 1 Current", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR1_CAN_ID-2));
-				SmartDashboard.putNumber("Left Drive 2 Current", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR2_CAN_ID-2));
-				SmartDashboard.putNumber("Left Drive 3 Current", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR3_CAN_ID-2));
-				SmartDashboard.putNumber("Right Drive 1 Current", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR1_CAN_ID-2));
-				SmartDashboard.putNumber("Right Drive 2 Current", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR2_CAN_ID-2));
-				SmartDashboard.putNumber("Right Drive 3 Current", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR3_CAN_ID-2));
-				SmartDashboard.putNumber("Yaw Angle", getGyroAngleDeg());
-				SmartDashboard.putBoolean("Drivetrain Hold On", controlMode == DriveTrainControlMode.HOLD);
+				SmartDashboard.putNumber("Right Pos Inches", rightDrive1.getPositionWorld());
+				SmartDashboard.putNumber("Left Pos Inches", leftDrive1.getPositionWorld());
+				SmartDashboard.putNumber("Right Vel Ft-Sec", rightDrive1.getVelocityWorld() / 12);
+				SmartDashboard.putNumber("Left Vel Ft-Sec", leftDrive1.getVelocityWorld() / 12);
+				SmartDashboard.putNumber("Left 1 Amps", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR1_CAN_ID-2));
+				SmartDashboard.putNumber("Left 2 Amps", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR2_CAN_ID-2));
+				SmartDashboard.putNumber("Left 3 Amps", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR3_CAN_ID-2));
+				SmartDashboard.putNumber("Right 1 Amps", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR1_CAN_ID-2));
+				SmartDashboard.putNumber("Right 2 Amps", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR2_CAN_ID-2));
+				SmartDashboard.putNumber("Right 3 Amps", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR3_CAN_ID-2));
+				SmartDashboard.putBoolean("Drive Hold", controlMode == DriveTrainControlMode.HOLD);
 				MotionProfilePoint mpPoint = mpTurnController.getCurrentPoint(); 
 				double delta = mpPoint != null ? getGyroAngleDeg() - mpTurnController.getCurrentPoint().position : 0;
 				SmartDashboard.putNumber("Gyro Delta", delta);

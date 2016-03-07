@@ -40,6 +40,7 @@ import edu.rhhs.frc.controller.XboxController;
 import edu.rhhs.frc.subsystems.DriveTrain;
 import edu.rhhs.frc.subsystems.DriveTrain.PTOShiftState;
 import edu.rhhs.frc.subsystems.DriveTrain.SpeedShiftState;
+import edu.rhhs.frc.subsystems.Intake;
 import edu.rhhs.frc.subsystems.Intake.LiftState;
 import edu.rhhs.frc.subsystems.Manipulator.ArmSide;
 import edu.rhhs.frc.subsystems.Manipulator.PresetPositions;
@@ -152,114 +153,108 @@ public class OI
         // Pneumatics Test
 		Button drivetrainSpeedShiftHi = new InternalButton();
 		drivetrainSpeedShiftHi.whenPressed(new DriveTrainSpeedShift(SpeedShiftState.HI));
-		SmartDashboard.putData("Drivetrain speed shift HI", drivetrainSpeedShiftHi);
+		SmartDashboard.putData("Speed Shift HI", drivetrainSpeedShiftHi);
 
 		Button drivetrainSpeedShiftLo = new InternalButton();
 		drivetrainSpeedShiftLo.whenPressed(new DriveTrainSpeedShift(SpeedShiftState.LO));
-		SmartDashboard.putData("Drivetrain speed shift LO", drivetrainSpeedShiftLo);
+		SmartDashboard.putData("Speed Shift LO", drivetrainSpeedShiftLo);
 
 		Button drivetrainPTOShiftEngaged = new InternalButton();
 		drivetrainPTOShiftEngaged.whenPressed(new DriveTrainPTOShift(PTOShiftState.ENGAGED));
-		SmartDashboard.putData("Drivetrain PTO shift ENGAGED", drivetrainPTOShiftEngaged);
+		SmartDashboard.putData("PTO ENGAGED", drivetrainPTOShiftEngaged);
 
 		Button drivetrainPTOShiftDisengaged = new InternalButton();
 		drivetrainPTOShiftDisengaged.whenPressed(new DriveTrainPTOShift(PTOShiftState.DISENGAGED));
-		SmartDashboard.putData("Drivetrain PTO shift DISENGAGED", drivetrainPTOShiftDisengaged);
+		SmartDashboard.putData("PTO DISENGAGED", drivetrainPTOShiftDisengaged);
 
 		Button outerIntakeUp = new InternalButton();
 		outerIntakeUp.whenPressed(new IntakeOuterPosition(LiftState.UP));
-		SmartDashboard.putData("Intake outer UP", outerIntakeUp);
+		SmartDashboard.putData("Intake Outer UP", outerIntakeUp);
 
 		Button outerIntakeDown = new InternalButton();
 		outerIntakeDown.whenPressed(new IntakeOuterPosition(LiftState.DOWN));
-		SmartDashboard.putData("Intake outer DOWN", outerIntakeDown);
+		SmartDashboard.putData("Intake Outer DOWN", outerIntakeDown);
 
 		Button innerIntakeUp = new InternalButton();
 		innerIntakeUp.whenPressed(new IntakeInnerPosition(LiftState.UP));
-		SmartDashboard.putData("Intake inner UP", innerIntakeUp);
+		SmartDashboard.putData("Intake Inner UP", innerIntakeUp);
 
 		Button innerIntakeDown = new InternalButton();
 		innerIntakeDown.whenPressed(new IntakeInnerPosition(LiftState.DOWN));
-		SmartDashboard.putData("Intake inner DOWN", innerIntakeDown);
+		SmartDashboard.putData("Intake Inner DOWN", innerIntakeDown);
 
 		Button shooterShotPositionLong = new InternalButton();
 		shooterShotPositionLong.whenPressed(new ShooterShotPosition(ShotPosition.LONG));
-		SmartDashboard.putData("Shooter shot position LONG", shooterShotPositionLong);
+		SmartDashboard.putData("Shot Position LONG", shooterShotPositionLong);
 
 		Button shooterShotPositionShort = new InternalButton();
 		shooterShotPositionShort.whenPressed(new ShooterShotPosition(ShotPosition.SHORT));
-		SmartDashboard.putData("Shooter shot position SHORT", shooterShotPositionShort);
+		SmartDashboard.putData("Shot Position SHORT", shooterShotPositionShort);
 
 		Button shooterCarriageReleased = new InternalButton();
 		shooterCarriageReleased.whenPressed(new ShooterCarriageState(CarriageState.RELEASED));
-		SmartDashboard.putData("Shooter carriage RELEASED", shooterCarriageReleased);
+		SmartDashboard.putData("Carriage RELEASED", shooterCarriageReleased);
 
 		Button shooterCarriageLocked = new InternalButton();
 		shooterCarriageLocked.whenPressed(new ShooterCarriageState(CarriageState.LOCKED));
-		SmartDashboard.putData("Shooter carriage LOCKED", shooterCarriageLocked);
+		SmartDashboard.putData("Carriage LOCKED", shooterCarriageLocked);
 		
 		// Motors
 		Button manipulatorArmPositive = new InternalButton();
 		manipulatorArmPositive.whileHeld(new ManipulatorArmSpeed(0.15, ArmSide.BOTH));
 		manipulatorArmPositive.whenReleased(new ManipulatorArmSpeed(0, ArmSide.BOTH));
-		SmartDashboard.putData("Manip speed pos", manipulatorArmPositive);
+		SmartDashboard.putData("Manip Positive", manipulatorArmPositive);
 
 		Button manipulatorArmNegative = new InternalButton();
 		manipulatorArmNegative.whileHeld(new ManipulatorArmSpeed(-0.15, ArmSide.BOTH));
 		manipulatorArmNegative.whenReleased(new ManipulatorArmSpeed(0, ArmSide.BOTH));
-		SmartDashboard.putData("Manip speed negative", manipulatorArmNegative);
-		
-		Button manipulatorArmOff = new InternalButton();
-		manipulatorArmOff.whenPressed(new ManipulatorArmSpeed(0.0, ArmSide.BOTH));
-		SmartDashboard.putData("Manip speed off", manipulatorArmOff);
+		SmartDashboard.putData("Manip Negative", manipulatorArmNegative);
 		
 		Button outerIntakeOn = new InternalButton();
-		outerIntakeOn.whenPressed(new IntakeOuterSpeed(1.0));
-		SmartDashboard.putData("Intake outer roller on", outerIntakeOn);
+		outerIntakeOn.whenPressed(new IntakeOuterSpeed(Intake.OUTER_INTAKE_LOAD_SPEED));
+		SmartDashboard.putData("Outer Roller On", outerIntakeOn);
 
 		Button outerIntakeOff = new InternalButton();
 		outerIntakeOff.whenPressed(new IntakeOuterSpeed(0.0));
-		SmartDashboard.putData("Intake outer roller off", outerIntakeOff);
+		SmartDashboard.putData("Outer Roller Off", outerIntakeOff);
 
 		Button innerIntakeOn = new InternalButton();
-		innerIntakeOn.whenPressed(new IntakeInnerSpeed(0.7));
-		SmartDashboard.putData("Intake inner roller on", innerIntakeOn);
+		innerIntakeOn.whenPressed(new IntakeInnerSpeed(Intake.INNER_INTAKE_LOAD_SPEED));
+		SmartDashboard.putData("Inner Roller On", innerIntakeOn);
 
 		Button innerIntakeOff = new InternalButton();
 		innerIntakeOff.whenPressed(new IntakeInnerSpeed(0.0));
-		SmartDashboard.putData("Intake inner roller off", innerIntakeOff);
+		SmartDashboard.putData("Inner Roller Off", innerIntakeOff);
 
 		Button shooterWinchPositive = new InternalButton();
-		shooterWinchPositive.whenPressed(new ShooterWinchSpeed(1.0));
-		SmartDashboard.putData("Shooter winch speed positive", shooterWinchPositive);
+		shooterWinchPositive.whileHeld(new ShooterWinchSpeed(0.5));
+		shooterWinchPositive.whenReleased(new ShooterWinchSpeed(0.0));
+		SmartDashboard.putData("Winch Speed Pos", shooterWinchPositive);
 
 		Button shooterWinchNegative = new InternalButton();
-		shooterWinchNegative.whenPressed(new ShooterWinchSpeed(-1.0));
-		SmartDashboard.putData("Shooter winch speed negative", shooterWinchNegative);
-		
-		Button shooterWinchOff = new InternalButton();
-		shooterWinchOff.whenPressed(new ShooterWinchSpeed(0.0));
-		SmartDashboard.putData("Shooter winch speed off", shooterWinchOff);
+		shooterWinchNegative.whileHeld(new ShooterWinchSpeed(-0.5));
+		shooterWinchNegative.whenReleased(new ShooterWinchSpeed(0.0));
+		SmartDashboard.putData("Winch Speed Neg", shooterWinchNegative);
 		
 		Button shooterWinchRetract = new InternalButton();
 		shooterWinchRetract.whenPressed(new ShooterWinchRetractAndSpoolOut());
-		SmartDashboard.putData("Shooter winch retract", shooterWinchRetract);
+		SmartDashboard.putData("Winch Retract", shooterWinchRetract);
 		
 		Button shooterWinchSpoolOut = new InternalButton();
 		shooterWinchSpoolOut.whenPressed(new ShooterWinchSpoolOut());
-		SmartDashboard.putData("Shooter winch spool out", shooterWinchSpoolOut);
+		SmartDashboard.putData("Winch Spool Out", shooterWinchSpoolOut);
 		
 		Button drivePos05 = new InternalButton();
 		drivePos05.whenPressed(new DriveTrainSpeed(0.5));
-		SmartDashboard.putData("Drive positive 0.5", drivePos05);
+		SmartDashboard.putData("Drive 0.5", drivePos05);
 		
 		Button drivePos08 = new InternalButton();
 		drivePos08.whenPressed(new DriveTrainSpeed(0.8));
-		SmartDashboard.putData("Drive positive 0.8", drivePos08);
+		SmartDashboard.putData("Drive 0.8", drivePos08);
 		
 		Button drivePos10 = new InternalButton();
 		drivePos10 .whenPressed(new DriveTrainSpeed(1.0));
-		SmartDashboard.putData("Drive positive 1.0", drivePos10 );
+		SmartDashboard.putData("Drive 1.0", drivePos10 );
 		
 		Button driveOff = new InternalButton();
 		driveOff.whenPressed(new DriveTrainSpeed(0.0));
@@ -267,31 +262,31 @@ public class OI
 		
 		Button driveMP = new InternalButton();
 		driveMP.whenPressed(new DriveTrainStraightMP(96, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, 0));
-		SmartDashboard.putData("MotionProfile Drive", driveMP);
+		SmartDashboard.putData("Drive Straight", driveMP);
 		
 		Button turnRelativeMP = new InternalButton();
 		turnRelativeMP.whenPressed(new DriveTrainRelativeTurnMP(60, DriveTrain.MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC, MPSoftwareTurnType.TANK));
-		SmartDashboard.putData("MotionProfile Turn Relative", turnRelativeMP);
+		SmartDashboard.putData("Turn Relative", turnRelativeMP);
 		
 		Button turnAbsoluteMP = new InternalButton();
 		turnAbsoluteMP.whenPressed(new DriveTrainAbsoluteTurnMP(0, DriveTrain.MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC, MPSoftwareTurnType.TANK));
-		SmartDashboard.putData("MotionProfile Turn Absolute", turnAbsoluteMP);
+		SmartDashboard.putData("Turn Absolute", turnAbsoluteMP);
 		
 		Button armMPDeploy = new InternalButton();
 		armMPDeploy.whenPressed(new ManipulatorMoveMP(PresetPositions.FULLY_DEPLOYED));
-		SmartDashboard.putData("MotionProfile Arm Deploy", armMPDeploy);
+		SmartDashboard.putData("Arm Deploy", armMPDeploy);
 
 		Button armMPPartialDeploy = new InternalButton();
 		armMPPartialDeploy.whenPressed(new ManipulatorMoveMP(PresetPositions.PARTIALLY_DEPLOYED));
-		SmartDashboard.putData("MotionProfile Arm Partial Deploy", armMPPartialDeploy);
+		SmartDashboard.putData("Arm Partial Deploy", armMPPartialDeploy);
 
 		Button armMPZero = new InternalButton();
 		armMPZero.whenPressed(new ManipulatorMoveMP(PresetPositions.ZERO));
-		SmartDashboard.putData("MotionProfile Arm Zero Position", armMPZero);
+		SmartDashboard.putData("Arm Zero Position", armMPZero);
 
 		Button armMPRetract = new InternalButton();
 		armMPRetract.whenPressed(new ManipulatorMoveMP(PresetPositions.RETRACTED));
-		SmartDashboard.putData("MotionProfile Arm Retract", armMPRetract);
+		SmartDashboard.putData("Arm Retract", armMPRetract);
 
 		Button resetArmZero = new InternalButton();
 		resetArmZero.whenPressed(new ManipulatorResetZero());
@@ -315,19 +310,19 @@ public class OI
 		
 		Button cameraUpdateDashboard = new InternalButton();
 		cameraUpdateDashboard.whenPressed(new CameraUpdateDashboard());
-		SmartDashboard.putData("Camera Update Dashboard", cameraUpdateDashboard);
+		SmartDashboard.putData("Camera Update", cameraUpdateDashboard);
 		
 		Button cameraSaveImage = new InternalButton();
 		cameraSaveImage.whenPressed(new CameraSaveImage());
-		SmartDashboard.putData("Camera Save Image", cameraSaveImage);
+		SmartDashboard.putData("Camera Save", cameraSaveImage);
 		
 		Button cameraReadImage = new InternalButton();
 		cameraReadImage.whenPressed(new CameraReadAndProcessImage());
-		SmartDashboard.putData("Camera Read Image", cameraReadImage);
+		SmartDashboard.putData("Camera Read", cameraReadImage);
 		
 		Button cameraReadImageTurnToBestTarget = new InternalButton();
 		cameraReadImageTurnToBestTarget.whenPressed(new CameraReadImageTurnToBestTarget());
-		SmartDashboard.putData("Camera Read and Turn", cameraReadImageTurnToBestTarget);
+		SmartDashboard.putData("Camera Read Turn", cameraReadImageTurnToBestTarget);
 		
 		DigitalIOSwitch cdfSwitch = new DigitalIOSwitch(RobotMap.CDF_SENSOR_DIO_PORT_ID);
 		cdfSwitch.whenPressed(new ManipulatorMoveMP(PresetPositions.FULLY_DEPLOYED, true));
