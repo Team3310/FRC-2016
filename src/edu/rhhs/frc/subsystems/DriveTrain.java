@@ -15,6 +15,7 @@ import edu.rhhs.frc.utility.MotionProfilePoint;
 import edu.rhhs.frc.utility.PIDParams;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -97,12 +98,14 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 	private PIDParams mpHoldPIDParams = new PIDParams(1, 0, 0, 0.0, 0.0, 0.0); 
 
 	private MPSoftwarePIDController mpTurnController;
-	private PIDParams mpTurnPIDParams = new PIDParams(0.09, 0, 0, 0.00025, 0.005); //0.00025, 0.005);
+	private PIDParams mpTurnPIDParams = new PIDParams(0.09, 0.005, 0, 0.00025, 0.005, 0.0, 5); 
 
 	private ADXRS450_Gyro gyro = new ADXRS450_Gyro();
 	private boolean useGyroLock;
 	private double gyroLockAngleDeg;
 	private double kPGyro = 0.04;
+	private DigitalInput gyroCalibrationSwitch;
+	private boolean isCalibrating = false;
 
 	public DriveTrain() {
 		try {
@@ -150,6 +153,8 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 			
 			speedShift = new Solenoid(RobotMap.DRIVETRAIN_SPEEDSHIFT_PCM_ID);
 			ptoShift = new DoubleSolenoid(RobotMap.DRIVETRAIN_WINCH_ENGAGE_PCM_ID, RobotMap.DRIVETRAIN_WINCH_DISENGAGE_PCM_ID);		
+
+			gyroCalibrationSwitch = new DigitalInput(RobotMap.CALIBRATE_GYRO_BUTTON_DIO_PORT_ID);
 		}
 		catch (Exception e) {
 			System.err.println("An error occurred in the DriveTrain constructor");
@@ -173,10 +178,8 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 	}
 	
 	public void calibrateGyro() {
-		System.err.println("Gyro starting calibration");
-		gyro.reset();
 		gyro.calibrate();
-		System.err.println("Gyro finished calibration");
+		gyro.reset();
 	}
 	
 	public void setStraightMP(double distanceInches, double maxVelocity, boolean useGyroLock, double desiredAbsoluteAngle) {
@@ -418,6 +421,17 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 		}
 		else if(state == PTOShiftState.DISENGAGED) {
 			ptoShift.set(Value.kReverse);
+		}
+	}
+	
+	public boolean getGyroCalibrationSwitch() {
+		return !gyroCalibrationSwitch.get();
+	}
+	
+	public void checkForGyroCalibration() {
+		if (!isCalibrating && getGyroCalibrationSwitch()) {
+			calibrateGyro();
+			isCalibrating = false;
 		}
 	}
 

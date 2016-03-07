@@ -11,7 +11,7 @@ public class CameraReadAndProcessImage extends Command
 
 	@Override
 	protected void initialize() {
-		RobotMain.camera.readAndProcessImage();
+		RobotMain.camera.readImagePostProcessedImageToDashboard();
 	}
 
 	@Override

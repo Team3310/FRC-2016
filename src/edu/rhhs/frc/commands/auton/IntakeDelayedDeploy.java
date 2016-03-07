@@ -1,10 +1,6 @@
 package edu.rhhs.frc.commands.auton;
 
 import edu.rhhs.frc.commands.IntakeLowBarPosition;
-import edu.rhhs.frc.commands.ShooterCarriageState;
-import edu.rhhs.frc.commands.ShooterWinchRetract;
-import edu.rhhs.frc.commands.ShooterWinchSpoolOut;
-import edu.rhhs.frc.subsystems.Shooter;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitCommand;
 

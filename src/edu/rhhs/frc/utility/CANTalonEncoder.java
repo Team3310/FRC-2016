@@ -1,6 +1,5 @@
 package edu.rhhs.frc.utility;
 
-import edu.rhhs.frc.RobotMap;
 import edu.wpi.first.wpilibj.CANTalon;
 
 public class CANTalonEncoder extends CANTalon

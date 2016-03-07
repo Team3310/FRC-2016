@@ -9,6 +9,7 @@ import edu.rhhs.frc.subsystems.DriveTrain;
 import edu.rhhs.frc.subsystems.Intake;
 import edu.rhhs.frc.subsystems.Manipulator;
 import edu.rhhs.frc.subsystems.Shooter;
+import edu.rhhs.frc.subsystems.Manipulator.PresetPositions;
 import edu.rhhs.frc.utility.ControlLooper;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -75,6 +76,7 @@ public class RobotMain extends IterativeRobot
 	
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
+		driveTrain.checkForGyroCalibration();
 		updateStatus();
 	}
 
@@ -83,6 +85,7 @@ public class RobotMain extends IterativeRobot
     	
         // Schedule the autonomous command (example)
     	controlLoop.start();
+    	manipulator.setPresetPosition(PresetPositions.RETRACTED);
         if (autonomousCommand != null) autonomousCommand.start();
     }
 

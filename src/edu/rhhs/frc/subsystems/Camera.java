@@ -1,9 +1,7 @@
 package edu.rhhs.frc.subsystems;
 
 import com.ni.vision.NIVision;
-import com.ni.vision.NIVision.DrawMode;
 import com.ni.vision.NIVision.Image;
-import com.ni.vision.NIVision.ShapeMode;
 
 import edu.rhhs.frc.RobotMain;
 import edu.rhhs.frc.vision.ImageProcessor;
@@ -16,9 +14,12 @@ import edu.wpi.first.wpilibj.vision.USBCamera;
 public class Camera extends Subsystem
 {	
     private USBCamera targetCam;
-    private int imageCounter = 0;
     private ImageProcessor imageProcessor;
+	private Image currentImage = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
+
     private TargetInfo bestTarget;
+	private int imageCounter = 0;
+	private long processTimeMs = 0;
 
     public Camera() {
 		try {
@@ -40,47 +41,56 @@ public class Camera extends Subsystem
 		
 	}
 	
-	public void updateDashboardImage() {
-    	Image currentImage = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
-		targetCam.getImage(currentImage);
-		
-        NIVision.Rect rect = new NIVision.Rect(10, 10, 100, 100);
-        NIVision.imaqDrawShapeOnImage(currentImage, currentImage, rect,
-                DrawMode.DRAW_VALUE, ShapeMode.SHAPE_OVAL, 0.0f);
-        
+	public void postCameraImageToDashboard() {
+		targetCam.getImage(currentImage);        
         CameraServer.getInstance().setImage(currentImage);
-        
-        if (currentImage != null) {
-        	currentImage.free();
-        }
 	}
 	
-	public void readAndProcessImage() {
-    	Image fileImage = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
-		NIVision.imaqReadFile(fileImage, "/home/lvuser/image" + imageCounter + ".jpg");
-		
-        bestTarget = imageProcessor.findBestTarget(fileImage);
-        CameraServer.getInstance().setImage(fileImage);
+	public void readImagePostProcessedImageToDashboard() {
+    	try {
+    		NIVision.imaqReadFile(currentImage, "/home/lvuser/image" + imageCounter + ".jpg");
+    	}
+    	catch (Exception e) {
+    		imageCounter = 0;
+    		NIVision.imaqReadFile(currentImage, "/home/lvuser/image" + imageCounter + ".jpg");
+    	}
+        bestTarget = imageProcessor.findBestTarget(currentImage, true);
+        CameraServer.getInstance().setImage(currentImage);
         
 		imageCounter++;
+	}
+	
+	public TargetInfo readImageGetBestTarget() {
+		long startTime = System.currentTimeMillis();
+    	try {
+    		NIVision.imaqReadFile(currentImage, "/home/lvuser/image" + imageCounter + ".jpg");
+    	}
+    	catch (Exception e) {
+    		imageCounter = 0;
+    		NIVision.imaqReadFile(currentImage, "/home/lvuser/image" + imageCounter + ".jpg");
+    	}
+		imageCounter++;
 
-		if (fileImage != null) {
-        	fileImage.free();
-        }
+		bestTarget = imageProcessor.findBestTarget(currentImage, false);
+		processTimeMs = System.currentTimeMillis() - startTime;
+		
+		return bestTarget;
+	}
+	
+	public TargetInfo getBestTarget() {
+		targetCam.getImage(currentImage);        
+		bestTarget = imageProcessor.findBestTarget(currentImage, false);
+		
+		return bestTarget;
 	}
 	
 	public void writeImage() {
-    	Image currentImage = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
 		targetCam.getImage(currentImage);
 
 		NIVision.RGBValue rgbValues = new NIVision.RGBValue();
 		NIVision.imaqWriteFile(currentImage, "/home/lvuser/image" + imageCounter + ".jpg", rgbValues);
 	
 		imageCounter++;
-		
-        if (currentImage != null) {
-        	currentImage.free();
-        }
 	}
 	
 	public void updateStatus(RobotMain.OperationMode operationMode) {
@@ -89,6 +99,7 @@ public class Camera extends Subsystem
 			SmartDashboard.putNumber("Camera distance", bestTarget == null ? 0.0 : bestTarget.distanceToTargetFt);
 			SmartDashboard.putNumber("Camera angle",  bestTarget == null ? 0.0 : bestTarget.angleToTargetDeg);
 			SmartDashboard.putNumber("Camera score",  bestTarget == null ? 0.0 : bestTarget.compositeScore);
+			SmartDashboard.putNumber("Camera process time",  processTimeMs);
 		}
 	}
 }

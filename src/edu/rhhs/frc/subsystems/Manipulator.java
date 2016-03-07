@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Manipulator extends Subsystem implements ControlLoopable
 {
 	private static final double ENCODER_TICKS_TO_WORLD = (4096.0 / 360.0) * (18.0 / 16.0);  
+	public static enum ArmSide { LEFT, RIGHT, BOTH };
 	public static enum ArmState { RETRACT, DEPLOY };
 	public static enum Attachment { CHEVAL_DE_FRISE, PORTCULLIS };
 	public static enum PresetPositions { RETRACTED, ZERO, PARTIALLY_DEPLOYED, FULLY_DEPLOYED };
@@ -118,11 +119,15 @@ public class Manipulator extends Subsystem implements ControlLoopable
 		return leftArm.getPositionWorld();
 	}
 	
-	public void setArmSpeed(double speed) {
-		leftArm.changeControlMode(TalonControlMode.PercentVbus);
-		rightArm.changeControlMode(TalonControlMode.PercentVbus);
-		leftArm.set(speed);
-		rightArm.set(speed);
+	public void setArmSpeed(double speed, ArmSide side) {
+		if (side == ArmSide.LEFT || side == ArmSide.BOTH) {
+			leftArm.changeControlMode(TalonControlMode.PercentVbus);
+			leftArm.set(-speed);
+		}
+		if (side == ArmSide.RIGHT || side == ArmSide.BOTH) {
+			rightArm.changeControlMode(TalonControlMode.PercentVbus);
+			rightArm.set(speed);
+		}
 	}
 
 	protected void initDefaultCommand() {

@@ -18,6 +18,9 @@ public class MPSoftwarePIDController
 	protected double targetGyroAngle;
 	protected MPSoftwareTurnType turnType;
 	
+	protected double prevError = 0.0; // the prior error (used to compute velocity)
+	protected double totalError = 0.0; // the sum of the errors for use in the integral calc
+	
 	public MPSoftwarePIDController(long periodMs, PIDParams pidParams, ArrayList<CANTalonEncoder> motorControllers) 
 	{
 		this.motorControllers = motorControllers;
@@ -40,6 +43,9 @@ public class MPSoftwarePIDController
 		for (CANTalonEncoder motorController : motorControllers) {
 			motorController.changeControlMode(TalonControlMode.PercentVbus);
 		}
+		
+		prevError = 0.0;
+		totalError = 0.0;
 	}
 	
 	public boolean controlLoopUpdate() {
@@ -56,8 +62,17 @@ public class MPSoftwarePIDController
 		
 		// Calculate the motion profile feed forward and error feedback terms
 		double error = mpPoint.position - currentGyroAngle;
-		double output =  pidParams.kP * error + pidParams.kA * mpPoint.acceleration + pidParams.kV * mpPoint.velocity;
 		
+		if (Math.abs(targetGyroAngle - currentGyroAngle) < pidParams.iZone) {
+			totalError += error;
+		}
+		else {
+			totalError = 0;
+		}
+		
+		double output =  pidParams.kP * error + pidParams.kI * totalError + pidParams.kD * (error - prevError) + pidParams.kA * mpPoint.acceleration + pidParams.kV * mpPoint.velocity;
+		prevError = error;
+			
 		// Update the controllers set point.
 		if (turnType == MPSoftwareTurnType.TANK) {
 			for (CANTalonEncoder motorController : motorControllers) {
@@ -84,7 +99,7 @@ public class MPSoftwarePIDController
 				}
 			}
 		}
-		
+
 		return false;
 	}
 	

@@ -13,7 +13,7 @@ public class ShooterShoot extends CommandGroup {
         addSequential(new DriveTrainHold(true));
         addSequential(new WaitCommand(0.1));
         addSequential(new ShooterCarriageState(Shooter.CarriageState.RELEASED));
-        addSequential(new WaitCommand(0.2));
+        addSequential(new WaitCommand(0.1));
         addSequential(new DriveTrainHold(false));
     }
 }

@@ -11,7 +11,7 @@ public class CameraUpdateDashboard extends Command
 
 	@Override
 	protected void initialize() {
-		RobotMain.camera.updateDashboardImage();
+		RobotMain.camera.postCameraImageToDashboard();
 	}
 
 	@Override

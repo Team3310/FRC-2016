@@ -1,12 +1,9 @@
 package edu.rhhs.frc.vision;
 
-import java.text.DecimalFormat;
-
 import com.ni.vision.NIVision;
 import com.ni.vision.NIVision.DrawMode;
 import com.ni.vision.NIVision.Image;
 import com.ni.vision.NIVision.ImageType;
-import com.ni.vision.NIVision.RGBValue;
 import com.ni.vision.NIVision.ShapeMode;
 
 /**
@@ -17,7 +14,7 @@ import com.ni.vision.NIVision.ShapeMode;
  */
 public class ImageProcessor {
     
-    private static final int NUM_SMALL_OBJECT_EROSIONS = 1;
+//    private static final int NUM_SMALL_OBJECT_EROSIONS = 2;
     
     private NIVision.Range TARGET_HUE_RANGE = new NIVision.Range(82, 137);	
     private NIVision.Range TARGET_SAT_RANGE = new NIVision.Range(35, 255);	
@@ -26,6 +23,8 @@ public class ImageProcessor {
     public static final double TARGET_HEIGHT_FT = 1.0;
     public static final double TARGET_WIDTH_FT = 20.0/12.0;
     public static final double TARGET_ASPECT_RATIO = TARGET_HEIGHT_FT / TARGET_WIDTH_FT;
+    
+    public static final double CAMERA_OFFSET_FT = 3.75/12.0;
             
     public static final double OPTIMAL_RECT = 0.2;
     public static final double OPTIMAL_AR = TARGET_ASPECT_RATIO;
@@ -39,87 +38,101 @@ public class ImageProcessor {
     public static final double CAMERA_FOV_HORIZONTAL_ANGLE = 33.565;  
     public static final double CAMERA_FOV_VERTICAL_ANGLE = 59.695;  
 	public static final double tanHalfFOV = Math.tan(Math.toRadians(CAMERA_FOV_HORIZONTAL_ANGLE / 2));
+	
+	public static final double MINIMUM_VALID_COMPOSITE_SCORE = 6;
         
-    private Image processedImage;
+    private Image processedImage = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
 
     public ImageProcessor() {
-        processedImage = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
     }
 
-    public TargetInfo findBestTarget(Image cameraImage) { 
+    public TargetInfo findBestTarget(Image cameraImage, boolean includeOverlays) { 
         if (cameraImage == null) {
             return null;
         }
 
-    	NIVision.imaqColorThreshold(processedImage, cameraImage, 1, NIVision.ColorMode.HSL, TARGET_HUE_RANGE, TARGET_SAT_RANGE, TARGET_LUM_RANGE);
-        if (processedImage == null) {
-            return null;
+        try {
+	    	NIVision.imaqColorThreshold(processedImage, cameraImage, 1, NIVision.ColorMode.HSL, TARGET_HUE_RANGE, TARGET_SAT_RANGE, TARGET_LUM_RANGE);
+	        if (processedImage == null) {
+	            return null;
+	        }
+	        
+//	        Image filteredImage = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
+//	        NIVision.StructuringElement element = new NIVision.StructuringElement();
+//	        NIVision.imaqSizeFilter(filteredImage, processedImage, 1, NUM_SMALL_OBJECT_EROSIONS, NIVision.SizeType.KEEP_LARGE, element);
+//	        if (filteredImage == null) {
+//	            return null;
+//	        }
+	        
+	        // The measurements are flipped because the image is rotated 90 degrees
+	    	int bestTargetIndex = -1;
+	    	double bestCompositeScore = 0;
+			int numParticles = NIVision.imaqCountParticles(processedImage, 1);
+	
+	    	// If there are no targets exit
+	    	if (numParticles == 0) {
+	    		return null;
+	    	}
+	    	
+	    	// Find the best target
+	    	for (int particleIndex = 0; particleIndex < numParticles; particleIndex++) {     
+				double rectWidth = NIVision.imaqMeasureParticle(processedImage, particleIndex, 0, NIVision.MeasurementType.MT_BOUNDING_RECT_HEIGHT);
+				double rectHeight = NIVision.imaqMeasureParticle(processedImage, particleIndex, 0, NIVision.MeasurementType.MT_BOUNDING_RECT_WIDTH);
+				double rectArea = NIVision.imaqMeasureParticle(processedImage, particleIndex, 0, NIVision.MeasurementType.MT_AREA);
+				double rectMomentYY = NIVision.imaqMeasureParticle(processedImage, particleIndex, 0, NIVision.MeasurementType.MT_NORM_MOMENT_OF_INERTIA_XX);
+				double rectMomentXX = NIVision.imaqMeasureParticle(processedImage, particleIndex, 0, NIVision.MeasurementType.MT_NORM_MOMENT_OF_INERTIA_YY);
+	
+				double currentCompositeScore = getCompositeScore(rectArea, rectWidth, rectHeight, rectMomentXX, rectMomentYY);
+	            if (bestTargetIndex == -1 || currentCompositeScore < bestCompositeScore) {
+	            	bestCompositeScore = currentCompositeScore;
+	            	bestTargetIndex = particleIndex;
+	            }
+			}
+	    	
+	    	// Check if a valid target was idenitified
+	    	if (bestCompositeScore > MINIMUM_VALID_COMPOSITE_SCORE) {
+	    		return null;
+	    	}
+	        
+	    	// Calculate the distances and angle to target
+			double rectTop = NIVision.imaqMeasureParticle(processedImage, bestTargetIndex, 0, NIVision.MeasurementType.MT_BOUNDING_RECT_LEFT);
+			double rectLeft = NIVision.imaqMeasureParticle(processedImage, bestTargetIndex, 0, NIVision.MeasurementType.MT_BOUNDING_RECT_TOP);
+			double rectWidth = NIVision.imaqMeasureParticle(processedImage, bestTargetIndex, 0, NIVision.MeasurementType.MT_BOUNDING_RECT_HEIGHT);
+			double rectHeight = NIVision.imaqMeasureParticle(processedImage, bestTargetIndex, 0, NIVision.MeasurementType.MT_BOUNDING_RECT_WIDTH);
+			NIVision.GetImageSizeResult imageSize;
+			imageSize = NIVision.imaqGetImageSize(processedImage);
+			int imageWidth = imageSize.height;
+	               
+	    	// Account for targets off center
+	        double widthOffsetPixels = ((rectLeft + rectWidth / 2) - (double)imageWidth / 2);
+	        double focalDistancePixels = (double)imageWidth / 2 / tanHalfFOV;
+	        double offsetAngle = Math.atan(widthOffsetPixels / focalDistancePixels);
+	
+	        double imageWidthFt = Math.cos(offsetAngle) * (double)imageWidth * TARGET_WIDTH_FT / rectWidth;
+	        double cameraDistanceWidthFt = imageWidthFt / 2.0 / tanHalfFOV;
+	
+	        // Calculate the angle from the center of the image to the selected target
+	        double targetOffsetFt = imageWidthFt * widthOffsetPixels / (double)imageWidth + CAMERA_OFFSET_FT;
+	        double angleToTargetDeg = Math.atan2(targetOffsetFt, cameraDistanceWidthFt) * 180.0 / Math.PI;
+	
+	        if (includeOverlays) {
+		        NIVision.Rect rect = new NIVision.Rect((int)rectLeft, (int)rectTop, (int)rectWidth, (int)rectHeight);
+		        NIVision.imaqDrawShapeOnImage(cameraImage, cameraImage, rect, DrawMode.DRAW_VALUE, ShapeMode.SHAPE_RECT, 65000);
+		        
+		        int targetYCoord = (int)(rectLeft + rectWidth / 2);
+		        NIVision.Point startPoint = new NIVision.Point(0, targetYCoord);
+		        NIVision.Point endPoint = new NIVision.Point(imageSize.width, targetYCoord);
+		        NIVision.imaqDrawLineOnImage(cameraImage, cameraImage, DrawMode.DRAW_VALUE, startPoint, endPoint, 65000);
+	        }
+	                
+	        return new TargetInfo(cameraDistanceWidthFt, angleToTargetDeg, bestCompositeScore);
         }
-        
-        NIVision.imaqSizeFilter(processedImage, processedImage, 1, NUM_SMALL_OBJECT_EROSIONS, NIVision.SizeType.KEEP_LARGE, null);
-        if (processedImage == null) {
-            return null;
+        catch (Exception e) {
+        	System.err.println("An error occurred in vision processing.  Message = " + e.getMessage());
+        	return null;
         }
-        
-        // The measurements are flipped because the image is rotated 90 degrees
-    	int bestTargetIndex = -1;
-    	double bestCompositeScore = 0;
-		int numParticles = NIVision.imaqCountParticles(processedImage, 1);
-
-    	for (int particleIndex = 0; particleIndex < numParticles; particleIndex++) {     
-			double rectWidth = NIVision.imaqMeasureParticle(processedImage, particleIndex, 0, NIVision.MeasurementType.MT_BOUNDING_RECT_HEIGHT);
-			double rectHeight = NIVision.imaqMeasureParticle(processedImage, particleIndex, 0, NIVision.MeasurementType.MT_BOUNDING_RECT_WIDTH);
-			double rectArea = NIVision.imaqMeasureParticle(processedImage, particleIndex, 0, NIVision.MeasurementType.MT_AREA);
-			double rectMomentYY = NIVision.imaqMeasureParticle(processedImage, particleIndex, 0, NIVision.MeasurementType.MT_NORM_MOMENT_OF_INERTIA_XX);
-			double rectMomentXX = NIVision.imaqMeasureParticle(processedImage, particleIndex, 0, NIVision.MeasurementType.MT_NORM_MOMENT_OF_INERTIA_YY);
-
-			double currentCompositeScore = getCompositeScore(rectArea, rectWidth, rectHeight, rectMomentXX, rectMomentYY);
-            if (bestTargetIndex == -1 || currentCompositeScore < bestCompositeScore) {
-            	bestCompositeScore = currentCompositeScore;
-            	bestTargetIndex = particleIndex;
-            }
-		}
-        
-		double rectTop = NIVision.imaqMeasureParticle(processedImage, bestTargetIndex, 0, NIVision.MeasurementType.MT_BOUNDING_RECT_LEFT);
-		double rectLeft = NIVision.imaqMeasureParticle(processedImage, bestTargetIndex, 0, NIVision.MeasurementType.MT_BOUNDING_RECT_TOP);
-		double rectWidth = NIVision.imaqMeasureParticle(processedImage, bestTargetIndex, 0, NIVision.MeasurementType.MT_BOUNDING_RECT_HEIGHT);
-		double rectHeight = NIVision.imaqMeasureParticle(processedImage, bestTargetIndex, 0, NIVision.MeasurementType.MT_BOUNDING_RECT_WIDTH);
-		NIVision.GetImageSizeResult imageSize;
-		imageSize = NIVision.imaqGetImageSize(processedImage);
-		int imageHeight = imageSize.width;
-		int imageWidth = imageSize.height;
-		
-		// Calculate distance and angle to target
-        int widthOffsetPixels = (int)((rectLeft + rectWidth / 2) - imageWidth / 2);
-               
-    	// Account for targets off center
-        double focalDistancePixels = (double)imageWidth / 2 / tanHalfFOV;
-        double offsetAngle = Math.atan((double)widthOffsetPixels / focalDistancePixels);
-
-        double imageWidthFt = Math.cos(offsetAngle) * (double)imageWidth * TARGET_WIDTH_FT / rectWidth;
-        double cameraDistanceWidthFt = imageWidthFt / 2.0 / tanHalfFOV;
-
-        // Calculate the angle from the center of the image to the selected target
-        double targetOffsetFt = imageWidthFt * widthOffsetPixels / (double)imageWidth;
-        double angleToTargetDeg = Math.atan2(targetOffsetFt, cameraDistanceWidthFt) * 180.0 / Math.PI;
-
-        NIVision.Rect rect = new NIVision.Rect((int)rectLeft, (int)rectTop, (int)rectWidth, (int)rectHeight);
-        NIVision.imaqDrawShapeOnImage(cameraImage, cameraImage, rect, DrawMode.DRAW_VALUE, ShapeMode.SHAPE_RECT, 255.0f);
-        
-        int targetYCoord = (int)(widthOffsetPixels + rectLeft + rectWidth / 2);
-        NIVision.Point startPoint = new NIVision.Point(0, targetYCoord);
-        NIVision.Point endPoint = new NIVision.Point(imageSize.width, targetYCoord);
-        NIVision.imaqDrawLineOnImage(cameraImage, cameraImage, DrawMode.DRAW_VALUE, startPoint, endPoint, 255.0f);
-        
-        NIVision.OverlayTextOptions options = new NIVision.OverlayTextOptions();
-        NIVision.RGBValue textColor = new RGBValue(0, 255, 0, 0);        
-        NIVision.Point textPoint = new NIVision.Point((int)(rectTop + rectHeight/2), (int)targetYCoord);        
-        DecimalFormat numFormat = new DecimalFormat("##.##");
-        NIVision.imaqOverlayText(cameraImage, textPoint, "A = " + numFormat.format(angleToTargetDeg), textColor, options, "");
-        
-        return new TargetInfo(cameraDistanceWidthFt, angleToTargetDeg, bestCompositeScore);
     }
-        
+
     private double getRectangleScore(double area, double width, double height) {
         return (area / (width * height) - OPTIMAL_RECT) * WEIGHT_FACTOR_RECT;
     } 

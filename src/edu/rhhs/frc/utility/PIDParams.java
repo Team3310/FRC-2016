@@ -9,7 +9,7 @@ public class PIDParams
     public double kA = 0;
     public double kV = 0;
     public double kG = 0;
-    public int iZone = 0;
+    public double iZone = 0;
     public double rampRatePID = 0;
 
     public PIDParams() {	
@@ -36,5 +36,15 @@ public class PIDParams
         this.kA = kA;
         this.kV = kV;
         this.kG = kG;
+    }
+    
+    public PIDParams(double kP, double kI, double kD, double kA, double kV, double kG, double iZone) {
+        this.kP = kP;
+        this.kI = kI;
+        this.kD = kD;
+        this.kA = kA;
+        this.kV = kV;
+        this.kG = kG;
+        this.iZone = iZone;
     }
 }

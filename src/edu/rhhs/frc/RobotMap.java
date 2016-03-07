@@ -44,4 +44,5 @@ public class RobotMap
 	// DIGITAL INPUTS
     public static final int CARRIAGE_RETRACTED_DIO_PORT_ID = 0;
     public static final int CDF_SENSOR_DIO_PORT_ID = 1;
+    public static final int CALIBRATE_GYRO_BUTTON_DIO_PORT_ID = 2;
 }

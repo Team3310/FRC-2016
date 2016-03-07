@@ -4,6 +4,7 @@ import edu.rhhs.frc.buttons.DigitalIOSwitch;
 import edu.rhhs.frc.buttons.XBoxDPadTriggerButton;
 import edu.rhhs.frc.buttons.XBoxTriggerButton;
 import edu.rhhs.frc.commands.CameraReadAndProcessImage;
+import edu.rhhs.frc.commands.CameraReadImageTurnToBestTarget;
 import edu.rhhs.frc.commands.CameraSaveImage;
 import edu.rhhs.frc.commands.CameraUpdateDashboard;
 import edu.rhhs.frc.commands.DriveTrainAbsoluteTurnMP;
@@ -40,6 +41,7 @@ import edu.rhhs.frc.subsystems.DriveTrain;
 import edu.rhhs.frc.subsystems.DriveTrain.PTOShiftState;
 import edu.rhhs.frc.subsystems.DriveTrain.SpeedShiftState;
 import edu.rhhs.frc.subsystems.Intake.LiftState;
+import edu.rhhs.frc.subsystems.Manipulator.ArmSide;
 import edu.rhhs.frc.subsystems.Manipulator.PresetPositions;
 import edu.rhhs.frc.subsystems.Shooter.CarriageState;
 import edu.rhhs.frc.subsystems.Shooter.ShotPosition;
@@ -198,16 +200,18 @@ public class OI
 		
 		// Motors
 		Button manipulatorArmPositive = new InternalButton();
-		manipulatorArmPositive.whenPressed(new ManipulatorArmSpeed(0.2));
-		SmartDashboard.putData("Manipulator speed positive", manipulatorArmPositive);
+		manipulatorArmPositive.whileHeld(new ManipulatorArmSpeed(0.15, ArmSide.BOTH));
+		manipulatorArmPositive.whenReleased(new ManipulatorArmSpeed(0, ArmSide.BOTH));
+		SmartDashboard.putData("Manip speed pos", manipulatorArmPositive);
 
 		Button manipulatorArmNegative = new InternalButton();
-		manipulatorArmNegative.whenPressed(new ManipulatorArmSpeed(-0.2));
-		SmartDashboard.putData("Manipulator speed negative", manipulatorArmNegative);
+		manipulatorArmNegative.whileHeld(new ManipulatorArmSpeed(-0.15, ArmSide.BOTH));
+		manipulatorArmNegative.whenReleased(new ManipulatorArmSpeed(0, ArmSide.BOTH));
+		SmartDashboard.putData("Manip speed negative", manipulatorArmNegative);
 		
 		Button manipulatorArmOff = new InternalButton();
-		manipulatorArmOff.whenPressed(new ManipulatorArmSpeed(0.0));
-		SmartDashboard.putData("Manipulator speed off", manipulatorArmOff);
+		manipulatorArmOff.whenPressed(new ManipulatorArmSpeed(0.0, ArmSide.BOTH));
+		SmartDashboard.putData("Manip speed off", manipulatorArmOff);
 		
 		Button outerIntakeOn = new InternalButton();
 		outerIntakeOn.whenPressed(new IntakeOuterSpeed(1.0));
@@ -266,7 +270,7 @@ public class OI
 		SmartDashboard.putData("MotionProfile Drive", driveMP);
 		
 		Button turnRelativeMP = new InternalButton();
-		turnRelativeMP.whenPressed(new DriveTrainRelativeTurnMP(-90, DriveTrain.MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC, MPSoftwareTurnType.RIGHT_SIDE_ONLY));
+		turnRelativeMP.whenPressed(new DriveTrainRelativeTurnMP(60, DriveTrain.MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC, MPSoftwareTurnType.TANK));
 		SmartDashboard.putData("MotionProfile Turn Relative", turnRelativeMP);
 		
 		Button turnAbsoluteMP = new InternalButton();
@@ -320,6 +324,10 @@ public class OI
 		Button cameraReadImage = new InternalButton();
 		cameraReadImage.whenPressed(new CameraReadAndProcessImage());
 		SmartDashboard.putData("Camera Read Image", cameraReadImage);
+		
+		Button cameraReadImageTurnToBestTarget = new InternalButton();
+		cameraReadImageTurnToBestTarget.whenPressed(new CameraReadImageTurnToBestTarget());
+		SmartDashboard.putData("Camera Read and Turn", cameraReadImageTurnToBestTarget);
 		
 		DigitalIOSwitch cdfSwitch = new DigitalIOSwitch(RobotMap.CDF_SENSOR_DIO_PORT_ID);
 		cdfSwitch.whenPressed(new ManipulatorMoveMP(PresetPositions.FULLY_DEPLOYED, true));
