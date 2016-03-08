@@ -18,15 +18,15 @@ public class LowBarShootHigh extends CommandGroup {
     
     public LowBarShootHigh() {
         addParallel(new IntakeDelayedDeploy());
-        addSequential(new DriveTrainStraightMP(215, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, 0));
+        addSequential(new DriveTrainStraightMP(215, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, true, 0));
         addParallel(new IntakeFullyRetract());
         addSequential(new DriveTrainAbsoluteTurnMP(60, DriveTrain.MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC, MPSoftwareTurnType.TANK));
-        addSequential(new DriveTrainStraightMP(62, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, 60));
+        addSequential(new DriveTrainStraightMP(62, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, true, 60));
         addSequential(new WaitCommand(0.1));
         addSequential(new CameraTurnToBestTarget());
         addSequential(new CameraTurnToBestTarget());
         addSequential(new WaitCommand(0.1));
-        addSequential(new DriveTrainStraightMP(22, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, false, 60));
+        addSequential(new DriveTrainStraightMP(22, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, false, 60));
         addSequential(new WaitCommand(0.1));
         addSequential(new ShooterShoot());
         addParallel(new ShooterWinchRetractAndSpoolOut());

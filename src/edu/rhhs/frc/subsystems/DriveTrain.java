@@ -38,7 +38,7 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 
 	// Motion profile max velocities and accel times
 	public static final double MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC = 72;
-	public static final double MP_AUTON_MOAT_VELOCITY_INCHES_PER_SEC = 100;
+	public static final double MP_AUTON_MOAT_VELOCITY_INCHES_PER_SEC = 96;
 	public static final double MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC = 180;
 	
 	public static final double MP_STRAIGHT_T1 = 600;
@@ -182,9 +182,10 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 		gyro.reset();
 	}
 	
-	public void setStraightMP(double distanceInches, double maxVelocity, boolean useGyroLock, double desiredAbsoluteAngle) {
+	public void setStraightMP(double distanceInches, double maxVelocity, boolean useGyroLock, boolean useAbsolute, double desiredAbsoluteAngle) {
+		double yawAngle = useAbsolute ? BHRMathUtils.adjustAccumAngleToDesired(getGyroAngleDeg(), desiredAbsoluteAngle) : getGyroAngleDeg();
 		mpStraightController.setPID(mpStraightPIDParams);
-		mpStraightController.setMPStraightTarget(0, distanceInches, maxVelocity, MP_STRAIGHT_T1, MP_STRAIGHT_T2, useGyroLock, BHRMathUtils.adjustAccumAngleToDesired(getGyroAngleDeg(), desiredAbsoluteAngle), true); 
+		mpStraightController.setMPStraightTarget(0, distanceInches, maxVelocity, MP_STRAIGHT_T1, MP_STRAIGHT_T2, useGyroLock, yawAngle, true); 
 		setControlMode(DriveTrainControlMode.MP_STRAIGHT);
 	}
 	

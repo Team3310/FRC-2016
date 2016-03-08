@@ -263,7 +263,7 @@ public class OI
 		SmartDashboard.putData("Drive off", driveOff);
 		
 		Button driveMP = new InternalButton();
-		driveMP.whenPressed(new DriveTrainStraightMP(96, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, 0));
+		driveMP.whenPressed(new DriveTrainStraightMP(96, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, false, 0));
 		SmartDashboard.putData("Drive Straight", driveMP);
 		
 		Button turnRelativeMP = new InternalButton();

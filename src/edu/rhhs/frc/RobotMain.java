@@ -168,7 +168,7 @@ public class RobotMain extends IterativeRobot
     }
     
     private void setupAutonTable() {
-    	autonCommandTable.put(buildAutonKey(AutonPosition.LOW_BAR, AutonDefense.LOW_BAR, AutonTask.SHOOT_CENTER_HIGH), 
+    	autonCommandTable.put(buildAutonKey(AutonPosition.LOW_BAR, AutonDefense.LOW_BAR, AutonTask.SHOOT_LEFT_HIGH), 
     			new LowBarShootHigh());
     	autonCommandTable.put(buildAutonKey(AutonPosition.LOW_BAR, AutonDefense.LOW_BAR, AutonTask.CROSS_AND_RETURN), 
     			new LowBarCrossAndReturn());

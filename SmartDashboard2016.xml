@@ -47,7 +47,7 @@
 		<location x="870" y="286"/>
 	</widget>
 	<widget field="Gyro Delta" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="360" y="110"/>
+		<location x="1001" y="30"/>
 	</widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.WebcamViewerExtension">
 		<location x="773" y="376"/>
@@ -58,10 +58,10 @@
 		<location x="650" y="214"/>
 	</widget>
 	<widget field="Gyro Calibrate" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
-		<location x="227" y="135"/>
+		<location x="887" y="60"/>
 	</widget>
 	<widget field="Gyro Reset" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
-		<location x="228" y="107"/>
+		<location x="886" y="29"/>
 		<width>99</width>
 	</widget>
 	<widget field="Autonomous" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
@@ -225,7 +225,7 @@
 		<location x="254" y="336"/>
 	</widget>
 	<widget field="Yaw Angle Deg" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="339" y="137"/>
+		<location x="1000" y="61"/>
 	</widget>
 	<widget field="Left Arm deg" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="13" y="247"/>
@@ -264,7 +264,7 @@
 		<location x="1014" y="287"/>
 	</widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.ConnectionIndicator">
-		<location x="212" y="93"/>
+		<location x="875" y="15"/>
 		<width>299</width>
 		<height>82</height>
 	</static-widget>

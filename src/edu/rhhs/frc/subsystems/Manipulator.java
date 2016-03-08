@@ -21,12 +21,12 @@ public class Manipulator extends Subsystem implements ControlLoopable
 	public static enum Attachment { CHEVAL_DE_FRISE, PORTCULLIS };
 	public static enum PresetPositions { RETRACTED, ZERO, PARTIALLY_DEPLOYED, FULLY_DEPLOYED };
 	
-	public static final double PORTCULLIS_RETRACTED_ANGLE_DEG = -10;
+	public static final double PORTCULLIS_RETRACTED_ANGLE_DEG = 0;
 	public static final double PORTCULLIS_ZERO_ANGLE_DEG = 0;
 	public static final double PORTCULLIS_PARTIALLY_DEPLOYED_ANGLE_DEG = 140;
 	public static final double PORTCULLIS_FULLY_DEPLOYED_ANGLE_DEG = 180;
 
-	public static final double CHEVAL_DE_FRISE_RETRACTED_ANGLE_DEG = -10;
+	public static final double CHEVAL_DE_FRISE_RETRACTED_ANGLE_DEG = 0;
 	public static final double CHEVAL_DE_FRISE_ZERO_ANGLE_DEG = 0;
 	public static final double CHEVAL_DE_FRISE_PARTIALLY_DEPLOYED_ANGLE_DEG = 165;
 	public static final double CHEVAL_DE_FRISE_FULLY_DEPLOYED_ANGLE_DEG = 180;
