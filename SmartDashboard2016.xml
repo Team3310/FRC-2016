@@ -1,5 +1,17 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="Camera Offset Neg" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="908" y="168"/>
+	</widget>
+	<widget field="Camera Offset Pos" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="1044" y="168"/>
+	</widget>
+	<widget field="Camera Offset" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1020" y="199"/>
+	</widget>
+	<widget field="Camera Turn To Best" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="999" y="227"/>
+	</widget>
 	<widget field="Drive Hold On" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
 		<location x="542" y="214"/>
 	</widget>

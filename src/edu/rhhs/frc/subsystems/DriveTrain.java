@@ -37,7 +37,7 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 	public static final double VOLTAGE_RAMP_RATE = 24;  // Volts per second
 
 	// Motion profile max velocities and accel times
-	public static final double MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC = 60;
+	public static final double MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC = 72;
 	public static final double MP_AUTON_MOAT_VELOCITY_INCHES_PER_SEC = 100;
 	public static final double MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC = 180;
 	
@@ -98,7 +98,7 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 	private PIDParams mpHoldPIDParams = new PIDParams(1, 0, 0, 0.0, 0.0, 0.0); 
 
 	private MPSoftwarePIDController mpTurnController;
-	private PIDParams mpTurnPIDParams = new PIDParams(0.09, 0.005, 0, 0.00025, 0.005, 0.0, 5); 
+	private PIDParams mpTurnPIDParams = new PIDParams(0.09, 0.01, 0, 0.00025, 0.005, 0.0, 5); 
 
 	private ADXRS450_Gyro gyro = new ADXRS450_Gyro();
 	private boolean useGyroLock;

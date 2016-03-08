@@ -3,9 +3,11 @@ package edu.rhhs.frc;
 import edu.rhhs.frc.buttons.DigitalIOSwitch;
 import edu.rhhs.frc.buttons.XBoxDPadTriggerButton;
 import edu.rhhs.frc.buttons.XBoxTriggerButton;
+import edu.rhhs.frc.commands.CameraOffset;
 import edu.rhhs.frc.commands.CameraReadAndProcessImage;
 import edu.rhhs.frc.commands.CameraReadImageTurnToBestTarget;
 import edu.rhhs.frc.commands.CameraSaveImage;
+import edu.rhhs.frc.commands.CameraTurnToBestTarget;
 import edu.rhhs.frc.commands.CameraUpdateDashboard;
 import edu.rhhs.frc.commands.DriveTrainAbsoluteTurnMP;
 import edu.rhhs.frc.commands.DriveTrainGyroCalibrate;
@@ -323,6 +325,18 @@ public class OI
 		Button cameraReadImageTurnToBestTarget = new InternalButton();
 		cameraReadImageTurnToBestTarget.whenPressed(new CameraReadImageTurnToBestTarget());
 		SmartDashboard.putData("Camera Read Turn", cameraReadImageTurnToBestTarget);
+		
+		Button cameraTurnToBestTarget = new InternalButton();
+		cameraTurnToBestTarget.whenPressed(new CameraTurnToBestTarget());
+		SmartDashboard.putData("Camera Turn To Best", cameraTurnToBestTarget);
+		
+		Button incrementCameraOffsetPos = new InternalButton();
+		incrementCameraOffsetPos.whenPressed(new CameraOffset(0.5));
+		SmartDashboard.putData("Camera Offset Pos", incrementCameraOffsetPos);
+		
+		Button incrementCameraOffsetNeg = new InternalButton();
+		incrementCameraOffsetNeg.whenPressed(new CameraOffset(-0.5));
+		SmartDashboard.putData("Camera Offset Neg", incrementCameraOffsetNeg);
 		
 		DigitalIOSwitch cdfSwitch = new DigitalIOSwitch(RobotMap.CDF_SENSOR_DIO_PORT_ID);
 		cdfSwitch.whenPressed(new ManipulatorMoveMP(PresetPositions.FULLY_DEPLOYED, true));

@@ -41,7 +41,7 @@ public class ImageProcessor {
 	
 	public static final double MINIMUM_VALID_COMPOSITE_SCORE = 6;
         
-    private Image processedImage = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
+    public Image processedImage = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
 
     public ImageProcessor() {
     }
@@ -50,7 +50,7 @@ public class ImageProcessor {
         if (cameraImage == null) {
             return null;
         }
-
+        
         try {
 	    	NIVision.imaqColorThreshold(processedImage, cameraImage, 1, NIVision.ColorMode.HSL, TARGET_HUE_RANGE, TARGET_SAT_RANGE, TARGET_LUM_RANGE);
 	        if (processedImage == null) {
