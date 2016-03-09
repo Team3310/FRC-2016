@@ -107,8 +107,8 @@ public class OI
         intakeEject1.whenPressed(new IntakeEject());
         intakeEject1.whenReleased(new IntakeOff());
         
-        JoystickButton shooterShoot1 = new JoystickButton(m_driverJoystickTurn, 2);
-        shooterShoot1.whenPressed(new ShooterShootAndRetract());
+        //JoystickButton shooterShoot1 = new JoystickButton(m_driverJoystickTurn, 2);
+        //shooterShoot1.whenPressed(new ShooterShootAndRetract());
 
         JoystickButton retractWinch1 = new JoystickButton(m_driverJoystickTurn, 11);
         retractWinch1.whenPressed(new ShooterWinchRetractAndSpoolOut());

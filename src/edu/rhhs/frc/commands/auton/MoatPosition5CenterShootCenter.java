@@ -7,11 +7,11 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 /**
  *
  */
-public class MoatPosition3CenterShootCenter extends CommandGroup {
+public class MoatPosition5CenterShootCenter extends CommandGroup {
     
-    public MoatPosition3CenterShootCenter() {
+    public MoatPosition5CenterShootCenter() {
         addSequential(new DriveTrainStraightMP(155, DriveTrain.MP_AUTON_MOAT_VELOCITY_INCHES_PER_SEC, true, true, 0));
         addSequential(new DriveTrainStraightMP(17, DriveTrain.MP_AUTON_MOAT_VELOCITY_INCHES_PER_SEC, true, true, 0));
-        addSequential(new Position3CenterShootCenter());
+        addSequential(new Position5CenterShootCenter());
     }
 }

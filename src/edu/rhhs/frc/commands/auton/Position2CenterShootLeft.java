@@ -3,7 +3,6 @@ package edu.rhhs.frc.commands.auton;
 import edu.rhhs.frc.commands.CameraTurnToBestTarget;
 import edu.rhhs.frc.commands.DriveTrainAbsoluteTurnMP;
 import edu.rhhs.frc.commands.DriveTrainStraightMP;
-import edu.rhhs.frc.commands.IntakeFullyRetract;
 import edu.rhhs.frc.commands.ShooterShoot;
 import edu.rhhs.frc.commands.ShooterWinchRetractAndSpoolOut;
 import edu.rhhs.frc.subsystems.DriveTrain;

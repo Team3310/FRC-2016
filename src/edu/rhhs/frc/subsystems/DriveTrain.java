@@ -38,7 +38,7 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 
 	// Motion profile max velocities and accel times
 	public static final double MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC = 72;
-	public static final double MP_AUTON_MOAT_VELOCITY_INCHES_PER_SEC = 96;
+	public static final double MP_AUTON_MOAT_VELOCITY_INCHES_PER_SEC = 108;
 	public static final double MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC = 180;
 	
 	public static final double MP_STRAIGHT_T1 = 600;

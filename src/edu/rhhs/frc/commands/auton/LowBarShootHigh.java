@@ -18,11 +18,12 @@ public class LowBarShootHigh extends CommandGroup {
     
     public LowBarShootHigh() {
         addParallel(new IntakeDelayedDeploy());
-        addSequential(new DriveTrainStraightMP(215, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, true, 0));
+        addSequential(new DriveTrainStraightMP(207, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, true, 0));
         addParallel(new IntakeFullyRetract());
         addSequential(new DriveTrainAbsoluteTurnMP(60, DriveTrain.MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC, MPSoftwareTurnType.TANK));
         addSequential(new DriveTrainStraightMP(62, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, true, 60));
         addSequential(new WaitCommand(0.1));
+        addSequential(new CameraTurnToBestTarget());
         addSequential(new CameraTurnToBestTarget());
         addSequential(new CameraTurnToBestTarget());
         addSequential(new WaitCommand(0.1));
@@ -30,8 +31,8 @@ public class LowBarShootHigh extends CommandGroup {
         addSequential(new WaitCommand(0.1));
         addSequential(new ShooterShoot());
         addParallel(new ShooterWinchRetractAndSpoolOut());
-//        addSequential(new DriveTrainStraightMP(-84, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, 60));
-//        addSequential(new DriveTrainAbsoluteTurnMP(175, DriveTrain.MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC, MPSoftwareTurnType.TANK));
+        addSequential(new DriveTrainStraightMP(-68, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, false, 60));
+        addSequential(new DriveTrainAbsoluteTurnMP(175, DriveTrain.MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC, MPSoftwareTurnType.TANK));
 //        addParallel(new IntakeDelayedDeploy());
 //        addSequential(new DriveTrainStraightMP(50, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, 175));
     }
