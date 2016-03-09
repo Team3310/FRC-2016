@@ -20,12 +20,12 @@ public class Position2CenterShootLeft extends CommandGroup {
         // Starting point is 30" from the outerworks ramp/carpet point in the courtyard
         addSequential(new DriveTrainStraightMP(109, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, true, 0));
         addSequential(new DriveTrainAbsoluteTurnMP(60, DriveTrain.MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC, MPSoftwareTurnType.TANK));
-        addSequential(new DriveTrainStraightMP(22, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, true, 60));
         addSequential(new WaitCommand(0.3));
         addSequential(new CameraTurnToBestTarget());
         addSequential(new CameraTurnToBestTarget());
         addSequential(new CameraTurnToBestTarget());
         addSequential(new WaitCommand(0.3));
+        addSequential(new DriveTrainStraightMP(22, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, false, 60));
         addSequential(new ShooterShoot(true));
         addParallel(new ShooterWinchRetractAndSpoolOut());
         addSequential(new DriveTrainStraightMP(-22, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, true, 60));

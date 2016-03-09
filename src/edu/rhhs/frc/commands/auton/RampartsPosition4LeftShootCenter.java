@@ -8,11 +8,11 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 /**
  *
  */
-public class RampartsPosition3CenterShootCenter extends CommandGroup {
+public class RampartsPosition4LeftShootCenter extends CommandGroup {
     
-    public RampartsPosition3CenterShootCenter() {
+    public RampartsPosition4LeftShootCenter() {
     	addSequential(new DriveTrainGyroOffset(-6.0));
-        addSequential(new DriveTrainStraightMP(152, DriveTrain.MP_AUTON_MOAT_VELOCITY_INCHES_PER_SEC, true, true, 0));
-        addSequential(new Position3CenterShootCenter());
+        addSequential(new DriveTrainStraightMP(140, DriveTrain.MP_AUTON_MOAT_VELOCITY_INCHES_PER_SEC, true, true, 0));
+        addSequential(new Position4CenterShootCenter());
     }
 }

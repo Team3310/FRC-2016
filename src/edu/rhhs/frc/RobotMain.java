@@ -9,10 +9,10 @@ import edu.rhhs.frc.commands.auton.MoatPosition2CenterShootLeft;
 import edu.rhhs.frc.commands.auton.MoatPosition3CenterShootCenter;
 import edu.rhhs.frc.commands.auton.MoatPosition4CenterShootCenter;
 import edu.rhhs.frc.commands.auton.MoatPosition5CenterShootCenter;
-import edu.rhhs.frc.commands.auton.RampartsPosition2CenterShootLeft;
-import edu.rhhs.frc.commands.auton.RampartsPosition3CenterShootCenter;
-import edu.rhhs.frc.commands.auton.RampartsPosition4CenterShootCenter;
-import edu.rhhs.frc.commands.auton.RampartsPosition5CenterShootCenter;
+import edu.rhhs.frc.commands.auton.RampartsPosition2LeftShootLeft;
+import edu.rhhs.frc.commands.auton.RampartsPosition3LeftShootCenter;
+import edu.rhhs.frc.commands.auton.RampartsPosition4LeftShootCenter;
+import edu.rhhs.frc.commands.auton.RampartsPosition5LeftShootCenter;
 import edu.rhhs.frc.commands.auton.SpyStraightShootLeft;
 import edu.rhhs.frc.subsystems.Camera;
 import edu.rhhs.frc.subsystems.DriveTrain;
@@ -215,13 +215,13 @@ public class RobotMain extends IterativeRobot
     			new MoatPosition5CenterShootCenter());
 
     	autonCommandTable.put(buildAutonKey(AutonPosition.TWO, AutonDefense.RAMPARTS, AutonTask.SHOOT_LEFT_HIGH), 
-    			new RampartsPosition2CenterShootLeft());
+    			new RampartsPosition2LeftShootLeft());
     	autonCommandTable.put(buildAutonKey(AutonPosition.THREE, AutonDefense.RAMPARTS, AutonTask.SHOOT_CENTER_HIGH), 
-    			new RampartsPosition3CenterShootCenter());
+    			new RampartsPosition3LeftShootCenter());
     	autonCommandTable.put(buildAutonKey(AutonPosition.FOUR, AutonDefense.RAMPARTS, AutonTask.SHOOT_CENTER_HIGH), 
-    			new RampartsPosition4CenterShootCenter());
+    			new RampartsPosition4LeftShootCenter());
     	autonCommandTable.put(buildAutonKey(AutonPosition.FIVE, AutonDefense.RAMPARTS, AutonTask.SHOOT_CENTER_HIGH), 
-    			new RampartsPosition5CenterShootCenter());
+    			new RampartsPosition5LeftShootCenter());
   }
     
     private String buildAutonKey(AutonPosition position, AutonDefense defense, AutonTask task) {
