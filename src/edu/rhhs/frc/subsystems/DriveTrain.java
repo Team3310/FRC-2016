@@ -6,6 +6,7 @@ import edu.rhhs.frc.OI;
 import edu.rhhs.frc.RobotMain;
 import edu.rhhs.frc.RobotMap;
 import edu.rhhs.frc.utility.BHRMathUtils;
+import edu.rhhs.frc.utility.BHR_ADSXRS453_Gyro;
 import edu.rhhs.frc.utility.CANTalonEncoder;
 import edu.rhhs.frc.utility.ControlLoopable;
 import edu.rhhs.frc.utility.MPSoftwarePIDController;
@@ -13,11 +14,10 @@ import edu.rhhs.frc.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 import edu.rhhs.frc.utility.MPTalonPIDController;
 import edu.rhhs.frc.utility.MotionProfilePoint;
 import edu.rhhs.frc.utility.PIDParams;
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.CANTalon;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.RobotDrive;
@@ -100,12 +100,13 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 	private MPSoftwarePIDController mpTurnController;
 	private PIDParams mpTurnPIDParams = new PIDParams(0.09, 0.01, 0, 0.00025, 0.005, 0.0, 5); 
 
-	private ADXRS450_Gyro gyro = new ADXRS450_Gyro();
+	private BHR_ADSXRS453_Gyro gyro = new BHR_ADSXRS453_Gyro();
 	private boolean useGyroLock;
 	private double gyroLockAngleDeg;
 	private double kPGyro = 0.04;
 	private DigitalInput gyroCalibrationSwitch;
 	private boolean isCalibrating = false;
+	private double gyroOffsetDeg = 0;
 
 	public DriveTrain() {
 		try {
@@ -166,7 +167,7 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 	}
 	
 	public double getGyroAngleDeg() {
-		return gyro.getAngle();
+		return gyro.getAngle() + gyroOffsetDeg;
 	}
 	
 	public double getGyroRateDegPerSec() {
@@ -179,9 +180,30 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 	
 	public void calibrateGyro() {
 		gyro.calibrate();
-		gyro.reset();
 	}
 	
+	public void endGyroCalibration() {
+		if (isCalibrating == true) {
+			gyro.endCalibration();
+			isCalibrating = false;
+		}
+	}
+	
+	public boolean getGyroCalibrationSwitch() {
+		return !gyroCalibrationSwitch.get();
+	}
+	
+	public void checkForGyroCalibration() {
+		if (!isCalibrating && getGyroCalibrationSwitch()) {
+			gyro.startCalibration();
+			isCalibrating = true;
+		}
+	}
+	
+	public void setGyroOffset(double offsetDeg) {
+		gyroOffsetDeg = offsetDeg;
+	}
+
 	public void setStraightMP(double distanceInches, double maxVelocity, boolean useGyroLock, boolean useAbsolute, double desiredAbsoluteAngle) {
 		double yawAngle = useAbsolute ? BHRMathUtils.adjustAccumAngleToDesired(getGyroAngleDeg(), desiredAbsoluteAngle) : getGyroAngleDeg();
 		mpStraightController.setPID(mpStraightPIDParams);
@@ -425,17 +447,6 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 		}
 	}
 	
-	public boolean getGyroCalibrationSwitch() {
-		return !gyroCalibrationSwitch.get();
-	}
-	
-	public void checkForGyroCalibration() {
-		if (!isCalibrating && getGyroCalibrationSwitch()) {
-			calibrateGyro();
-			isCalibrating = false;
-		}
-	}
-
 	public boolean isFinished() {
 		return isFinished;
 	}
@@ -464,6 +475,7 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 				MotionProfilePoint mpPoint = mpTurnController.getCurrentPoint(); 
 				double delta = mpPoint != null ? getGyroAngleDeg() - mpTurnController.getCurrentPoint().position : 0;
 				SmartDashboard.putNumber("Gyro Delta", delta);
+				SmartDashboard.putNumber("Gyro Offset", gyroOffsetDeg);
 			}
 			catch (Exception e) {
 				System.err.println("Drivetrain update status error");

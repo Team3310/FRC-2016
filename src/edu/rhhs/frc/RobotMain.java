@@ -4,11 +4,14 @@ package edu.rhhs.frc;
 import java.util.Hashtable;
 
 import edu.rhhs.frc.commands.auton.LowBarCrossAndReturn;
-import edu.rhhs.frc.commands.auton.LowBarShootHigh;
+import edu.rhhs.frc.commands.auton.LowBarShootLeft;
 import edu.rhhs.frc.commands.auton.MoatPosition2CenterShootLeft;
 import edu.rhhs.frc.commands.auton.MoatPosition3CenterShootCenter;
 import edu.rhhs.frc.commands.auton.MoatPosition4CenterShootCenter;
 import edu.rhhs.frc.commands.auton.MoatPosition5CenterShootCenter;
+import edu.rhhs.frc.commands.auton.RampartsPosition2CenterShootLeft;
+import edu.rhhs.frc.commands.auton.RampartsPosition3CenterShootCenter;
+import edu.rhhs.frc.commands.auton.RampartsPosition4CenterShootCenter;
 import edu.rhhs.frc.commands.auton.RampartsPosition5CenterShootCenter;
 import edu.rhhs.frc.commands.auton.SpyStraightShootLeft;
 import edu.rhhs.frc.subsystems.Camera;
@@ -46,7 +49,7 @@ public class RobotMain extends IterativeRobot
 	public static OI oi;
 	
 	public static enum OperationMode { TEST, COMPETITION };
-	private static OperationMode operationMode = OperationMode.TEST;
+	public static OperationMode operationMode = OperationMode.COMPETITION;
 
 	public static enum AutonPosition { SPY, LOW_BAR, TWO, THREE, FOUR, FIVE };
 	public static enum AutonDefense { SPY, LOW_BAR, PORTCULLIS, RAMPARTS, MOAT, ROCKWALL, ROUGH_TERRAIN };
@@ -123,6 +126,7 @@ public class RobotMain extends IterativeRobot
         // Schedule the autonomous command (example)
     	controlLoop.start();
     	manipulator.setPresetPosition(PresetPositions.RETRACTED);
+    	driveTrain.endGyroCalibration();
         if (autonomousCommand != null) autonomousCommand.start();
     }
 
@@ -143,6 +147,7 @@ public class RobotMain extends IterativeRobot
     	updateChoosers();
         controlLoop.start();
     	manipulator.setPresetPosition(PresetPositions.RETRACTED);
+    	driveTrain.endGyroCalibration();
         updateStatus();
     }
 
@@ -174,10 +179,14 @@ public class RobotMain extends IterativeRobot
     }
     
     private void setupAutonTable() {
+    	autonCommandTable.put(buildAutonKey(AutonPosition.SPY, AutonDefense.SPY, AutonTask.SHOOT_CENTER_HIGH), 
+    			new SpyStraightShootLeft());
+
     	autonCommandTable.put(buildAutonKey(AutonPosition.LOW_BAR, AutonDefense.LOW_BAR, AutonTask.SHOOT_LEFT_HIGH), 
-    			new LowBarShootHigh());
+    			new LowBarShootLeft());
     	autonCommandTable.put(buildAutonKey(AutonPosition.LOW_BAR, AutonDefense.LOW_BAR, AutonTask.CROSS_AND_RETURN), 
     			new LowBarCrossAndReturn());
+
     	autonCommandTable.put(buildAutonKey(AutonPosition.TWO, AutonDefense.MOAT, AutonTask.SHOOT_LEFT_HIGH), 
     			new MoatPosition2CenterShootLeft());
     	autonCommandTable.put(buildAutonKey(AutonPosition.THREE, AutonDefense.MOAT, AutonTask.SHOOT_CENTER_HIGH), 
@@ -186,10 +195,33 @@ public class RobotMain extends IterativeRobot
     			new MoatPosition4CenterShootCenter());
     	autonCommandTable.put(buildAutonKey(AutonPosition.FIVE, AutonDefense.MOAT, AutonTask.SHOOT_CENTER_HIGH), 
     			new MoatPosition5CenterShootCenter());
+
+    	autonCommandTable.put(buildAutonKey(AutonPosition.TWO, AutonDefense.ROCKWALL, AutonTask.SHOOT_LEFT_HIGH), 
+    			new MoatPosition2CenterShootLeft());
+    	autonCommandTable.put(buildAutonKey(AutonPosition.THREE, AutonDefense.ROCKWALL, AutonTask.SHOOT_CENTER_HIGH), 
+    			new MoatPosition3CenterShootCenter());
+    	autonCommandTable.put(buildAutonKey(AutonPosition.FOUR, AutonDefense.ROCKWALL, AutonTask.SHOOT_CENTER_HIGH), 
+    			new MoatPosition4CenterShootCenter());
+    	autonCommandTable.put(buildAutonKey(AutonPosition.FIVE, AutonDefense.ROCKWALL, AutonTask.SHOOT_CENTER_HIGH), 
+    			new MoatPosition5CenterShootCenter());
+
+    	autonCommandTable.put(buildAutonKey(AutonPosition.TWO, AutonDefense.ROUGH_TERRAIN, AutonTask.SHOOT_LEFT_HIGH), 
+    			new MoatPosition2CenterShootLeft());
+    	autonCommandTable.put(buildAutonKey(AutonPosition.THREE, AutonDefense.ROUGH_TERRAIN, AutonTask.SHOOT_CENTER_HIGH), 
+    			new MoatPosition3CenterShootCenter());
+    	autonCommandTable.put(buildAutonKey(AutonPosition.FOUR, AutonDefense.ROUGH_TERRAIN, AutonTask.SHOOT_CENTER_HIGH), 
+    			new MoatPosition4CenterShootCenter());
+    	autonCommandTable.put(buildAutonKey(AutonPosition.FIVE, AutonDefense.ROUGH_TERRAIN, AutonTask.SHOOT_CENTER_HIGH), 
+    			new MoatPosition5CenterShootCenter());
+
+    	autonCommandTable.put(buildAutonKey(AutonPosition.TWO, AutonDefense.RAMPARTS, AutonTask.SHOOT_LEFT_HIGH), 
+    			new RampartsPosition2CenterShootLeft());
+    	autonCommandTable.put(buildAutonKey(AutonPosition.THREE, AutonDefense.RAMPARTS, AutonTask.SHOOT_CENTER_HIGH), 
+    			new RampartsPosition3CenterShootCenter());
+    	autonCommandTable.put(buildAutonKey(AutonPosition.FOUR, AutonDefense.RAMPARTS, AutonTask.SHOOT_CENTER_HIGH), 
+    			new RampartsPosition4CenterShootCenter());
     	autonCommandTable.put(buildAutonKey(AutonPosition.FIVE, AutonDefense.RAMPARTS, AutonTask.SHOOT_CENTER_HIGH), 
     			new RampartsPosition5CenterShootCenter());
-    	autonCommandTable.put(buildAutonKey(AutonPosition.SPY, AutonDefense.SPY, AutonTask.SHOOT_CENTER_HIGH), 
-    			new SpyStraightShootLeft());
   }
     
     private String buildAutonKey(AutonPosition position, AutonDefense defense, AutonTask task) {

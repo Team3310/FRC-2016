@@ -97,8 +97,8 @@ public class OI
         JoystickButton manipulatorPartiallyDeploy1 = new JoystickButton(m_driverJoystickTurn, 3);
         manipulatorPartiallyDeploy1.whenPressed(new ManipulatorMoveMP(PresetPositions.PARTIALLY_DEPLOYED));
 
-        JoystickButton shooterShortPosition1 = new JoystickButton(m_driverJoystickTurn, 4);
-        shooterShortPosition1.whenPressed(new ShooterShotPosition(ShotPosition.SHORT));
+//        JoystickButton shooterShortPosition1 = new JoystickButton(m_driverJoystickTurn, 4);
+//        shooterShortPosition1.whenPressed(new ShooterShotPosition(ShotPosition.SHORT));
 
         JoystickButton intakeLowBarPosition1 = new JoystickButton(m_driverJoystickTurn, 5);
         intakeLowBarPosition1.whenPressed(new IntakeLowBarPosition());
@@ -126,8 +126,8 @@ public class OI
         JoystickButton manipulatorRetract = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.A_BUTTON);
         manipulatorRetract.whenPressed(new ManipulatorMoveMP(PresetPositions.RETRACTED));
 
-        JoystickButton shooterShortPosition = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.X_BUTTON);
-        shooterShortPosition.whenPressed(new ShooterShotPosition(ShotPosition.SHORT));
+//        JoystickButton shooterShortPosition = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.X_BUTTON);
+//        shooterShortPosition.whenPressed(new ShooterShotPosition(ShotPosition.SHORT));
 
         XBoxDPadTriggerButton intakeFullyRetract = new XBoxDPadTriggerButton(m_operatorXBox, XBoxDPadTriggerButton.UP);
         intakeFullyRetract.whenPressed(new IntakeFullyRetract());
@@ -144,7 +144,7 @@ public class OI
         intakeEject.whenReleased(new IntakeOff());
         
         XBoxTriggerButton shooterShoot = new XBoxTriggerButton(m_operatorXBox, XBoxTriggerButton.RIGHT_TRIGGER);
-        shooterShoot.whenPressed(new ShooterShootAndRetract());
+        shooterShoot.whenPressed(new ShooterShootAndRetract(false));
 
         JoystickButton retractWinch = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.BACK_BUTTON);
         retractWinch.whenPressed(new ShooterWinchRetractAndSpoolOut());

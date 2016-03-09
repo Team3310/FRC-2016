@@ -4,6 +4,7 @@ import com.ni.vision.NIVision;
 import com.ni.vision.NIVision.Image;
 
 import edu.rhhs.frc.RobotMain;
+import edu.rhhs.frc.RobotMain.OperationMode;
 import edu.rhhs.frc.vision.ImageProcessor;
 import edu.rhhs.frc.vision.ImageProcessor.TargetInfo;
 import edu.wpi.first.wpilibj.CameraServer;
@@ -21,6 +22,7 @@ public class Camera extends Subsystem
 	private int imageCounter = 0;
 	private long processTimeMs = 0;
 	private double offsetAngleDeg = 0;
+	private boolean lastTargetValid = false;
 
     public Camera() {
 		try {
@@ -78,17 +80,32 @@ public class Camera extends Subsystem
 		return bestTarget;
 	}
 	
+	public boolean isTargetValid() {
+		return lastTargetValid;
+	}
+	
 	public TargetInfo getBestTarget() {
-		targetCam.getImage(currentImage);        
-		bestTarget = imageProcessor.findBestTarget(currentImage, true);
-		
-		if (bestTarget != null) {
-			bestTarget.angleToTargetDeg += offsetAngleDeg;
-		}
-		
-        CameraServer.getInstance().setImage(currentImage);
-		
-		return bestTarget;
+		lastTargetValid = false;
+    	try {
+			targetCam.getImage(currentImage);        
+			bestTarget = imageProcessor.findBestTarget(currentImage, RobotMain.operationMode == OperationMode.TEST);
+			
+			if (bestTarget != null) {
+				bestTarget.angleToTargetDeg += offsetAngleDeg;
+				if (bestTarget.compositeScore < ImageProcessor.MINIMUM_VALID_COMPOSITE_SCORE) {
+					lastTargetValid = true;
+				}
+			}
+			
+			if (RobotMain.operationMode == OperationMode.TEST) {
+				CameraServer.getInstance().setImage(currentImage);
+			}		
+			
+			return bestTarget;
+    	}
+    	catch (Exception e) {
+    		return null;
+    	}
 	}
 	
 	public void writeImage() {

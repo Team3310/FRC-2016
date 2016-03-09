@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.command.WaitCommand;
  */
 public class ShooterShoot extends CommandGroup {
     
-    public ShooterShoot() {
+    public ShooterShoot(boolean checkForValidTarget) {
         addSequential(new DriveTrainHold(true));
         addSequential(new WaitCommand(0.1));
         addSequential(new ShooterCarriageState(Shooter.CarriageState.RELEASED));

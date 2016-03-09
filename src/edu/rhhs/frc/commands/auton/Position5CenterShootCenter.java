@@ -25,7 +25,7 @@ public class Position5CenterShootCenter extends CommandGroup {
         addSequential(new CameraTurnToBestTarget());
         addSequential(new WaitCommand(0.1));
         addSequential(new DriveTrainStraightMP(25, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, true, 0));
-        addSequential(new ShooterShoot());
+        addSequential(new ShooterShoot(true));
         addParallel(new ShooterWinchRetractAndSpoolOut());
 //        addSequential(new DriveTrainStraightMP(-23, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, 0));
 //        addSequential(new DriveTrainAbsoluteTurnMP(45, DriveTrain.MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC, MPSoftwareTurnType.TANK));

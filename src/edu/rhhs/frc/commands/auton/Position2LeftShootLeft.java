@@ -25,7 +25,7 @@ public class Position2LeftShootLeft extends CommandGroup {
         addSequential(new CameraTurnToBestTarget());
         addSequential(new CameraTurnToBestTarget());
         addSequential(new WaitCommand(0.1));
-        addSequential(new ShooterShoot());
+        addSequential(new ShooterShoot(true));
         addParallel(new ShooterWinchRetractAndSpoolOut());
         addSequential(new DriveTrainStraightMP(-36, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, true, 60));
         addSequential(new DriveTrainAbsoluteTurnMP(175, DriveTrain.MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC, MPSoftwareTurnType.TANK));

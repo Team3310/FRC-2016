@@ -15,7 +15,7 @@ public class SpyStraightShootLeft extends CommandGroup {
     
     public SpyStraightShootLeft() {
         addSequential(new DriveTrainStraightMP(82, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, false, 85));
-        addSequential(new ShooterShoot());
+        addSequential(new ShooterShoot(false));
         addParallel(new ShooterWinchRetractAndSpoolOut());
         addSequential(new DriveTrainAbsoluteTurnMP(315, DriveTrain.MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC, MPSoftwareTurnType.LEFT_SIDE_ONLY));
         addSequential(new DriveTrainStraightMP(-73, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, true, 315));
