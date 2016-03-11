@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class SpyStraightShootLeft extends CommandGroup {
     
     public SpyStraightShootLeft() {
-        addSequential(new DriveTrainStraightMP(82, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, false, 85));
+        addSequential(new DriveTrainStraightMP(82, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, true, 358));
         addSequential(new ShooterShoot(false));
         addParallel(new ShooterWinchRetractAndSpoolOut());
         addSequential(new DriveTrainAbsoluteTurnMP(315, DriveTrain.MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC, MPSoftwareTurnType.LEFT_SIDE_ONLY));
