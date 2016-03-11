@@ -125,8 +125,9 @@ public class RobotMain extends IterativeRobot
     	
         // Schedule the autonomous command (example)
     	controlLoop.start();
+    	manipulator.setZeroPosition();
     	manipulator.setPresetPosition(PresetPositions.RETRACTED);
-    	driveTrain.endGyroCalibration();
+//    	driveTrain.endGyroCalibration();
         if (autonomousCommand != null) autonomousCommand.start();
     }
 
@@ -147,7 +148,7 @@ public class RobotMain extends IterativeRobot
     	updateChoosers();
         controlLoop.start();
     	manipulator.setPresetPosition(PresetPositions.RETRACTED);
-    	driveTrain.endGyroCalibration();
+//    	driveTrain.endGyroCalibration();
         updateStatus();
     }
 

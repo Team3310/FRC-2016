@@ -38,6 +38,7 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 
 	// Motion profile max velocities and accel times
 	public static final double MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC = 72;
+	public static final double MP_AUTON_LOWBAR_VELOCITY_INCHES_PER_SEC = 65;
 	public static final double MP_AUTON_MOAT_VELOCITY_INCHES_PER_SEC = 108;
 	public static final double MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC = 180;
 	
@@ -195,7 +196,8 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 	
 	public void checkForGyroCalibration() {
 		if (!isCalibrating && getGyroCalibrationSwitch()) {
-			gyro.startCalibration();
+	//		gyro.startCalibration();
+			gyro.calibrate();
 			isCalibrating = true;
 		}
 	}
@@ -465,12 +467,12 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 				SmartDashboard.putNumber("Left Pos Inches", leftDrive1.getPositionWorld());
 				SmartDashboard.putNumber("Right Vel Ft-Sec", rightDrive1.getVelocityWorld() / 12);
 				SmartDashboard.putNumber("Left Vel Ft-Sec", leftDrive1.getVelocityWorld() / 12);
-				SmartDashboard.putNumber("Left 1 Amps", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR1_CAN_ID-2));
-				SmartDashboard.putNumber("Left 2 Amps", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR2_CAN_ID-2));
-				SmartDashboard.putNumber("Left 3 Amps", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR3_CAN_ID-2));
-				SmartDashboard.putNumber("Right 1 Amps", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR1_CAN_ID-2));
-				SmartDashboard.putNumber("Right 2 Amps", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR2_CAN_ID-2));
-				SmartDashboard.putNumber("Right 3 Amps", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR3_CAN_ID-2));
+				SmartDashboard.putNumber("Left 1 Amps", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR1_CAN_ID));
+				SmartDashboard.putNumber("Left 2 Amps", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR2_CAN_ID));
+				SmartDashboard.putNumber("Left 3 Amps", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR3_CAN_ID));
+				SmartDashboard.putNumber("Right 1 Amps", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR1_CAN_ID));
+				SmartDashboard.putNumber("Right 2 Amps", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR2_CAN_ID));
+				SmartDashboard.putNumber("Right 3 Amps", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR3_CAN_ID));
 				SmartDashboard.putBoolean("Drive Hold", controlMode == DriveTrainControlMode.HOLD);
 				MotionProfilePoint mpPoint = mpTurnController.getCurrentPoint(); 
 				double delta = mpPoint != null ? getGyroAngleDeg() - mpTurnController.getCurrentPoint().position : 0;
