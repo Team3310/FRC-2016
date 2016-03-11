@@ -22,11 +22,11 @@ public class LowBarShootLeft extends CommandGroup {
     public LowBarShootLeft() {
         addParallel(new IntakeDelayedDeploy());
         addParallel(new ManipulatorMoveMP(PresetPositions.FULLY_DEPLOYED, Manipulator.Attachment.CHEVAL_DE_FRISE));
-        addSequential(new DriveTrainStraightMP(222, DriveTrain.MP_AUTON_LOWBAR_VELOCITY_INCHES_PER_SEC, true, true, 0));
+        addSequential(new DriveTrainStraightMP(212, DriveTrain.MP_AUTON_LOWBAR_VELOCITY_INCHES_PER_SEC, true, true, 0));
         addParallel(new ManipulatorMoveMP(PresetPositions.RETRACTED, Manipulator.Attachment.CHEVAL_DE_FRISE));
         addSequential(new IntakeHelperRetract());
         addSequential(new DriveTrainAbsoluteTurnMP(60, DriveTrain.MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC, MPSoftwareTurnType.TANK));
-        addSequential(new DriveTrainStraightMP(42, DriveTrain.MP_AUTON_LOWBAR_VELOCITY_INCHES_PER_SEC, true, true, 60));
+        addSequential(new DriveTrainStraightMP(52, DriveTrain.MP_AUTON_LOWBAR_VELOCITY_INCHES_PER_SEC, true, true, 60));
         addSequential(new WaitCommand(0.1));
         addSequential(new CameraTurnToBestTarget());
         addSequential(new CameraTurnToBestTarget());

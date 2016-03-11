@@ -9,6 +9,10 @@ import edu.rhhs.frc.commands.auton.MoatPosition2CenterShootLeft;
 import edu.rhhs.frc.commands.auton.MoatPosition3CenterShootCenter;
 import edu.rhhs.frc.commands.auton.MoatPosition4CenterShootCenter;
 import edu.rhhs.frc.commands.auton.MoatPosition5CenterShootCenter;
+import edu.rhhs.frc.commands.auton.PortcullisPosition2CenterShootLeft;
+import edu.rhhs.frc.commands.auton.PortcullisPosition3CenterShootCenter;
+import edu.rhhs.frc.commands.auton.PortcullisPosition4CenterShootCenter;
+import edu.rhhs.frc.commands.auton.PortcullisPosition5CenterShootCenter;
 import edu.rhhs.frc.commands.auton.RampartsPosition2LeftShootLeft;
 import edu.rhhs.frc.commands.auton.RampartsPosition3LeftShootCenter;
 import edu.rhhs.frc.commands.auton.RampartsPosition4LeftShootCenter;
@@ -223,6 +227,15 @@ public class RobotMain extends IterativeRobot
     			new RampartsPosition4LeftShootCenter());
     	autonCommandTable.put(buildAutonKey(AutonPosition.FIVE, AutonDefense.RAMPARTS, AutonTask.SHOOT_CENTER_HIGH), 
     			new RampartsPosition5LeftShootCenter());
+    	
+    	autonCommandTable.put(buildAutonKey(AutonPosition.TWO, AutonDefense.PORTCULLIS, AutonTask.SHOOT_LEFT_HIGH), 
+    			new PortcullisPosition2CenterShootLeft());
+    	autonCommandTable.put(buildAutonKey(AutonPosition.THREE, AutonDefense.PORTCULLIS, AutonTask.SHOOT_CENTER_HIGH), 
+    			new PortcullisPosition3CenterShootCenter());
+    	autonCommandTable.put(buildAutonKey(AutonPosition.FOUR, AutonDefense.PORTCULLIS, AutonTask.SHOOT_CENTER_HIGH), 
+    			new PortcullisPosition4CenterShootCenter());
+    	autonCommandTable.put(buildAutonKey(AutonPosition.FIVE, AutonDefense.PORTCULLIS, AutonTask.SHOOT_CENTER_HIGH), 
+    			new PortcullisPosition5CenterShootCenter());
   }
     
     private String buildAutonKey(AutonPosition position, AutonDefense defense, AutonTask task) {

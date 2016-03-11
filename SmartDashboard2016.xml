@@ -1,8 +1,5 @@
 <xml version="1.0">
 <dashboard>
-	<widget field="Gyro Offset" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="268"/>
-	</widget>
 	<widget field="Camera Offset Neg" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
 		<location x="908" y="168"/>
 	</widget>
@@ -175,4 +172,103 @@
 		<location x="1082" y="254"/>
 		<height>23</height>
 	</widget>
-	<widget field="Intake Inner UP" type="Button" class="ed
+	<widget field="Intake Inner UP" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="626" y="371"/>
+	</widget>
+	<widget field="Outer Roller Off" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="605" y="344"/>
+	</widget>
+	<widget field="Drive 0.5" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="538" y="160"/>
+	</widget>
+	<widget field="AutonPosition" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="4" y="18"/>
+	</widget>
+	<widget field="Camera Update" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="869" y="254"/>
+	</widget>
+	<widget field="Manip Positive" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="11" y="188"/>
+	</widget>
+	<widget field="PTO DISENGAGED" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="541" y="269"/>
+	</widget>
+	<widget field="Drive Straight" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="752" y="189"/>
+		<width>106</width>
+	</widget>
+	<widget field="Turn Absolute" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="649" y="188"/>
+	</widget>
+	<widget field="Right Vel Ft-Sec" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="698" y="128"/>
+	</widget>
+	<widget field="Camera Score" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="847" y="342"/>
+	</widget>
+	<widget field="Winch Retracted" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="256" y="309"/>
+	</widget>
+	<widget field="Winch Amps" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="276" y="364"/>
+	</widget>
+	<widget field="Left 1 Amps" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="544" y="24"/>
+	</widget>
+	<widget field="Right 2 Amps" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="712" y="47"/>
+	</widget>
+	<widget field="Left Pos Inches" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="527" y="104"/>
+	</widget>
+	<widget field="Winch Max Amps" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="254" y="336"/>
+	</widget>
+	<widget field="Yaw Angle Deg" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1000" y="61"/>
+	</widget>
+	<widget field="Left Arm deg" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="13" y="247"/>
+	</widget>
+	<widget field="Camera Distance" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1012" y="314"/>
+	</widget>
+	<widget field="Left Vel Ft-Sec" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="531" y="128"/>
+	</widget>
+	<widget field="Right 1 Amps" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="712" y="22"/>
+	</widget>
+	<widget field="Left 3 Amps" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="545" y="71"/>
+	</widget>
+	<widget field="Right Arm deg" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="173" y="248"/>
+	</widget>
+	<widget field="Image Counter" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1021" y="341"/>
+	</widget>
+	<widget field="Left 2 Amps" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="545" y="47"/>
+	</widget>
+	<widget field="Right 3 Amps" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="712" y="70"/>
+	</widget>
+	<widget field="Camera Angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="848" y="316"/>
+	</widget>
+	<widget field="Right Pos Inches" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="695" y="104"/>
+	</widget>
+	<widget field="Camera Time ms" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1014" y="287"/>
+	</widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.ConnectionIndicator">
+		<location x="875" y="15"/>
+		<width>299</width>
+		<height>82</height>
+	</static-widget>
+</dashboard>
+<live-window>
+</live-window>
+</xml>
