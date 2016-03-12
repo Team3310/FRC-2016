@@ -38,7 +38,7 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 
 	// Motion profile max velocities and accel times
 	public static final double MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC = 72;
-	public static final double MP_AUTON_LOWBAR_VELOCITY_INCHES_PER_SEC = 65;
+	public static final double MP_AUTON_LOWBAR_VELOCITY_INCHES_PER_SEC = 72;
 	public static final double MP_AUTON_MOAT_VELOCITY_INCHES_PER_SEC = 108;
 	public static final double MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC = 180;
 	
@@ -196,8 +196,8 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 	
 	public void checkForGyroCalibration() {
 		if (!isCalibrating && getGyroCalibrationSwitch()) {
-	//		gyro.startCalibration();
-			gyro.calibrate();
+			gyro.startCalibration();
+//			gyro.calibrate();
 			isCalibrating = true;
 		}
 	}
@@ -477,6 +477,7 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 				MotionProfilePoint mpPoint = mpTurnController.getCurrentPoint(); 
 				double delta = mpPoint != null ? getGyroAngleDeg() - mpTurnController.getCurrentPoint().position : 0;
 				SmartDashboard.putNumber("Gyro Delta", delta);
+				SmartDashboard.putBoolean("Gyro Calibrating", isCalibrating);
 				SmartDashboard.putNumber("Gyro Offset", gyroOffsetDeg);
 			}
 			catch (Exception e) {

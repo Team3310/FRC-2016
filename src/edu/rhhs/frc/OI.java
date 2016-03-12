@@ -246,6 +246,10 @@ public class OI
 		shooterWinchSpoolOut.whenPressed(new ShooterWinchSpoolOut());
 		SmartDashboard.putData("Winch Spool Out", shooterWinchSpoolOut);
 		
+		Button shooterShootAndRetract = new InternalButton();
+		shooterShootAndRetract.whenPressed(new ShooterShootAndRetract(false));
+		SmartDashboard.putData("Shoot and Retract", shooterShootAndRetract);
+		
 		Button drivePos05 = new InternalButton();
 		drivePos05.whenPressed(new DriveTrainSpeed(0.5));
 		SmartDashboard.putData("Drive 0.5", drivePos05);

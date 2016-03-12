@@ -9,6 +9,6 @@ public class ShooterWinchRetractAndSpoolOut extends CommandGroup {
     
     public ShooterWinchRetractAndSpoolOut() {
         addSequential(new ShooterWinchRetract());
-        addSequential(new ShooterWinchSpoolOut());
+        addParallel(new ShooterWinchSpoolOut());
     }
 }

@@ -6,7 +6,9 @@ import edu.rhhs.frc.commands.DriveTrainStraightMP;
 import edu.rhhs.frc.commands.IntakeHelperRetract;
 import edu.rhhs.frc.commands.ManipulatorMoveMP;
 import edu.rhhs.frc.commands.ShooterShoot;
+import edu.rhhs.frc.commands.ShooterWinchRetract;
 import edu.rhhs.frc.commands.ShooterWinchRetractAndSpoolOut;
+import edu.rhhs.frc.commands.ShooterWinchSpoolOut;
 import edu.rhhs.frc.subsystems.DriveTrain;
 import edu.rhhs.frc.subsystems.Manipulator;
 import edu.rhhs.frc.subsystems.Manipulator.PresetPositions;
@@ -20,6 +22,8 @@ import edu.wpi.first.wpilibj.command.WaitCommand;
 public class LowBarShootLeft extends CommandGroup {
     
     public LowBarShootLeft() {
+        addSequential(new ShooterWinchRetract());
+        addParallel(new ShooterWinchSpoolOut());
         addParallel(new IntakeDelayedDeploy());
         addParallel(new ManipulatorMoveMP(PresetPositions.FULLY_DEPLOYED, Manipulator.Attachment.CHEVAL_DE_FRISE));
         addSequential(new DriveTrainStraightMP(212, DriveTrain.MP_AUTON_LOWBAR_VELOCITY_INCHES_PER_SEC, true, true, 0));
@@ -35,7 +39,7 @@ public class LowBarShootLeft extends CommandGroup {
         addSequential(new DriveTrainStraightMP(42, DriveTrain.MP_AUTON_LOWBAR_VELOCITY_INCHES_PER_SEC, true, false, 60));
         addSequential(new WaitCommand(0.1));
         addSequential(new ShooterShoot(true));
-        addParallel(new ShooterWinchRetractAndSpoolOut());
+//        addParallel(new ShooterWinchRetractAndSpoolOut());
 //        addSequential(new DriveTrainStraightMP(-68, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, false, 60));
 //        addSequential(new DriveTrainAbsoluteTurnMP(175, DriveTrain.MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC, MPSoftwareTurnType.TANK));
 //        addParallel(new IntakeDelayedDeploy());

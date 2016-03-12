@@ -1,5 +1,16 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="Shoot and Retract" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="109" y="423"/>
+		<width>255</width>
+		<height>33</height>
+	</widget>
+	<widget field="Gyro Calibrating" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1000" y="60"/>
+	</widget>
+	<widget field="Gyro Offset" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1018" y="115"/>
+	</widget>
 	<widget field="Camera Offset Neg" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
 		<location x="908" y="168"/>
 	</widget>
@@ -50,7 +61,7 @@
 		<location x="1001" y="30"/>
 	</widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.WebcamViewerExtension">
-		<location x="773" y="376"/>
+		<location x="784" y="384"/>
 		<width>404</width>
 		<height>302</height>
 	</static-widget>
@@ -68,13 +79,13 @@
 		<location x="307" y="93"/>
 	</widget>
 	<widget field="Manipulator" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
-		<location x="312" y="17"/>
+		<location x="312" y="12"/>
 	</widget>
 	<widget field="Reset Arm Zero" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
 		<location x="227" y="188"/>
 	</widget>
 	<widget field="Operation Mode" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
-		<location x="429" y="16"/>
+		<location x="430" y="11"/>
 	</widget>
 	<widget field="Drive off" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
 		<location x="785" y="160"/>
@@ -124,7 +135,7 @@
 		<location x="135" y="307"/>
 	</widget>
 	<widget field="AutonDefense" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
-		<location x="100" y="19"/>
+		<location x="99" y="15"/>
 	</widget>
 	<widget field="Winch Speed Neg" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
 		<location x="10" y="307"/>
@@ -166,7 +177,7 @@
 		<location x="703" y="160"/>
 	</widget>
 	<widget field="AutonTask" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
-		<location x="195" y="18"/>
+		<location x="195" y="13"/>
 	</widget>
 	<widget field="Camera Read" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
 		<location x="1082" y="254"/>
@@ -182,7 +193,7 @@
 		<location x="538" y="160"/>
 	</widget>
 	<widget field="AutonPosition" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
-		<location x="4" y="18"/>
+		<location x="3" y="15"/>
 	</widget>
 	<widget field="Camera Update" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
 		<location x="869" y="254"/>
@@ -225,7 +236,7 @@
 		<location x="254" y="336"/>
 	</widget>
 	<widget field="Yaw Angle Deg" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1000" y="61"/>
+		<location x="1003" y="88"/>
 	</widget>
 	<widget field="Left Arm deg" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="13" y="247"/>
@@ -266,7 +277,7 @@
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.ConnectionIndicator">
 		<location x="875" y="15"/>
 		<width>299</width>
-		<height>82</height>
+		<height>129</height>
 	</static-widget>
 </dashboard>
 <live-window>
