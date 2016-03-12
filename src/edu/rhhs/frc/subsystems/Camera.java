@@ -23,6 +23,7 @@ public class Camera extends Subsystem
 	private long processTimeMs = 0;
 	private double offsetAngleDeg = -1;
 	private boolean lastTargetValid = false;
+	private boolean alignmentFinished = false;
 
     public Camera() {
 		try {
@@ -121,6 +122,23 @@ public class Camera extends Subsystem
 		offsetAngleDeg += deltaAngle;
 	}
 	
+	
+	
+	public boolean isAlignmentFinished() {
+		return alignmentFinished;
+	}
+
+	public void setAlignmentFinished(boolean state) {
+		if (state && lastTargetValid) {
+			alignmentFinished = true;
+		}
+		else {
+			alignmentFinished = false;
+		}
+		
+		return;
+	}
+
 	public void updateStatus(RobotMain.OperationMode operationMode) {
 		if (operationMode == RobotMain.OperationMode.TEST) {
 			SmartDashboard.putNumber("Image Counter", imageCounter);
@@ -129,6 +147,7 @@ public class Camera extends Subsystem
 			SmartDashboard.putNumber("Camera Score",  bestTarget == null ? 0.0 : bestTarget.compositeScore);
 			SmartDashboard.putNumber("Camera Time ms",  processTimeMs);
 			SmartDashboard.putNumber("Camera Offset",  offsetAngleDeg);
+			SmartDashboard.putBoolean("Camera Aligned",  alignmentFinished);
 		}
 	}
 }

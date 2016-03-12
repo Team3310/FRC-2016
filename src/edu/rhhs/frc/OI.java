@@ -31,8 +31,10 @@ import edu.rhhs.frc.commands.IntakeOuterSpeed;
 import edu.rhhs.frc.commands.ManipulatorArmSpeed;
 import edu.rhhs.frc.commands.ManipulatorMoveMP;
 import edu.rhhs.frc.commands.ManipulatorResetZero;
+import edu.rhhs.frc.commands.ShooterCameraAlign;
 import edu.rhhs.frc.commands.ShooterCarriageState;
 import edu.rhhs.frc.commands.ShooterShootAndRetract;
+import edu.rhhs.frc.commands.ShooterShootAndRetractCamera;
 import edu.rhhs.frc.commands.ShooterShotPosition;
 import edu.rhhs.frc.commands.ShooterWinchRetractAndSpoolOut;
 import edu.rhhs.frc.commands.ShooterWinchSafeRelease;
@@ -146,8 +148,14 @@ public class OI
         XBoxTriggerButton shooterShoot = new XBoxTriggerButton(m_operatorXBox, XBoxTriggerButton.RIGHT_TRIGGER);
         shooterShoot.whenPressed(new ShooterShootAndRetract(false));
 
+        XBoxTriggerButton shooterShootCamera = new XBoxTriggerButton(m_operatorXBox, XBoxTriggerButton.LEFT_TRIGGER);
+        shooterShootCamera.whenPressed(new ShooterShootAndRetractCamera());
+
         JoystickButton retractWinch = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.BACK_BUTTON);
         retractWinch.whenPressed(new ShooterWinchRetractAndSpoolOut());
+
+        JoystickButton cameraAlign = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.LEFT_JOYSTICK_BUTTON);
+        cameraAlign.whenPressed(new ShooterCameraAlign());
 
         JoystickButton safeReleaseWinch = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.START_BUTTON);
         safeReleaseWinch.whenPressed(new ShooterWinchSafeRelease());

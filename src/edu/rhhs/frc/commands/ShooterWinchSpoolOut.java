@@ -30,16 +30,13 @@ public class ShooterWinchSpoolOut extends Command
 
 	@Override
 	protected boolean isFinished() {
-		boolean finished = isWinchAlreadyRetracted || RobotMain.shooter.isWinchSpooledOut();
-		if(finished) {
-			RobotMain.shooter.resetWinchEncoder();
-		}
-		return finished;
+		return isWinchAlreadyRetracted || RobotMain.shooter.isWinchSpooledOut();
 	}
 
 	@Override
 	protected void end() {
 		RobotMain.shooter.setWinchSpeed(0.0);		
+		RobotMain.shooter.resetWinchEncoder();
 	}
 
 	@Override
