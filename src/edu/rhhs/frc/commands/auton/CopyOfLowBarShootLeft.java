@@ -15,13 +15,13 @@ import edu.rhhs.frc.subsystems.Manipulator.PresetPositions;
 import edu.rhhs.frc.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitCommand;
-import edu.rhhs.frc.commands.DriveTrainStraightMPLaser;
+
 /**
  *
  */
-public class LowBarShootLeft extends CommandGroup {
+public class CopyOfLowBarShootLeft extends CommandGroup {
     
-    public LowBarShootLeft() {
+    public CopyOfLowBarShootLeft() {
         addSequential(new ShooterWinchRetract());
         addParallel(new ShooterWinchSpoolOut());
         addParallel(new IntakeDelayedDeploy());
@@ -30,12 +30,12 @@ public class LowBarShootLeft extends CommandGroup {
         addParallel(new ManipulatorMoveMP(PresetPositions.RETRACTED, Manipulator.Attachment.CHEVAL_DE_FRISE));
         addSequential(new IntakeHelperRetract());
         addSequential(new DriveTrainAbsoluteTurnMP(60, DriveTrain.MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC, MPSoftwareTurnType.TANK));
-        addSequential(new DriveTrainStraightMP(70, DriveTrain.MP_AUTON_LOWBAR_VELOCITY_INCHES_PER_SEC, true, true, 60));
+        addSequential(new DriveTrainStraightMP(52, DriveTrain.MP_AUTON_LOWBAR_VELOCITY_INCHES_PER_SEC, true, true, 60));
         addSequential(new CameraTurnToBestTarget());
         addSequential(new CameraTurnToBestTarget());
-        addSequential(new DriveTrainStraightMPLaser(24, DriveTrain.MP_LASER_SEARCH_VELOCITY_INCHES_PER_SEC, true, false, 60));
         addSequential(new CameraTurnToBestTarget());
-        addSequential(new CameraTurnToBestTarget());
+        addSequential(new WaitCommand(0.1));
+        addSequential(new DriveTrainStraightMP(42, DriveTrain.MP_AUTON_LOWBAR_VELOCITY_INCHES_PER_SEC, true, false, 60));
         addSequential(new WaitCommand(0.1));
         addSequential(new ShooterShoot(true));
 //        addParallel(new ShooterWinchRetractAndSpoolOut());

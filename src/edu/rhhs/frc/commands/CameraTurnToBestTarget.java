@@ -20,7 +20,12 @@ public class CameraTurnToBestTarget extends Command
 	protected void initialize() {
 		TargetInfo bestTarget = RobotMain.camera.getBestTarget();
 		if (bestTarget != null) {
-			RobotMain.driveTrain.setRelativeTurnMP(bestTarget.angleToTargetDeg, DriveTrain.MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC, MPSoftwareTurnType.TANK);			
+			if(bestTarget.angleToTargetDeg > 15) {
+				RobotMain.driveTrain.setRelativeTurnMP(bestTarget.angleToTargetDeg, DriveTrain.MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC, MPSoftwareTurnType.TANK);			
+			}
+			else {
+				RobotMain.driveTrain.setRelativeTurnPID(bestTarget.angleToTargetDeg, 0.3, 0.1, MPSoftwareTurnType.TANK);
+			}
 			targetFound = true;
 		}
 		else {

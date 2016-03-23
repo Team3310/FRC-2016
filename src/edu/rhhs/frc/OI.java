@@ -8,6 +8,7 @@ import edu.rhhs.frc.commands.CameraReadAndProcessImage;
 import edu.rhhs.frc.commands.CameraReadImageTurnToBestTarget;
 import edu.rhhs.frc.commands.CameraSaveImage;
 import edu.rhhs.frc.commands.CameraTurnToBestTarget;
+import edu.rhhs.frc.commands.CameraUpdateBestTarget;
 import edu.rhhs.frc.commands.CameraUpdateDashboard;
 import edu.rhhs.frc.commands.DriveTrainAbsoluteTurnMP;
 import edu.rhhs.frc.commands.DriveTrainGyroCalibrate;
@@ -15,16 +16,19 @@ import edu.rhhs.frc.commands.DriveTrainGyroLock;
 import edu.rhhs.frc.commands.DriveTrainGyroReset;
 import edu.rhhs.frc.commands.DriveTrainHold;
 import edu.rhhs.frc.commands.DriveTrainPTOShift;
+import edu.rhhs.frc.commands.DriveTrainRelativeMaxTurnMP;
 import edu.rhhs.frc.commands.DriveTrainRelativeTurnMP;
 import edu.rhhs.frc.commands.DriveTrainSpeed;
 import edu.rhhs.frc.commands.DriveTrainSpeedShift;
 import edu.rhhs.frc.commands.DriveTrainStraightMP;
+import edu.rhhs.frc.commands.DriveTrainStraightMPLaser;
 import edu.rhhs.frc.commands.IntakeEject;
 import edu.rhhs.frc.commands.IntakeFullyDeploy;
 import edu.rhhs.frc.commands.IntakeFullyRetract;
 import edu.rhhs.frc.commands.IntakeInnerPosition;
 import edu.rhhs.frc.commands.IntakeInnerSpeed;
 import edu.rhhs.frc.commands.IntakeLowBarPosition;
+import edu.rhhs.frc.commands.IntakeLowGoal;
 import edu.rhhs.frc.commands.IntakeOff;
 import edu.rhhs.frc.commands.IntakeOuterPosition;
 import edu.rhhs.frc.commands.IntakeOuterSpeed;
@@ -93,11 +97,14 @@ public class OI
         intakeFullyRetract1.whenPressed(new IntakeFullyRetract());
 
         JoystickButton gyroLock = new JoystickButton(m_driverJoystickTurn, 1);
-        gyroLock.whenPressed(new DriveTrainGyroLock(true, false));
+        gyroLock.whenPressed(new DriveTrainGyroLock(true, true));
         gyroLock.whenReleased(new DriveTrainGyroLock(false, false));
 
-        JoystickButton manipulatorPartiallyDeploy1 = new JoystickButton(m_driverJoystickTurn, 3);
-        manipulatorPartiallyDeploy1.whenPressed(new ManipulatorMoveMP(PresetPositions.PARTIALLY_DEPLOYED));
+//        JoystickButton manipulatorPartiallyDeploy1 = new JoystickButton(m_driverJoystickTurn, 3);
+//        manipulatorPartiallyDeploy1.whenPressed(new ManipulatorMoveMP(PresetPositions.PARTIALLY_DEPLOYED));
+        
+        JoystickButton turn180 = new JoystickButton(m_driverJoystickTurn, 3);
+        turn180.whenPressed(new DriveTrainRelativeMaxTurnMP(180, DriveTrain.MAX_TURN_RATE_DEG_PER_SEC, MPSoftwareTurnType.TANK));
 
 //        JoystickButton shooterShortPosition1 = new JoystickButton(m_driverJoystickTurn, 4);
 //        shooterShortPosition1.whenPressed(new ShooterShotPosition(ShotPosition.SHORT));
@@ -136,6 +143,9 @@ public class OI
 
         XBoxDPadTriggerButton intakeLowBarPosition = new XBoxDPadTriggerButton(m_operatorXBox, XBoxDPadTriggerButton.DOWN);
         intakeLowBarPosition.whenPressed(new IntakeLowBarPosition());
+        
+        XBoxDPadTriggerButton intakeLowGoal = new XBoxDPadTriggerButton(m_operatorXBox, XBoxDPadTriggerButton.LEFT);
+        intakeLowGoal.whenPressed(new IntakeLowGoal());
 
         JoystickButton intakeFullyDeploy = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.RIGHT_BUMPER_BUTTON);
         intakeFullyDeploy.whenPressed(new IntakeFullyDeploy());
@@ -274,6 +284,10 @@ public class OI
 		driveOff.whenPressed(new DriveTrainSpeed(0.0));
 		SmartDashboard.putData("Drive off", driveOff);
 		
+		Button driveMPLaser = new InternalButton();
+		driveMPLaser.whenPressed(new DriveTrainStraightMPLaser(24, DriveTrain.MP_LASER_SEARCH_VELOCITY_INCHES_PER_SEC, true, false, 0));
+		SmartDashboard.putData("Drive Straight Laser", driveMPLaser);
+		
 		Button driveMP = new InternalButton();
 		driveMP.whenPressed(new DriveTrainStraightMP(96, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, false, 0));
 		SmartDashboard.putData("Drive Straight", driveMP);
@@ -341,6 +355,10 @@ public class OI
 		Button cameraTurnToBestTarget = new InternalButton();
 		cameraTurnToBestTarget.whenPressed(new CameraTurnToBestTarget());
 		SmartDashboard.putData("Camera Turn To Best", cameraTurnToBestTarget);
+		
+		Button cameraUpdateBestTarget = new InternalButton();
+		cameraUpdateBestTarget.whenPressed(new CameraUpdateBestTarget());
+		SmartDashboard.putData("Camera Update Best", cameraUpdateBestTarget);
 		
 		Button incrementCameraOffsetPos = new InternalButton();
 		incrementCameraOffsetPos.whenPressed(new CameraOffset(0.5));
