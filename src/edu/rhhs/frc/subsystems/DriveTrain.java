@@ -107,7 +107,7 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 	private PIDParams mpTurnPIDParams = new PIDParams(0.09, 0.01, 0, 0.00025, 0.005, 0.0, 5); 
 	
 	private SoftwarePIDController pidTurnController;
-	private PIDParams pidTurnPIDParams = new PIDParams(0.05, 0.005, .3, 0, 0, 0.0, 5);
+	private PIDParams pidTurnPIDParams = new PIDParams(0.05, 0.007, .3, 0, 0, 0.0, 5);
 	private double targetPIDAngle;
 
 	private BHR_ADSXRS453_Gyro gyro = new BHR_ADSXRS453_Gyro();
@@ -516,6 +516,7 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 				SmartDashboard.putBoolean("Laser Sensor", getLaserSensorStatus());
 				SmartDashboard.putNumber("Yaw Rate", getGyroRateDegPerSec());
 				SmartDashboard.putNumber("Delta PID Angle", targetPIDAngle - getGyroAngleDeg());
+				SmartDashboard.putNumber("Steer Output", m_steerOutput);
 			}
 			catch (Exception e) {
 				System.err.println("Drivetrain update status error");

@@ -1,5 +1,20 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="Camera Update Best" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="880" y="227"/>
+	</widget>
+	<widget field="Delta PID Angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="839" y="368"/>
+	</widget>
+	<widget field="Drive Straight Laser" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="0" y="499"/>
+	</widget>
+	<widget field="Yaw Rate" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="478"/>
+	</widget>
+	<widget field="Laser Sensor" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="457"/>
+	</widget>
 	<widget field="Camera Aligned" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="0" y="268"/>
 	</widget>
@@ -24,13 +39,14 @@
 		<location x="1020" y="199"/>
 	</widget>
 	<widget field="Camera Turn To Best" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
-		<location x="999" y="227"/>
+		<location x="1018" y="227"/>
 	</widget>
 	<widget field="Drive Hold On" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
 		<location x="542" y="214"/>
 	</widget>
 	<widget field="Drive Hold" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="758" y="218"/>
+		<location x="755" y="218"/>
+		<width>102</width>
 	</widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Label">
 		<location x="674" y="3"/>
@@ -64,7 +80,7 @@
 		<location x="1001" y="30"/>
 	</widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.WebcamViewerExtension">
-		<location x="784" y="384"/>
+		<location x="831" y="402"/>
 		<width>404</width>
 		<height>302</height>
 	</static-widget>

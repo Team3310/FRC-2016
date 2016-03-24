@@ -13,6 +13,7 @@ public class SoftwarePIDController
 	protected double targetGyroAngle;
 	protected MPSoftwareTurnType turnType;
 	
+	protected double minTurnOutput = 0.002;
 	protected double maxError;
 	protected double maxPrevError;
 	protected double prevError = 0.0; // the prior error (used to compute velocity)
@@ -65,6 +66,9 @@ public class SoftwarePIDController
 		}
 		
 		double output =  pidParams.kP * error + pidParams.kI * totalError + pidParams.kD * deltaLastError;
+		double turnBoost = output < 0 ? -minTurnOutput : minTurnOutput;
+		output += turnBoost;
+		
 		prevError = error;
 			
 		// Update the controllers set point.
