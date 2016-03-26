@@ -24,7 +24,7 @@ public class Manipulator extends Subsystem implements ControlLoopable
 	public static final double PORTCULLIS_RETRACTED_ANGLE_DEG = 0;
 	public static final double PORTCULLIS_ZERO_ANGLE_DEG = 0;
 	public static final double PORTCULLIS_PARTIALLY_DEPLOYED_ANGLE_DEG = 180;//165;
-	public static final double PORTCULLIS_FULLY_DEPLOYED_ANGLE_DEG = 205;//181;
+	public static final double PORTCULLIS_FULLY_DEPLOYED_ANGLE_DEG = 210;//181;
 
 	public static final double CHEVAL_DE_FRISE_RETRACTED_ANGLE_DEG = 0;
 	public static final double CHEVAL_DE_FRISE_ZERO_ANGLE_DEG = 0;

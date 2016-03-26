@@ -21,7 +21,7 @@ public class Camera extends Subsystem
     private TargetInfo bestTarget;
 	private int imageCounter = 0;
 	private long processTimeMs = 0;
-	private double offsetAngleDeg = 0;
+	private double offsetAngleDeg = 7;
 	private boolean lastTargetValid = false;
 	private boolean alignmentFinished = false;
 

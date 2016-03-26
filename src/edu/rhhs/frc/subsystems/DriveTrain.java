@@ -78,11 +78,13 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 	public static final int DRIVER_INPUT_XBOX_ARCADE_RIGHT = 5;
 	public static final int DRIVER_INPUT_WHEEL = 6;
 
-	public static final double STEER_NON_LINEARITY = 1.0;
+	public static final double STEER_NON_LINEARITY = 0.5;
 	public static final double MOVE_NON_LINEARITY = 1.0;
+	
+	public static final double STICK_DEADBAND = 0.02;
 
 	private int m_moveNonLinear = 0;
-	private int m_steerNonLinear = 0;
+	private int m_steerNonLinear = 3;
 
 	private double m_moveScale = 1.0;
 	private double m_steerScale = 1.0;
@@ -411,7 +413,7 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 
 	private boolean inDeadZone(double input) {
 		boolean inDeadZone;
-		if (Math.abs(input) < .3) {
+		if (Math.abs(input) < STICK_DEADBAND) {
 			inDeadZone = true;
 		} else {
 			inDeadZone = false;

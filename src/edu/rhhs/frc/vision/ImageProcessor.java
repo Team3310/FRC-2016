@@ -24,7 +24,7 @@ public class ImageProcessor {
     public static final double TARGET_WIDTH_FT = 20.0/12.0;
     public static final double TARGET_ASPECT_RATIO = TARGET_HEIGHT_FT / TARGET_WIDTH_FT;
     
-    public static final double CAMERA_OFFSET_FT = 9.0/12.0;
+    public static final double CAMERA_OFFSET_FT = -9.0/12.0;
             
     public static final double OPTIMAL_RECT = 0.2;
     public static final double OPTIMAL_AR = TARGET_ASPECT_RATIO;
