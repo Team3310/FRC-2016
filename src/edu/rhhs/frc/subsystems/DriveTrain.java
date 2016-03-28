@@ -14,6 +14,7 @@ import edu.rhhs.frc.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 import edu.rhhs.frc.utility.MPTalonPIDController;
 import edu.rhhs.frc.utility.MotionProfilePoint;
 import edu.rhhs.frc.utility.PIDParams;
+import edu.rhhs.frc.utility.SoftwarePIDController;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
@@ -27,24 +28,29 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DriveTrain extends Subsystem implements ControlLoopable
 {
-	public static enum DriveTrainControlMode { JOYSTICK, MP_STRAIGHT, MP_TURN, HOLD, TEST };
+	public static enum DriveTrainControlMode { JOYSTICK, MP_STRAIGHT, MP_TURN, PID_TURN, HOLD, TEST };
 	public static enum SpeedShiftState { HI, LO };
 	public static enum PTOShiftState { ENGAGED, DISENGAGED };
 
 	public static final double TRACK_WIDTH_INCHES = 20;
-	public static final double ENCODER_TICKS_TO_INCHES = 4096 / (3.80 * Math.PI); 
+	public static final double ENCODER_TICKS_TO_INCHES = 4096 / (3.72 * Math.PI); //3.80
 	
 	public static final double VOLTAGE_RAMP_RATE = 24;  // Volts per second
 
 	// Motion profile max velocities and accel times
+	public static final double MAX_TURN_RATE_DEG_PER_SEC = 320;
 	public static final double MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC = 72;
+	public static final double MP_AUTON_LOWBAR_VELOCITY_INCHES_PER_SEC = 72;
 	public static final double MP_AUTON_MOAT_VELOCITY_INCHES_PER_SEC = 108;
 	public static final double MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC = 180;
+	public static final double MP_LASER_SEARCH_VELOCITY_INCHES_PER_SEC = 10;
 	
 	public static final double MP_STRAIGHT_T1 = 600;
 	public static final double MP_STRAIGHT_T2 = 300;
 	public static final double MP_TURN_T1 = 600;
 	public static final double MP_TURN_T2 = 300;
+	public static final double MP_MAX_TURN_T1 = 400;
+	public static final double MP_MAX_TURN_T2 = 200;
 	
 	// Motor controllers
 	private ArrayList<CANTalonEncoder> motorControllers = new ArrayList<CANTalonEncoder>();	
@@ -72,11 +78,13 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 	public static final int DRIVER_INPUT_XBOX_ARCADE_RIGHT = 5;
 	public static final int DRIVER_INPUT_WHEEL = 6;
 
-	public static final double STEER_NON_LINEARITY = 1.0;
+	public static final double STEER_NON_LINEARITY = 0.5;
 	public static final double MOVE_NON_LINEARITY = 1.0;
+	
+	public static final double STICK_DEADBAND = 0.02;
 
 	private int m_moveNonLinear = 0;
-	private int m_steerNonLinear = 0;
+	private int m_steerNonLinear = 3;
 
 	private double m_moveScale = 1.0;
 	private double m_steerScale = 1.0;
@@ -99,12 +107,17 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 
 	private MPSoftwarePIDController mpTurnController;
 	private PIDParams mpTurnPIDParams = new PIDParams(0.09, 0.01, 0, 0.00025, 0.005, 0.0, 5); 
+	
+	private SoftwarePIDController pidTurnController;
+	private PIDParams pidTurnPIDParams = new PIDParams(0.05, 0.007, .3, 0, 0, 0.0, 5);
+	private double targetPIDAngle;
 
 	private BHR_ADSXRS453_Gyro gyro = new BHR_ADSXRS453_Gyro();
 	private boolean useGyroLock;
 	private double gyroLockAngleDeg;
 	private double kPGyro = 0.04;
 	private DigitalInput gyroCalibrationSwitch;
+	private DigitalInput laserSensor;
 	private boolean isCalibrating = false;
 	private double gyroOffsetDeg = 0;
 
@@ -156,6 +169,7 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 			ptoShift = new DoubleSolenoid(RobotMap.DRIVETRAIN_WINCH_ENGAGE_PCM_ID, RobotMap.DRIVETRAIN_WINCH_DISENGAGE_PCM_ID);		
 
 			gyroCalibrationSwitch = new DigitalInput(RobotMap.CALIBRATE_GYRO_BUTTON_DIO_PORT_ID);
+			laserSensor = new DigitalInput(RobotMap.LASER_SENSOR_DIO_PORT_ID);
 		}
 		catch (Exception e) {
 			System.err.println("An error occurred in the DriveTrain constructor");
@@ -193,9 +207,14 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 		return !gyroCalibrationSwitch.get();
 	}
 	
+	public boolean getLaserSensorStatus() {
+		return !laserSensor.get();
+	}
+	
 	public void checkForGyroCalibration() {
 		if (!isCalibrating && getGyroCalibrationSwitch()) {
 			gyro.startCalibration();
+//			gyro.calibrate();
 			isCalibrating = true;
 		}
 	}
@@ -216,9 +235,20 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 		setControlMode(DriveTrainControlMode.MP_TURN);
 	}
 	
+	public void setRelativeMaxTurnMP(double relativeTurnAngleDeg, double turnRateDegPerSec, MPSoftwareTurnType turnType) {
+		mpTurnController.setMPTurnTarget(getGyroAngleDeg(), relativeTurnAngleDeg + getGyroAngleDeg(), turnRateDegPerSec, MP_MAX_TURN_T1, MP_MAX_TURN_T2, turnType, TRACK_WIDTH_INCHES);
+		setControlMode(DriveTrainControlMode.MP_TURN);
+	}
+	
 	public void setAbsoluteTurnMP(double absoluteTurnAngleDeg, double turnRateDegPerSec, MPSoftwareTurnType turnType) {
 		mpTurnController.setMPTurnTarget(getGyroAngleDeg(), BHRMathUtils.adjustAccumAngleToDesired(getGyroAngleDeg(), absoluteTurnAngleDeg), turnRateDegPerSec, MP_TURN_T1, MP_TURN_T2, turnType, TRACK_WIDTH_INCHES);
 		setControlMode(DriveTrainControlMode.MP_TURN);
+	}
+	
+	public void setRelativeTurnPID(double relativeTurnAngleDeg, double maxError, double maxPrevError, MPSoftwareTurnType turnType) {
+		this.targetPIDAngle = relativeTurnAngleDeg + getGyroAngleDeg();
+		pidTurnController.setPIDTurnTarget(relativeTurnAngleDeg + getGyroAngleDeg(), maxError, maxPrevError, turnType);
+		setControlMode(DriveTrainControlMode.PID_TURN);
 	}
 	
 	public void setDriveHold(boolean status) {
@@ -262,6 +292,9 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 			}
 			else if (controlMode == DriveTrainControlMode.MP_TURN) {
 				isFinished = mpTurnController.controlLoopUpdate(getGyroAngleDeg()); 
+			}
+			else if (controlMode == DriveTrainControlMode.PID_TURN) {
+				isFinished = pidTurnController.controlLoopUpdate(getGyroAngleDeg()); 
 			}
 		}
 	}
@@ -380,7 +413,7 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 
 	private boolean inDeadZone(double input) {
 		boolean inDeadZone;
-		if (Math.abs(input) < .3) {
+		if (Math.abs(input) < STICK_DEADBAND) {
 			inDeadZone = true;
 		} else {
 			inDeadZone = false;
@@ -451,10 +484,15 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 		return isFinished;
 	}
 	
+	public void setFinished(boolean isFinished) {
+		this.isFinished = isFinished;
+	}
+	
 	@Override
 	public void setPeriodMs(long periodMs) {
 		mpStraightController = new MPTalonPIDController(periodMs, mpStraightPIDParams, motorControllers);
 		mpTurnController = new MPSoftwarePIDController(periodMs, mpTurnPIDParams, motorControllers);
+		pidTurnController = new SoftwarePIDController(pidTurnPIDParams, motorControllers);
 	}
 	
 	public void updateStatus(RobotMain.OperationMode operationMode) {
@@ -465,17 +503,22 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 				SmartDashboard.putNumber("Left Pos Inches", leftDrive1.getPositionWorld());
 				SmartDashboard.putNumber("Right Vel Ft-Sec", rightDrive1.getVelocityWorld() / 12);
 				SmartDashboard.putNumber("Left Vel Ft-Sec", leftDrive1.getVelocityWorld() / 12);
-				SmartDashboard.putNumber("Left 1 Amps", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR1_CAN_ID-2));
-				SmartDashboard.putNumber("Left 2 Amps", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR2_CAN_ID-2));
-				SmartDashboard.putNumber("Left 3 Amps", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR3_CAN_ID-2));
-				SmartDashboard.putNumber("Right 1 Amps", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR1_CAN_ID-2));
-				SmartDashboard.putNumber("Right 2 Amps", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR2_CAN_ID-2));
-				SmartDashboard.putNumber("Right 3 Amps", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR3_CAN_ID-2));
+				SmartDashboard.putNumber("Left 1 Amps", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR1_CAN_ID));
+				SmartDashboard.putNumber("Left 2 Amps", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR2_CAN_ID));
+				SmartDashboard.putNumber("Left 3 Amps", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR3_CAN_ID));
+				SmartDashboard.putNumber("Right 1 Amps", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR1_CAN_ID));
+				SmartDashboard.putNumber("Right 2 Amps", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR2_CAN_ID));
+				SmartDashboard.putNumber("Right 3 Amps", RobotMain.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR3_CAN_ID));
 				SmartDashboard.putBoolean("Drive Hold", controlMode == DriveTrainControlMode.HOLD);
 				MotionProfilePoint mpPoint = mpTurnController.getCurrentPoint(); 
 				double delta = mpPoint != null ? getGyroAngleDeg() - mpTurnController.getCurrentPoint().position : 0;
 				SmartDashboard.putNumber("Gyro Delta", delta);
+				SmartDashboard.putBoolean("Gyro Calibrating", isCalibrating);
 				SmartDashboard.putNumber("Gyro Offset", gyroOffsetDeg);
+				SmartDashboard.putBoolean("Laser Sensor", getLaserSensorStatus());
+				SmartDashboard.putNumber("Yaw Rate", getGyroRateDegPerSec());
+				SmartDashboard.putNumber("Delta PID Angle", targetPIDAngle - getGyroAngleDeg());
+				SmartDashboard.putNumber("Steer Output", m_steerOutput);
 			}
 			catch (Exception e) {
 				System.err.println("Drivetrain update status error");

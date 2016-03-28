@@ -19,7 +19,7 @@ public class Shooter extends Subsystem
 	public static final double WINCH_SPOOLOUT_SPEED = -1.0;
 	public static final double MAX_WINCH_CURRENT = 50.0;
 	public static final double SAFE_RELEASE_WINCH_CURRENT = 10.0;
-	public static final double WINCH_SPOOLOUT_DISTANCE = -10.3;
+	public static final double WINCH_SPOOLOUT_DISTANCE = -9.3;
 
 	private CANTalonEncoder winch;
 	private Solenoid shotPosition, carriageRelease;
@@ -81,6 +81,10 @@ public class Shooter extends Subsystem
 		else if(position == ShotPosition.SHORT) {
 			shotPosition.set(false);
 		}
+	}
+	
+	public double getWinchPositionWorld() {
+		return winch.getPositionWorld(); 
 	}
 
 	@Override

@@ -9,12 +9,12 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 /**
  *
  */
-public class MoatPosition2CenterShootLeft extends CommandGroup {
+public class RoughTerrainPosition4CenterShootCenter extends CommandGroup {
     
-    public MoatPosition2CenterShootLeft() {
+    public RoughTerrainPosition4CenterShootCenter() {
         addSequential(new ShooterWinchRetract());
         addParallel(new ShooterWinchSpoolOut());
-        addSequential(new DriveTrainStraightMP(132, DriveTrain.MP_AUTON_MOAT_VELOCITY_INCHES_PER_SEC, true, true, 0));
-        addSequential(new Position2CenterShootLeft());
+        addSequential(new DriveTrainStraightMP(150, DriveTrain.MP_AUTON_MOAT_VELOCITY_INCHES_PER_SEC, true, true, 0));
+        addSequential(new Position4CenterShootCenter());
     }
 }

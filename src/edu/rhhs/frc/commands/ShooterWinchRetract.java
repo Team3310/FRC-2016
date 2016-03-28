@@ -18,11 +18,12 @@ public class ShooterWinchRetract extends ExtraTimeoutCommand
 	protected void initialize() {
 		waitingForLock = false;
 		resetTimer();
+		RobotMain.shooter.resetWinchEncoder();
 		carriageIsAlreadyRetracted = RobotMain.shooter.isCarriageRetracted();
 		if (!carriageIsAlreadyRetracted) {
 			RobotMain.shooter.setCarriageRelease(CarriageState.RELEASED);
 			RobotMain.shooter.setWinchSpeed(Shooter.WINCH_RETRACT_SPEED);			
-		};
+		}
 	}
 
 	@Override

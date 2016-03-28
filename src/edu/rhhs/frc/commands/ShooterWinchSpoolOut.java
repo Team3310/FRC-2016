@@ -6,15 +6,22 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class ShooterWinchSpoolOut extends Command
 {	
+	private boolean isWinchAlreadyRetracted;
+	
 	public ShooterWinchSpoolOut() {
 		requires(RobotMain.shooter);
 	}
 
 	@Override
 	protected void initialize() {
-		RobotMain.shooter.resetWinchEncoder();
-		RobotMain.shooter.setWinchSpeed(Shooter.WINCH_SPOOLOUT_SPEED);
-		
+		isWinchAlreadyRetracted = false;
+		if (Math.abs(RobotMain.shooter.getWinchPositionWorld()) > 1) {
+			RobotMain.shooter.resetWinchEncoder();
+			RobotMain.shooter.setWinchSpeed(Shooter.WINCH_SPOOLOUT_SPEED);
+		}	
+		else {
+			isWinchAlreadyRetracted = true;
+		}
 	}
 
 	@Override
@@ -23,12 +30,13 @@ public class ShooterWinchSpoolOut extends Command
 
 	@Override
 	protected boolean isFinished() {
-		return RobotMain.shooter.isWinchSpooledOut();
+		return isWinchAlreadyRetracted || RobotMain.shooter.isWinchSpooledOut();
 	}
 
 	@Override
 	protected void end() {
 		RobotMain.shooter.setWinchSpeed(0.0);		
+		RobotMain.shooter.resetWinchEncoder();
 	}
 
 	@Override

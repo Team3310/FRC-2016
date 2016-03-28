@@ -17,14 +17,14 @@ public class ImageProcessor {
 //    private static final int NUM_SMALL_OBJECT_EROSIONS = 2;
     
     private NIVision.Range TARGET_HUE_RANGE = new NIVision.Range(82, 137);	
-    private NIVision.Range TARGET_SAT_RANGE = new NIVision.Range(35, 255);	
+    private NIVision.Range TARGET_SAT_RANGE = new NIVision.Range(28, 255);	
     private NIVision.Range TARGET_LUM_RANGE = new NIVision.Range(60, 255);	
     
     public static final double TARGET_HEIGHT_FT = 1.0;
     public static final double TARGET_WIDTH_FT = 20.0/12.0;
     public static final double TARGET_ASPECT_RATIO = TARGET_HEIGHT_FT / TARGET_WIDTH_FT;
     
-    public static final double CAMERA_OFFSET_FT = 3.75/12.0;
+    public static final double CAMERA_OFFSET_FT = -9.0/12.0;
             
     public static final double OPTIMAL_RECT = 0.2;
     public static final double OPTIMAL_AR = TARGET_ASPECT_RATIO;
@@ -108,8 +108,8 @@ public class ImageProcessor {
 	        double focalDistancePixels = (double)imageWidth / 2 / tanHalfFOV;
 	        double offsetAngle = Math.atan(widthOffsetPixels / focalDistancePixels);
 	
-	        double imageWidthFt = Math.cos(offsetAngle) * (double)imageWidth * TARGET_WIDTH_FT / rectWidth;
-	        double cameraDistanceWidthFt = imageWidthFt / 2.0 / tanHalfFOV;
+	        double imageWidthFt = (double)imageWidth * TARGET_WIDTH_FT / rectWidth / Math.cos(offsetAngle);
+	        double cameraDistanceWidthFt = Math.cos(Math.toRadians(58)) * imageWidthFt / 2.0 / tanHalfFOV;
 	
 	        // Calculate the angle from the center of the image to the selected target
 	        double targetOffsetFt = imageWidthFt * widthOffsetPixels / (double)imageWidth + CAMERA_OFFSET_FT;

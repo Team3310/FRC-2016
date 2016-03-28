@@ -17,17 +17,17 @@ public class Position3CenterShootCenter extends CommandGroup {
     
     public Position3CenterShootCenter() {
         addSequential(new DriveTrainAbsoluteTurnMP(45, DriveTrain.MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC, MPSoftwareTurnType.TANK));
-        addSequential(new DriveTrainStraightMP(68, DriveTrain.MP_AUTON_MOAT_VELOCITY_INCHES_PER_SEC, true, true, 45));
+        addSequential(new DriveTrainStraightMP(54, DriveTrain.MP_AUTON_MOAT_VELOCITY_INCHES_PER_SEC, true, true, 45));
         addSequential(new DriveTrainAbsoluteTurnMP(0, DriveTrain.MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC, MPSoftwareTurnType.TANK));
-        addSequential(new DriveTrainStraightMP(5, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, true, 0));
+//        addSequential(new DriveTrainStraightMP(5, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, true, 0));
         addSequential(new WaitCommand(0.1));
         addSequential(new CameraTurnToBestTarget());
         addSequential(new CameraTurnToBestTarget());
         addSequential(new CameraTurnToBestTarget());
         addSequential(new WaitCommand(0.1));
-        addSequential(new DriveTrainStraightMP(18, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, false, 0));
+        addSequential(new DriveTrainStraightMP(23, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, false, 0));
         addSequential(new ShooterShoot(true));
-        addParallel(new ShooterWinchRetractAndSpoolOut());
+//        addParallel(new ShooterWinchRetractAndSpoolOut());
 //        addSequential(new DriveTrainStraightMP(-23, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, 0));
 //        addSequential(new DriveTrainAbsoluteTurnMP(45, DriveTrain.MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC, MPSoftwareTurnType.TANK));
 //        addSequential(new DriveTrainStraightMP(-54, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, 45));
