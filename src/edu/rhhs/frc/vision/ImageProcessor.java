@@ -18,7 +18,7 @@ public class ImageProcessor {
     
     private NIVision.Range TARGET_HUE_RANGE = new NIVision.Range(82, 137);	
     private NIVision.Range TARGET_SAT_RANGE = new NIVision.Range(28, 255);	
-    private NIVision.Range TARGET_LUM_RANGE = new NIVision.Range(60, 255);	
+    private NIVision.Range TARGET_LUM_RANGE = new NIVision.Range(35, 255);	
     
     public static final double TARGET_HEIGHT_FT = 1.0;
     public static final double TARGET_WIDTH_FT = 20.0/12.0;
