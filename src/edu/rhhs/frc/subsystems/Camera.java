@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.vision.USBCamera;
 
 public class Camera extends Subsystem
 {	
-    private USBCamera targetCam;
+    private USBCamera rightCam, leftCam;
     private ImageProcessor imageProcessor;
 	private Image currentImage = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
 
@@ -24,14 +24,22 @@ public class Camera extends Subsystem
 	private double offsetAngleDeg = 7;
 	private boolean lastTargetValid = false;
 	private boolean alignmentFinished = false;
+	private boolean usingRightCam = true;
+	private boolean checkedOtherCam = false;
 
     public Camera() {
 		try {
-	    	targetCam = new USBCamera("cam0");
-	    	targetCam.setBrightness(0);
-	    	targetCam.setExposureManual(0);
-	    	targetCam.updateSettings();
-	    	targetCam.startCapture();
+	    	rightCam = new USBCamera("cam0");
+	    	rightCam.setBrightness(0);
+	    	rightCam.setExposureManual(0);
+	    	rightCam.updateSettings();
+	    	rightCam.startCapture();
+	    	
+	    	leftCam = new USBCamera("cam1");
+	    	leftCam.setBrightness(0);
+	    	leftCam.setExposureManual(0);
+	    	leftCam.updateSettings();
+	    	leftCam.startCapture();
 	    	
 	    	imageProcessor = new ImageProcessor();
 		} 
@@ -46,7 +54,7 @@ public class Camera extends Subsystem
 	}
 	
 	public void postCameraImageToDashboard() {
-		targetCam.getImage(currentImage);        
+		getCamera().getImage(currentImage);        
         CameraServer.getInstance().setImage(currentImage);
 	}
 	
@@ -85,12 +93,24 @@ public class Camera extends Subsystem
 		return lastTargetValid;
 	}
 	
+	
+	//TODO: Check recursivity
 	public TargetInfo getBestTarget() {
 		lastTargetValid = false;
     	try {
-			targetCam.getImage(currentImage);        
+			getCamera().getImage(currentImage);        
 			bestTarget = imageProcessor.findBestTarget(currentImage, RobotMain.operationMode == OperationMode.TEST);
-			
+			if (bestTarget == null) {
+				if(!checkedOtherCam) {
+					setCameraInUse(!getUsingRightCamera());
+					getBestTarget();
+				}
+				else {
+					checkedOtherCam = false;
+					setCameraInUse(getDefaultCamera().equals(rightCam));
+					return bestTarget;
+				}
+			}
 			if (bestTarget != null) {
 				bestTarget.angleToTargetDeg += offsetAngleDeg;
 				if (bestTarget.compositeScore < ImageProcessor.MINIMUM_VALID_COMPOSITE_SCORE) {
@@ -102,6 +122,10 @@ public class Camera extends Subsystem
 				CameraServer.getInstance().setImage(currentImage);
 			}		
 			
+			if(checkedOtherCam) {
+				checkedOtherCam = false;
+			}
+			setCameraInUse(getDefaultCamera().equals(rightCam));
 			return bestTarget;
     	}
     	catch (Exception e) {
@@ -109,8 +133,21 @@ public class Camera extends Subsystem
     	}
 	}
 	
+	public USBCamera getCamera() {
+		if(usingRightCam) return rightCam;
+		else return leftCam;
+	}
+	
+	public USBCamera getDefaultCamera() {
+		return rightCam;
+	}
+	
+	public boolean getUsingRightCamera() {
+		return usingRightCam;
+	}
+	
 	public void writeImage() {
-		targetCam.getImage(currentImage);
+		getCamera().getImage(currentImage);
 
 		NIVision.RGBValue rgbValues = new NIVision.RGBValue();
 		NIVision.imaqWriteFile(currentImage, "/home/lvuser/image" + imageCounter + ".jpg", rgbValues);
@@ -121,8 +158,6 @@ public class Camera extends Subsystem
 	public void incrementAngleOffset(double deltaAngle) {
 		offsetAngleDeg += deltaAngle;
 	}
-	
-	
 	
 	public boolean isAlignmentFinished() {
 		return alignmentFinished;
@@ -137,6 +172,10 @@ public class Camera extends Subsystem
 		}
 		
 		return;
+	}
+	
+	public void setCameraInUse(boolean isRightCam) {
+		usingRightCam = isRightCam;
 	}
 
 	public void updateStatus(RobotMain.OperationMode operationMode) {

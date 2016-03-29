@@ -1,10 +1,8 @@
 package edu.rhhs.frc.commands.auton;
 
-import edu.rhhs.frc.commands.CameraTurnToBestTarget;
 import edu.rhhs.frc.commands.DriveTrainAbsoluteTurnMP;
 import edu.rhhs.frc.commands.DriveTrainStraightMP;
-import edu.rhhs.frc.commands.ShooterShoot;
-import edu.rhhs.frc.commands.ShooterWinchRetractAndSpoolOut;
+import edu.rhhs.frc.commands.ShooterLaserAlignmentShootAndRetract;
 import edu.rhhs.frc.subsystems.DriveTrain;
 import edu.rhhs.frc.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 import edu.wpi.first.wpilibj.command.CommandGroup;
@@ -20,13 +18,7 @@ public class Position5CenterShootCenter extends CommandGroup {
         addSequential(new DriveTrainStraightMP(68, DriveTrain.MP_AUTON_MOAT_VELOCITY_INCHES_PER_SEC, true, true, 315));
         addSequential(new DriveTrainAbsoluteTurnMP(0, DriveTrain.MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC, MPSoftwareTurnType.TANK));
         addSequential(new WaitCommand(0.1));
-        addSequential(new CameraTurnToBestTarget());
-        addSequential(new CameraTurnToBestTarget());
-        addSequential(new CameraTurnToBestTarget());
-        addSequential(new WaitCommand(0.1));
-        addSequential(new DriveTrainStraightMP(25, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, false, 0));
-        addSequential(new ShooterShoot(true));
-//        addParallel(new ShooterWinchRetractAndSpoolOut());
+        addSequential(new ShooterLaserAlignmentShootAndRetract());
 //        addSequential(new DriveTrainStraightMP(-23, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, 0));
 //        addSequential(new DriveTrainAbsoluteTurnMP(45, DriveTrain.MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC, MPSoftwareTurnType.TANK));
 //        addSequential(new DriveTrainStraightMP(-54, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, 45));

@@ -1,9 +1,7 @@
 package edu.rhhs.frc.commands.auton;
 
-import edu.rhhs.frc.commands.DriveTrainAbsoluteTurnMP;
 import edu.rhhs.frc.commands.DriveTrainStraightMP;
 import edu.rhhs.frc.subsystems.DriveTrain;
-import edu.rhhs.frc.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 /**

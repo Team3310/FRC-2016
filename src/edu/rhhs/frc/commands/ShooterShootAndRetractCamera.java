@@ -2,9 +2,6 @@ package edu.rhhs.frc.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-/**
- *
- */
 public class ShooterShootAndRetractCamera extends CommandGroup {
     
     public ShooterShootAndRetractCamera() {
