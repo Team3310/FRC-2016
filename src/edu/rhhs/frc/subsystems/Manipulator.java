@@ -24,12 +24,12 @@ public class Manipulator extends Subsystem implements ControlLoopable
 	public static final double PORTCULLIS_RETRACTED_ANGLE_DEG = 0;
 	public static final double PORTCULLIS_ZERO_ANGLE_DEG = 0;
 	public static final double PORTCULLIS_PARTIALLY_DEPLOYED_ANGLE_DEG = 165;//180;
-	public static final double PORTCULLIS_FULLY_DEPLOYED_ANGLE_DEG = 181;//210;
+	public static final double PORTCULLIS_FULLY_DEPLOYED_ANGLE_DEG = 183;//210;
 
-	public static final double CHEVAL_DE_FRISE_RETRACTED_ANGLE_DEG = 0;
+	public static final double CHEVAL_DE_FRISE_RETRACTED_ANGLE_DEG = -22;
 	public static final double CHEVAL_DE_FRISE_ZERO_ANGLE_DEG = 0;
-	public static final double CHEVAL_DE_FRISE_PARTIALLY_DEPLOYED_ANGLE_DEG = 151;
-	public static final double CHEVAL_DE_FRISE_FULLY_DEPLOYED_ANGLE_DEG = 168;//175;
+	public static final double CHEVAL_DE_FRISE_PARTIALLY_DEPLOYED_ANGLE_DEG = 135;
+	public static final double CHEVAL_DE_FRISE_FULLY_DEPLOYED_ANGLE_DEG = 154;//175; //168 other comp
 
 	// Motion profile max velocities and accel times
 	public static final double RETRACT_MAX_RATE_DEG_PER_SEC = 650;

@@ -60,7 +60,7 @@ public class RobotMain extends IterativeRobot
 	public static OperationMode operationMode = OperationMode.COMPETITION;
 
 	public static enum AutonPosition { SPY, LOW_BAR, TWO, THREE, FOUR, FIVE };
-	public static enum AutonDefense { SPY, LOW_BAR, PORTCULLIS, RAMPARTS, MOAT, ROCKWALL, ROUGH_TERRAIN };
+	public static enum AutonDefense { SPY, LOW_BAR, PORTCULLIS, RAMPARTS, MOAT, ROCKWALL, ROUGH_TERRAIN, CDF };
 	public static enum AutonTask { SHOOT_LEFT_HIGH, SHOOT_CENTER_HIGH, SHOOT_RIGHT_HIGH, CROSS_AND_RETURN };
 	
 	private Hashtable<String, Command> autonCommandTable = new Hashtable<String, Command>();
@@ -104,6 +104,7 @@ public class RobotMain extends IterativeRobot
 		autonDefenseChooser.addObject ("Spy", AutonDefense.SPY);
 		autonDefenseChooser.addDefault("Low bar", AutonDefense.LOW_BAR);
 		autonDefenseChooser.addObject ("Portcullis", AutonDefense.PORTCULLIS);
+		autonDefenseChooser.addObject ("Cheval de Frise", AutonDefense.CDF);
 		autonDefenseChooser.addObject ("Ramparts", AutonDefense.RAMPARTS);
 		autonDefenseChooser.addObject ("Moat", AutonDefense.MOAT);
 		autonDefenseChooser.addObject ("Rockwall", AutonDefense.ROCKWALL);
@@ -240,6 +241,15 @@ public class RobotMain extends IterativeRobot
     	autonCommandTable.put(buildAutonKey(AutonPosition.FOUR, AutonDefense.PORTCULLIS, AutonTask.SHOOT_CENTER_HIGH), 
     			new PortcullisPosition4CenterShootCenter());
     	autonCommandTable.put(buildAutonKey(AutonPosition.FIVE, AutonDefense.PORTCULLIS, AutonTask.SHOOT_CENTER_HIGH), 
+    			new PortcullisPosition5CenterShootCenter());
+    	
+    	autonCommandTable.put(buildAutonKey(AutonPosition.TWO, AutonDefense.CDF, AutonTask.SHOOT_LEFT_HIGH), 
+    			new PortcullisPosition2CenterShootLeft());
+    	autonCommandTable.put(buildAutonKey(AutonPosition.THREE, AutonDefense.CDF, AutonTask.SHOOT_CENTER_HIGH), 
+    			new PortcullisPosition3CenterShootCenter());
+    	autonCommandTable.put(buildAutonKey(AutonPosition.FOUR, AutonDefense.CDF, AutonTask.SHOOT_CENTER_HIGH), 
+    			new PortcullisPosition4CenterShootCenter());
+    	autonCommandTable.put(buildAutonKey(AutonPosition.FIVE, AutonDefense.CDF, AutonTask.SHOOT_CENTER_HIGH), 
     			new PortcullisPosition5CenterShootCenter());
   }
     

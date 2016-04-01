@@ -17,7 +17,7 @@ public class RampartsPosition3LeftShootCenter extends CommandGroup {
         addParallel(new ShooterWinchSpoolOut());
         addParallel(new IntakeDelayedDeploy());
     	addSequential(new DriveTrainGyroOffset(-6.0));
-        addSequential(new DriveTrainStraightMP(152, DriveTrain.MP_AUTON_MOAT_VELOCITY_INCHES_PER_SEC, true, true, 0));
+        addSequential(new DriveTrainStraightMP(152, DriveTrain.MP_AUTON_MOAT_VELOCITY_INCHES_PER_SEC, true, false, 0));
         addSequential(new Position3CenterShootCenter());
     }
 }
