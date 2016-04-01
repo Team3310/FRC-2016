@@ -24,7 +24,7 @@ public class ImageProcessor {
     public static final double TARGET_WIDTH_FT = 20.0/12.0;
     public static final double TARGET_ASPECT_RATIO = TARGET_HEIGHT_FT / TARGET_WIDTH_FT;
     
-    public static final double CAMERA_OFFSET_FT = -9.0/12.0;
+    public static final double CAMERA_OFFSET_FT = 0.0;
             
     public static final double OPTIMAL_RECT = 0.2;
     public static final double OPTIMAL_AR = TARGET_ASPECT_RATIO;
@@ -36,7 +36,7 @@ public class ImageProcessor {
     public static final double WEIGHT_FACTOR_YY = 10;
     
     public static final double CAMERA_FOV_HORIZONTAL_ANGLE = 33.565;  
-    public static final double CAMERA_FOV_VERTICAL_ANGLE = 59.695;  
+    public static final double CAMERA_FOV_VERTICAL_ANGLE = 58; //59.695  
 	public static final double tanHalfFOV = Math.tan(Math.toRadians(CAMERA_FOV_HORIZONTAL_ANGLE / 2));
 	
 	public static final double MINIMUM_VALID_COMPOSITE_SCORE = 6;

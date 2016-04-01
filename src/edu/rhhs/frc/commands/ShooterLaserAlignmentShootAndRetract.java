@@ -9,7 +9,7 @@ public class ShooterLaserAlignmentShootAndRetract extends CommandGroup {
     public ShooterLaserAlignmentShootAndRetract() {
     	addSequential(new CameraTurnToBestTarget());
         addSequential(new CameraTurnToBestTarget());
-        addSequential(new DriveTrainStraightMPLaser(24, DriveTrain.MP_LASER_SEARCH_VELOCITY_INCHES_PER_SEC, true, false, 60));
+        addSequential(new DriveTrainStraightMPLaser(36, DriveTrain.MP_LASER_SEARCH_VELOCITY_INCHES_PER_SEC, true, false, 60));
         addSequential(new CameraTurnToBestTarget());
         addSequential(new CameraTurnToBestTarget());
         addSequential(new WaitCommand(0.1));

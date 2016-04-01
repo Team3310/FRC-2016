@@ -285,7 +285,7 @@ public class OI
 		SmartDashboard.putData("Drive off", driveOff);
 		
 		Button driveMPLaser = new InternalButton();
-		driveMPLaser.whenPressed(new DriveTrainStraightMPLaser(24, DriveTrain.MP_LASER_SEARCH_VELOCITY_INCHES_PER_SEC, true, false, 0));
+		driveMPLaser.whenPressed(new DriveTrainStraightMPLaser(36, DriveTrain.MP_LASER_SEARCH_VELOCITY_INCHES_PER_SEC, true, false, 0));
 		SmartDashboard.putData("Drive Straight Laser", driveMPLaser);
 		
 		Button driveMP = new InternalButton();

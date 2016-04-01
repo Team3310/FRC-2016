@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Manipulator extends Subsystem implements ControlLoopable
 {
-	private static final double ENCODER_TICKS_TO_WORLD = (4096.0 / 360.0) * (18.0 / 16.0);  
+	private static final double ENCODER_TICKS_TO_WORLD = (4096.0 / 360.0) * (18.0 / 18.0);  
 	public static enum ArmSide { LEFT, RIGHT, BOTH };
 	public static enum ArmState { RETRACT, DEPLOY };
 	public static enum Attachment { CHEVAL_DE_FRISE, PORTCULLIS };

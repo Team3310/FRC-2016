@@ -14,18 +14,18 @@ import edu.wpi.first.wpilibj.vision.USBCamera;
 
 public class Camera extends Subsystem
 {	
-    private USBCamera rightCam, leftCam;
+    private USBCamera rightCam; //, leftCam
     private ImageProcessor imageProcessor;
 	private Image currentImage = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
 
     private TargetInfo bestTarget;
 	private int imageCounter = 0;
 	private long processTimeMs = 0;
-	private double offsetAngleDeg = 7;
+	private double offsetAngleDeg = 0; //7
 	private boolean lastTargetValid = false;
 	private boolean alignmentFinished = false;
-	private boolean usingRightCam = true;
-	private boolean checkedOtherCam = false;
+	//private boolean usingRightCam = true;
+	//private boolean checkedOtherCam = false;
 
     public Camera() {
 		try {
@@ -35,11 +35,11 @@ public class Camera extends Subsystem
 	    	rightCam.updateSettings();
 	    	rightCam.startCapture();
 	    	
-	    	leftCam = new USBCamera("cam1");
-	    	leftCam.setBrightness(0);
-	    	leftCam.setExposureManual(0);
-	    	leftCam.updateSettings();
-	    	leftCam.startCapture();
+//	    	leftCam = new USBCamera("cam1");
+//	    	leftCam.setBrightness(0);
+//	    	leftCam.setExposureManual(0);
+//	    	leftCam.updateSettings();
+//	    	leftCam.startCapture();
 	    	
 	    	imageProcessor = new ImageProcessor();
 		} 
@@ -100,17 +100,17 @@ public class Camera extends Subsystem
     	try {
 			getCamera().getImage(currentImage);        
 			bestTarget = imageProcessor.findBestTarget(currentImage, RobotMain.operationMode == OperationMode.TEST);
-			if (bestTarget == null) {
-				if(!checkedOtherCam) {
-					setCameraInUse(!getUsingRightCamera());
-					getBestTarget();
-				}
-				else {
-					checkedOtherCam = false;
-					setCameraInUse(getDefaultCamera().equals(rightCam));
-					return bestTarget;
-				}
-			}
+//			if (bestTarget == null) {
+//				if(!checkedOtherCam) {
+//					setCameraInUse(!getUsingRightCamera());
+//					getBestTarget();
+//				}
+//				else {
+//					checkedOtherCam = false;
+//					setCameraInUse(getDefaultCamera().equals(rightCam));
+//					return bestTarget;
+//				}
+//			}
 			if (bestTarget != null) {
 				bestTarget.angleToTargetDeg += offsetAngleDeg;
 				if (bestTarget.compositeScore < ImageProcessor.MINIMUM_VALID_COMPOSITE_SCORE) {
@@ -122,10 +122,10 @@ public class Camera extends Subsystem
 				CameraServer.getInstance().setImage(currentImage);
 			}		
 			
-			if(checkedOtherCam) {
-				checkedOtherCam = false;
-			}
-			setCameraInUse(getDefaultCamera().equals(rightCam));
+//			if(checkedOtherCam) {
+//				checkedOtherCam = false;
+//			}
+//			setCameraInUse(getDefaultCamera().equals(rightCam));
 			return bestTarget;
     	}
     	catch (Exception e) {
@@ -134,17 +134,19 @@ public class Camera extends Subsystem
 	}
 	
 	public USBCamera getCamera() {
-		if(usingRightCam) return rightCam;
-		else return leftCam;
+		//if(usingRightCam || (rightCam != null && leftCam == null)) {
+			return rightCam;
+		//}
+		//else return leftCam;
 	}
 	
-	public USBCamera getDefaultCamera() {
-		return rightCam;
-	}
+//	public USBCamera getDefaultCamera() {
+//		return rightCam;
+//	}
 	
-	public boolean getUsingRightCamera() {
-		return usingRightCam;
-	}
+//	public boolean getUsingRightCamera() {
+//		return usingRightCam;
+//	}
 	
 	public void writeImage() {
 		getCamera().getImage(currentImage);
@@ -174,9 +176,9 @@ public class Camera extends Subsystem
 		return;
 	}
 	
-	public void setCameraInUse(boolean isRightCam) {
-		usingRightCam = isRightCam;
-	}
+//	public void setCameraInUse(boolean isRightCam) {
+//		usingRightCam = isRightCam;
+//	}
 
 	public void updateStatus(RobotMain.OperationMode operationMode) {
 		if (operationMode == RobotMain.OperationMode.TEST) {
