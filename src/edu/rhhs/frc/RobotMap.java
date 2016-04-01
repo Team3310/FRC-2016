@@ -38,8 +38,8 @@ public class RobotMap
     public static final int INTAKE_OUTER_LIFT_PCM_ID = 4; 
     public static final int INTAKE_INNER_LIFT_PCM_ID = 3; 
     
-	public static final int DRIVETRAIN_WINCH_ENGAGE_PCM_ID = 5; 
-	public static final int DRIVETRAIN_WINCH_DISENGAGE_PCM_ID = 6; 
+	public static final int DRIVETRAIN_CLIMBER_DEPLOY_PCM_ID = 5; 
+	public static final int DRIVETRAIN_CLIMBER_RETRACT_PCM_ID = 6; 
 
 	// DIGITAL INPUTS
     public static final int CARRIAGE_RETRACTED_DIO_PORT_ID = 0;

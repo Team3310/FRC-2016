@@ -14,6 +14,7 @@ public class RoughTerrainPosition2CenterShootLeft extends CommandGroup {
     public RoughTerrainPosition2CenterShootLeft() {
         addSequential(new ShooterWinchRetract());
         addParallel(new ShooterWinchSpoolOut());
+        addParallel(new IntakeDelayedDeploy());
         addSequential(new DriveTrainStraightMP(150, DriveTrain.MP_AUTON_MOAT_VELOCITY_INCHES_PER_SEC, true, true, 0));
         addSequential(new Position2CenterShootLeft());
     }

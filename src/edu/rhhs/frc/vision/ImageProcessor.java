@@ -35,8 +35,9 @@ public class ImageProcessor {
     public static final double WEIGHT_FACTOR_XX = 10;
     public static final double WEIGHT_FACTOR_YY = 10;
     
+    public static final double CAMERA_AIM_VERTICAL_ANGLE = 58;
     public static final double CAMERA_FOV_HORIZONTAL_ANGLE = 33.565;  
-    public static final double CAMERA_FOV_VERTICAL_ANGLE = 58; //59.695  
+    public static final double CAMERA_FOV_VERTICAL_ANGLE = 59.695;
 	public static final double tanHalfFOV = Math.tan(Math.toRadians(CAMERA_FOV_HORIZONTAL_ANGLE / 2));
 	
 	public static final double MINIMUM_VALID_COMPOSITE_SCORE = 6;
@@ -109,7 +110,7 @@ public class ImageProcessor {
 	        double offsetAngle = Math.atan(widthOffsetPixels / focalDistancePixels);
 	
 	        double imageWidthFt = (double)imageWidth * TARGET_WIDTH_FT / rectWidth / Math.cos(offsetAngle);
-	        double cameraDistanceWidthFt = Math.cos(Math.toRadians(58)) * imageWidthFt / 2.0 / tanHalfFOV;
+	        double cameraDistanceWidthFt = Math.cos(Math.toRadians(CAMERA_AIM_VERTICAL_ANGLE)) * imageWidthFt / 2.0 / tanHalfFOV;
 	
 	        // Calculate the angle from the center of the image to the selected target
 	        double targetOffsetFt = imageWidthFt * widthOffsetPixels / (double)imageWidth + CAMERA_OFFSET_FT;

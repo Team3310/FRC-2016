@@ -30,7 +30,7 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 {
 	public static enum DriveTrainControlMode { JOYSTICK, MP_STRAIGHT, MP_TURN, PID_TURN, HOLD, TEST };
 	public static enum SpeedShiftState { HI, LO };
-	public static enum PTOShiftState { ENGAGED, DISENGAGED };
+	public static enum ClimberState { DEPLOYED, RETRACTED };
 
 	public static final double TRACK_WIDTH_INCHES = 20;
 	public static final double ENCODER_TICKS_TO_INCHES = 4096 / (3.72 * Math.PI); //3.80
@@ -67,7 +67,7 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 
 	// Pneumatics
 	private Solenoid speedShift;
-	private DoubleSolenoid ptoShift;
+	private DoubleSolenoid climber;
 
 	// Input devices
 	public static final int DRIVER_INPUT_JOYSTICK_ARCADE = 0;
@@ -166,7 +166,7 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 			m_drive.setSafetyEnabled(false);
 			
 			speedShift = new Solenoid(RobotMap.DRIVETRAIN_SPEEDSHIFT_PCM_ID);
-			ptoShift = new DoubleSolenoid(RobotMap.DRIVETRAIN_WINCH_ENGAGE_PCM_ID, RobotMap.DRIVETRAIN_WINCH_DISENGAGE_PCM_ID);		
+			climber = new DoubleSolenoid(RobotMap.DRIVETRAIN_CLIMBER_DEPLOY_PCM_ID, RobotMap.DRIVETRAIN_CLIMBER_RETRACT_PCM_ID);		
 
 			gyroCalibrationSwitch = new DigitalInput(RobotMap.CALIBRATE_GYRO_BUTTON_DIO_PORT_ID);
 			laserSensor = new DigitalInput(RobotMap.LASER_SENSOR_DIO_PORT_ID);
@@ -471,12 +471,12 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 		}
 	}
 
-	public void setPTOState(PTOShiftState state) {
-		if(state == PTOShiftState.ENGAGED) {
-			ptoShift.set(Value.kForward);
+	public void setClimberState(ClimberState state) {
+		if(state == ClimberState.DEPLOYED) {
+			climber.set(Value.kForward);
 		}
-		else if(state == PTOShiftState.DISENGAGED) {
-			ptoShift.set(Value.kReverse);
+		else if(state == ClimberState.RETRACTED) {
+			climber.set(Value.kReverse);
 		}
 	}
 	

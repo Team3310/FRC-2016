@@ -11,11 +11,12 @@ import edu.rhhs.frc.commands.CameraTurnToBestTarget;
 import edu.rhhs.frc.commands.CameraUpdateBestTarget;
 import edu.rhhs.frc.commands.CameraUpdateDashboard;
 import edu.rhhs.frc.commands.DriveTrainAbsoluteTurnMP;
+import edu.rhhs.frc.commands.DriveTrainClimberSet;
 import edu.rhhs.frc.commands.DriveTrainGyroCalibrate;
 import edu.rhhs.frc.commands.DriveTrainGyroLock;
 import edu.rhhs.frc.commands.DriveTrainGyroReset;
 import edu.rhhs.frc.commands.DriveTrainHold;
-import edu.rhhs.frc.commands.DriveTrainPTOShift;
+import edu.rhhs.frc.commands.DriveTrainMPCancel;
 import edu.rhhs.frc.commands.DriveTrainRelativeMaxTurnMP;
 import edu.rhhs.frc.commands.DriveTrainRelativeTurnMP;
 import edu.rhhs.frc.commands.DriveTrainSpeed;
@@ -46,7 +47,7 @@ import edu.rhhs.frc.commands.ShooterWinchSpeed;
 import edu.rhhs.frc.commands.ShooterWinchSpoolOut;
 import edu.rhhs.frc.controller.XboxController;
 import edu.rhhs.frc.subsystems.DriveTrain;
-import edu.rhhs.frc.subsystems.DriveTrain.PTOShiftState;
+import edu.rhhs.frc.subsystems.DriveTrain.ClimberState;
 import edu.rhhs.frc.subsystems.DriveTrain.SpeedShiftState;
 import edu.rhhs.frc.subsystems.Intake;
 import edu.rhhs.frc.subsystems.Intake.LiftState;
@@ -161,6 +162,18 @@ public class OI
         XBoxTriggerButton shooterShootCamera = new XBoxTriggerButton(m_operatorXBox, XBoxTriggerButton.LEFT_TRIGGER);
         shooterShootCamera.whenPressed(new ShooterShootAndRetractCamera());
 
+// TODO DISTANCE        XBoxTriggerButton motionProfileClimb = new XBoxTriggerButton(m_operatorXBox, XBoxTriggerButton.LEFT_AXIS_UP_TRIGGER);
+//        motionProfileClimb.whenPressed(new ShooterShootAndRetract(false));
+
+        XBoxTriggerButton cancelClimbMP = new XBoxTriggerButton(m_operatorXBox, XBoxTriggerButton.LEFT_AXIS_DOWN_TRIGGER);
+        cancelClimbMP.whenPressed(new DriveTrainMPCancel());
+        
+        XBoxTriggerButton driveTrainDisengagePTO = new XBoxTriggerButton(m_operatorXBox, XBoxTriggerButton.LEFT_AXIS_LEFT_TRIGGER);
+        driveTrainDisengagePTO.whenPressed(new ShooterShotPosition(ShotPosition.SHORT));
+
+        XBoxTriggerButton driveTrainEngagePTO = new XBoxTriggerButton(m_operatorXBox, XBoxTriggerButton.LEFT_AXIS_RIGHT_TRIGGER);
+        driveTrainEngagePTO.whenPressed(new ShooterShotPosition(ShotPosition.LONG));
+        
         JoystickButton retractWinch = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.BACK_BUTTON);
         retractWinch.whenPressed(new ShooterWinchRetractAndSpoolOut());
 
@@ -179,12 +192,20 @@ public class OI
 		drivetrainSpeedShiftLo.whenPressed(new DriveTrainSpeedShift(SpeedShiftState.LO));
 		SmartDashboard.putData("Speed Shift LO", drivetrainSpeedShiftLo);
 
+		Button drivetrainClimberDeployed = new InternalButton();
+		drivetrainClimberDeployed.whenPressed(new DriveTrainClimberSet(ClimberState.DEPLOYED));
+		SmartDashboard.putData("Climber Deploy", drivetrainClimberDeployed);
+
+		Button drivetrainClimberRetracted = new InternalButton();
+		drivetrainClimberRetracted.whenPressed(new DriveTrainClimberSet(ClimberState.RETRACTED));
+		SmartDashboard.putData("Climber Retract", drivetrainClimberRetracted);
+		
 		Button drivetrainPTOShiftEngaged = new InternalButton();
-		drivetrainPTOShiftEngaged.whenPressed(new DriveTrainPTOShift(PTOShiftState.ENGAGED));
+		drivetrainPTOShiftEngaged.whenPressed(new ShooterShotPosition(ShotPosition.LONG));
 		SmartDashboard.putData("PTO ENGAGED", drivetrainPTOShiftEngaged);
 
 		Button drivetrainPTOShiftDisengaged = new InternalButton();
-		drivetrainPTOShiftDisengaged.whenPressed(new DriveTrainPTOShift(PTOShiftState.DISENGAGED));
+		drivetrainPTOShiftDisengaged.whenPressed(new ShooterShotPosition(ShotPosition.SHORT));
 		SmartDashboard.putData("PTO DISENGAGED", drivetrainPTOShiftDisengaged);
 
 		Button outerIntakeUp = new InternalButton();

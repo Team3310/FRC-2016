@@ -19,6 +19,7 @@ public class RampartsPosition2LeftShootLeft extends CommandGroup {
     public RampartsPosition2LeftShootLeft() {
         addSequential(new ShooterWinchRetract());
         addParallel(new ShooterWinchSpoolOut());
+        addParallel(new IntakeDelayedDeploy());
     	addSequential(new DriveTrainGyroOffset(-6.0));
         addSequential(new DriveTrainStraightMP(225, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, true, 0));
         addSequential(new DriveTrainAbsoluteTurnMP(60, DriveTrain.MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC, MPSoftwareTurnType.TANK));

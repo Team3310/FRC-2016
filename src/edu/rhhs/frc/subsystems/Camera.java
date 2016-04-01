@@ -8,6 +8,9 @@ import edu.rhhs.frc.RobotMain.OperationMode;
 import edu.rhhs.frc.vision.ImageProcessor;
 import edu.rhhs.frc.vision.ImageProcessor.TargetInfo;
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.Relay.Direction;
+import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.vision.USBCamera;
@@ -15,6 +18,7 @@ import edu.wpi.first.wpilibj.vision.USBCamera;
 public class Camera extends Subsystem
 {	
     private USBCamera rightCam; //, leftCam
+    private Relay flashlight;
     private ImageProcessor imageProcessor;
 	private Image currentImage = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
 
@@ -40,7 +44,8 @@ public class Camera extends Subsystem
 //	    	leftCam.setExposureManual(0);
 //	    	leftCam.updateSettings();
 //	    	leftCam.startCapture();
-	    	
+	    	flashlight = new Relay(0, Direction.kForward);
+	    	flashlight.set(Value.kForward);
 	    	imageProcessor = new ImageProcessor();
 		} 
 		catch (Exception e) {

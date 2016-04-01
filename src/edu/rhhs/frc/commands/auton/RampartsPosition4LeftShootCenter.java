@@ -15,6 +15,7 @@ public class RampartsPosition4LeftShootCenter extends CommandGroup {
     public RampartsPosition4LeftShootCenter() {
         addSequential(new ShooterWinchRetract());
         addParallel(new ShooterWinchSpoolOut());
+        addParallel(new IntakeDelayedDeploy());
     	addSequential(new DriveTrainGyroOffset(-6.0));
         addSequential(new DriveTrainStraightMP(140, DriveTrain.MP_AUTON_MOAT_VELOCITY_INCHES_PER_SEC, true, true, 0));
         addSequential(new Position4CenterShootCenter());
