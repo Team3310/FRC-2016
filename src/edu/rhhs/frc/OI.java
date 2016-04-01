@@ -176,6 +176,12 @@ public class OI
         
         JoystickButton retractWinch = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.BACK_BUTTON);
         retractWinch.whenPressed(new ShooterWinchRetractAndSpoolOut());
+        
+        JoystickButton deployClimber = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.X_BUTTON);
+        deployClimber.whenPressed(new DriveTrainClimberSet(ClimberState.DEPLOYED));
+        
+        JoystickButton retractClimber = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.B_BUTTON);
+        retractClimber.whenPressed(new DriveTrainClimberSet(ClimberState.RETRACTED));
 
         JoystickButton cameraAlign = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.LEFT_JOYSTICK_BUTTON);
         cameraAlign.whenPressed(new ShooterCameraAlign());
