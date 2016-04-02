@@ -10,6 +10,7 @@ import edu.rhhs.frc.commands.CameraSaveImage;
 import edu.rhhs.frc.commands.CameraTurnToBestTarget;
 import edu.rhhs.frc.commands.CameraUpdateBestTarget;
 import edu.rhhs.frc.commands.CameraUpdateDashboard;
+import edu.rhhs.frc.commands.ClimberEngageAndWinch;
 import edu.rhhs.frc.commands.DriveTrainAbsoluteTurnMP;
 import edu.rhhs.frc.commands.DriveTrainClimberSet;
 import edu.rhhs.frc.commands.DriveTrainGyroCalibrate;
@@ -84,11 +85,11 @@ public class OI
         shiftDrivetrain.whenPressed(new DriveTrainSpeedShift(DriveTrain.SpeedShiftState.HI));
         shiftDrivetrain.whenReleased(new DriveTrainSpeedShift(DriveTrain.SpeedShiftState.LO));
 
-        JoystickButton manipulatorDeploy1 = new JoystickButton(m_driverJoystickPower, 3);
-        manipulatorDeploy1.whenPressed(new ManipulatorMoveMP(PresetPositions.FULLY_DEPLOYED));
+        JoystickButton climberDeploy1 = new JoystickButton(m_driverJoystickPower, 3);
+        climberDeploy1.whenPressed(new DriveTrainClimberSet(ClimberState.DEPLOYED));
 
-        JoystickButton manipulatorRetract1 = new JoystickButton(m_driverJoystickPower, 4);
-        manipulatorRetract1.whenPressed(new ManipulatorMoveMP(PresetPositions.RETRACTED));
+        JoystickButton climberRetract1 = new JoystickButton(m_driverJoystickPower, 4);
+        climberRetract1.whenPressed(new DriveTrainClimberSet(ClimberState.RETRACTED));
 
         JoystickButton intakeFullyDeploy1 = new JoystickButton(m_driverJoystickPower, 5);
         intakeFullyDeploy1.whenPressed(new IntakeFullyDeploy());
@@ -120,8 +121,14 @@ public class OI
         //JoystickButton shooterShoot1 = new JoystickButton(m_driverJoystickTurn, 2);
         //shooterShoot1.whenPressed(new ShooterShootAndRetract());
 
-        JoystickButton retractWinch1 = new JoystickButton(m_driverJoystickTurn, 11);
-        retractWinch1.whenPressed(new ShooterWinchRetractAndSpoolOut());
+        JoystickButton engagePTO = new JoystickButton(m_driverJoystickTurn, 9);
+        engagePTO.whenPressed(new ShooterShotPosition(ShotPosition.LONG));
+        
+        JoystickButton disengagePTO = new JoystickButton(m_driverJoystickTurn, 10);
+        disengagePTO.whenPressed(new ShooterShotPosition(ShotPosition.SHORT));
+        
+        JoystickButton engageClimberAndWinch1 = new JoystickButton(m_driverJoystickTurn, 11);
+        engageClimberAndWinch1.whenPressed(new ClimberEngageAndWinch());
 
         JoystickButton safeReleaseWinch1 = new JoystickButton(m_driverJoystickTurn, 12);
         safeReleaseWinch1.whenPressed(new ShooterWinchSafeRelease());
@@ -130,11 +137,11 @@ public class OI
         JoystickButton manipulatorDeploy = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.Y_BUTTON);
         manipulatorDeploy.whenPressed(new ManipulatorMoveMP(PresetPositions.FULLY_DEPLOYED));
 
-        JoystickButton retractClimber = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.B_BUTTON);
-        retractClimber.whenPressed(new DriveTrainClimberSet(ClimberState.RETRACTED));
-        
-        JoystickButton deployClimber = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.X_BUTTON);
-        deployClimber.whenPressed(new DriveTrainClimberSet(ClimberState.DEPLOYED));
+//        JoystickButton retractClimber = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.B_BUTTON);
+//        retractClimber.whenPressed(new DriveTrainClimberSet(ClimberState.RETRACTED));
+//        
+//        JoystickButton deployClimber = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.X_BUTTON);
+//        deployClimber.whenPressed(new DriveTrainClimberSet(ClimberState.DEPLOYED));
 
         JoystickButton manipulatorRetract = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.A_BUTTON);
         manipulatorRetract.whenPressed(new ManipulatorMoveMP(PresetPositions.RETRACTED));
@@ -168,17 +175,17 @@ public class OI
 // TODO DISTANCE        XBoxTriggerButton motionProfileClimb = new XBoxTriggerButton(m_operatorXBox, XBoxTriggerButton.LEFT_AXIS_UP_TRIGGER);
 //        motionProfileClimb.whenPressed(new ShooterShootAndRetract(false));
 
-        XBoxTriggerButton cancelClimbMP = new XBoxTriggerButton(m_operatorXBox, XBoxTriggerButton.LEFT_AXIS_DOWN_TRIGGER);
-        cancelClimbMP.whenPressed(new DriveTrainMPCancel());
-        
-        XBoxTriggerButton driveTrainDisengagePTO = new XBoxTriggerButton(m_operatorXBox, XBoxTriggerButton.LEFT_AXIS_LEFT_TRIGGER);
-        driveTrainDisengagePTO.whenPressed(new ShooterShotPosition(ShotPosition.SHORT));
-
-        XBoxTriggerButton driveTrainEngagePTO = new XBoxTriggerButton(m_operatorXBox, XBoxTriggerButton.LEFT_AXIS_RIGHT_TRIGGER);
-        driveTrainEngagePTO.whenPressed(new ShooterShotPosition(ShotPosition.LONG));
+//        XBoxTriggerButton cancelClimbMP = new XBoxTriggerButton(m_operatorXBox, XBoxTriggerButton.LEFT_AXIS_DOWN_TRIGGER);
+//        cancelClimbMP.whenPressed(new DriveTrainMPCancel());
+//        
+//        XBoxTriggerButton driveTrainDisengagePTO = new XBoxTriggerButton(m_operatorXBox, XBoxTriggerButton.LEFT_AXIS_LEFT_TRIGGER);
+//        driveTrainDisengagePTO.whenPressed(new ShooterShotPosition(ShotPosition.SHORT));
+//
+//        XBoxTriggerButton driveTrainEngagePTO = new XBoxTriggerButton(m_operatorXBox, XBoxTriggerButton.LEFT_AXIS_RIGHT_TRIGGER);
+//        driveTrainEngagePTO.whenPressed(new ShooterShotPosition(ShotPosition.LONG));
         
         JoystickButton retractWinch = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.BACK_BUTTON);
-        retractWinch.whenPressed(new ShooterWinchRetractAndSpoolOut());
+        retractWinch.whenPressed(new ShooterWinchRetractAndSpoolOut()); 
 
         JoystickButton cameraAlign = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.LEFT_JOYSTICK_BUTTON);
         cameraAlign.whenPressed(new ShooterCameraAlign());
