@@ -1,6 +1,5 @@
 package edu.rhhs.frc.commands.auton;
 
-import edu.rhhs.frc.commands.DriveTrainGyroOffset;
 import edu.rhhs.frc.commands.DriveTrainStraightMP;
 import edu.rhhs.frc.commands.ShooterWinchRetract;
 import edu.rhhs.frc.commands.ShooterWinchSpoolOut;
@@ -16,7 +15,7 @@ public class RampartsPosition3LeftShootCenter extends CommandGroup {
         addSequential(new ShooterWinchRetract());
         addParallel(new ShooterWinchSpoolOut());
         addParallel(new IntakeDelayedDeploy());
-    	addSequential(new DriveTrainGyroOffset(-6.0));
+    	//addSequential(new DriveTrainGyroOffset(-6.0));
         addSequential(new DriveTrainStraightMP(152, DriveTrain.MP_AUTON_MOAT_VELOCITY_INCHES_PER_SEC, true, false, 0));
         addSequential(new Position3CenterShootCenter());
     }

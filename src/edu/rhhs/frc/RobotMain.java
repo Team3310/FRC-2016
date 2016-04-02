@@ -83,39 +83,39 @@ public class RobotMain extends IterativeRobot
 
 	    operationModeChooser = new SendableChooser();
 	    operationModeChooser.addDefault("Test", OperationMode.TEST);
-	    operationModeChooser.addObject ("Competition", OperationMode.COMPETITION);
+	    operationModeChooser.addObject("Competition", OperationMode.COMPETITION);
 		SmartDashboard.putData("Operation Mode", operationModeChooser);
 		
 		manipulatorChooser = new SendableChooser();
-		manipulatorChooser.addDefault("Cheval de Frise", Manipulator.Attachment.CHEVAL_DE_FRISE);
-		manipulatorChooser.addObject ("Portcullis", Manipulator.Attachment.PORTCULLIS);
+		manipulatorChooser.addDefault("Portcullis", Manipulator.Attachment.PORTCULLIS);
+		manipulatorChooser.addObject("Cheval de Frise", Manipulator.Attachment.CHEVAL_DE_FRISE);
 		SmartDashboard.putData("Manipulator", manipulatorChooser);
 		
 		autonPositionChooser = new SendableChooser();
 		autonPositionChooser.addObject("Spy", AutonPosition.SPY);
 		autonPositionChooser.addDefault("Low bar", AutonPosition.LOW_BAR);
-		autonPositionChooser.addObject ("Position 2", AutonPosition.TWO);
-		autonPositionChooser.addObject ("Position 3", AutonPosition.THREE);
-		autonPositionChooser.addObject ("Position 4", AutonPosition.FOUR);
-		autonPositionChooser.addObject ("Position 5", AutonPosition.FIVE);
+		autonPositionChooser.addObject("Position 2", AutonPosition.TWO);
+		autonPositionChooser.addObject("Position 3", AutonPosition.THREE);
+		autonPositionChooser.addObject("Position 4", AutonPosition.FOUR);
+		autonPositionChooser.addObject("Position 5", AutonPosition.FIVE);
 		SmartDashboard.putData("AutonPosition", autonPositionChooser);
 		
 		autonDefenseChooser = new SendableChooser();
-		autonDefenseChooser.addObject ("Spy", AutonDefense.SPY);
+		autonDefenseChooser.addObject("Spy", AutonDefense.SPY);
 		autonDefenseChooser.addDefault("Low bar", AutonDefense.LOW_BAR);
-		autonDefenseChooser.addObject ("Portcullis", AutonDefense.PORTCULLIS);
-		autonDefenseChooser.addObject ("Cheval de Frise", AutonDefense.CDF);
-		autonDefenseChooser.addObject ("Ramparts", AutonDefense.RAMPARTS);
-		autonDefenseChooser.addObject ("Moat", AutonDefense.MOAT);
-		autonDefenseChooser.addObject ("Rockwall", AutonDefense.ROCKWALL);
-		autonDefenseChooser.addObject ("Rough Terrain", AutonDefense.ROUGH_TERRAIN);
+		autonDefenseChooser.addObject("Portcullis", AutonDefense.PORTCULLIS);
+		autonDefenseChooser.addObject("Cheval de Frise", AutonDefense.CDF);
+		autonDefenseChooser.addObject("Ramparts", AutonDefense.RAMPARTS);
+		autonDefenseChooser.addObject("Moat", AutonDefense.MOAT);
+		autonDefenseChooser.addObject("Rockwall", AutonDefense.ROCKWALL);
+		autonDefenseChooser.addObject("Rough Terrain", AutonDefense.ROUGH_TERRAIN);
 		SmartDashboard.putData("AutonDefense", autonDefenseChooser);
 				
 		autonTaskChooser = new SendableChooser();
 		autonTaskChooser.addDefault("Shoot left high", AutonTask.SHOOT_LEFT_HIGH);
-		autonTaskChooser.addDefault("Shoot center high", AutonTask.SHOOT_CENTER_HIGH);
-		autonTaskChooser.addDefault("Shoot right high", AutonTask.SHOOT_RIGHT_HIGH);
-		autonTaskChooser.addObject ("Cross and return", AutonTask.CROSS_AND_RETURN);
+		autonTaskChooser.addObject("Shoot center high", AutonTask.SHOOT_CENTER_HIGH);
+		autonTaskChooser.addObject("Shoot right high", AutonTask.SHOOT_RIGHT_HIGH);
+		autonTaskChooser.addObject("Cross and return", AutonTask.CROSS_AND_RETURN);
 		SmartDashboard.putData("AutonTask", autonTaskChooser);
 
 		setupAutonTable();
