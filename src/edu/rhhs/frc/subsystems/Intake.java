@@ -52,11 +52,11 @@ public class Intake extends Subsystem
 	}
 	
 	public void setPositionInner(LiftState state) {
-		if(state == LiftState.UP) {
-			innerLift.set(true);
-		}
-		else if(state == LiftState.DOWN) {
+		if(state == LiftState.DOWN) {
 			innerLift.set(false);
+		}
+		else if(state == LiftState.UP) {
+			innerLift.set(true);
 		}
 	}
 

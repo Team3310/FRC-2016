@@ -6,7 +6,7 @@ import edu.rhhs.frc.subsystems.Shooter.CarriageState;
 
 public class ShooterWinchRetract extends ExtraTimeoutCommand
 {
-	private final static double CARRIAGE_PNEUMATIC_LOCK_TIMEOUT = 0.030;
+	private final static double CARRIAGE_PNEUMATIC_LOCK_TIMEOUT = 0.060;
 	private boolean waitingForLock;
 	private boolean carriageIsAlreadyRetracted;
 	

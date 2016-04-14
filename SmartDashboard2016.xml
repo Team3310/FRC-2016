@@ -1,5 +1,14 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="Climber Retract" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="0" y="544"/>
+	</widget>
+	<widget field="Climber Deploy" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="0" y="417"/>
+	</widget>
+	<widget field="Steer Output" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="523"/>
+	</widget>
 	<widget field="Camera Update Best" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
 		<location x="880" y="227"/>
 	</widget>
@@ -65,7 +74,7 @@
 		<property name="Text" value="Auton Task"/>
 	</static-widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Label">
-		<location x="111" y="9"/>
+		<location x="117" y="-2"/>
 		<property name="Text" value="Auton Defense"/>
 	</static-widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Label">
@@ -154,7 +163,7 @@
 		<location x="135" y="307"/>
 	</widget>
 	<widget field="AutonDefense" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
-		<location x="99" y="15"/>
+		<location x="94" y="-4"/>
 	</widget>
 	<widget field="Winch Speed Neg" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
 		<location x="10" y="307"/>

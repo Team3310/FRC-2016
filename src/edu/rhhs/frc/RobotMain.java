@@ -21,6 +21,7 @@ import edu.rhhs.frc.commands.auton.RoughTerrainPosition2CenterShootLeft;
 import edu.rhhs.frc.commands.auton.RoughTerrainPosition3CenterShootCenter;
 import edu.rhhs.frc.commands.auton.RoughTerrainPosition4CenterShootCenter;
 import edu.rhhs.frc.commands.auton.RoughTerrainPosition5CenterShootCenter;
+import edu.rhhs.frc.commands.auton.SecretSauce;
 import edu.rhhs.frc.commands.auton.SpyStraightShootLeft;
 import edu.rhhs.frc.subsystems.Camera;
 import edu.rhhs.frc.subsystems.DriveTrain;
@@ -135,7 +136,7 @@ public class RobotMain extends IterativeRobot
         // Schedule the autonomous command (example)
     	controlLoop.start();
     	manipulator.setZeroPosition();
-    	manipulator.setPresetPosition(PresetPositions.RETRACTED);
+    	manipulator.setPresetPosition(PresetPositions.ZERO);
     	driveTrain.endGyroCalibration();
     	driveTrain.resetGyro();
         if (autonomousCommand != null) autonomousCommand.start();
@@ -157,7 +158,7 @@ public class RobotMain extends IterativeRobot
         if (autonomousCommand != null) autonomousCommand.cancel();
     	updateChoosers();
         controlLoop.start();
-    	manipulator.setPresetPosition(PresetPositions.RETRACTED);
+    	manipulator.setPresetPosition(PresetPositions.ZERO);
     	driveTrain.endGyroCalibration();
         updateStatus();
     }
@@ -251,6 +252,9 @@ public class RobotMain extends IterativeRobot
     			new PortcullisPosition4CenterShootCenter());
     	autonCommandTable.put(buildAutonKey(AutonPosition.FIVE, AutonDefense.CDF, AutonTask.SHOOT_CENTER_HIGH), 
     			new PortcullisPosition5CenterShootCenter());
+
+    	autonCommandTable.put(buildAutonKey(AutonPosition.FIVE, AutonDefense.ROCKWALL, AutonTask.SHOOT_RIGHT_HIGH), 
+    			new SecretSauce());
   }
     
     private String buildAutonKey(AutonPosition position, AutonDefense defense, AutonTask task) {

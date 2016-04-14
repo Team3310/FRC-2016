@@ -14,7 +14,7 @@ public class RoughTerrainPosition4CenterShootCenter extends CommandGroup {
     public RoughTerrainPosition4CenterShootCenter() {
         addSequential(new ShooterWinchRetract());
         addParallel(new ShooterWinchSpoolOut());
-        addParallel(new IntakeDelayedDeploy());
+//        addParallel(new IntakeDelayedDeploy());
         addSequential(new DriveTrainStraightMP(150, DriveTrain.MP_AUTON_MOAT_VELOCITY_INCHES_PER_SEC, true, true, 0));
         addSequential(new Position4CenterShootCenter());
     }

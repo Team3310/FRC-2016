@@ -39,6 +39,7 @@ import edu.rhhs.frc.commands.ManipulatorMoveMP;
 import edu.rhhs.frc.commands.ManipulatorResetZero;
 import edu.rhhs.frc.commands.ShooterCameraAlign;
 import edu.rhhs.frc.commands.ShooterCarriageState;
+import edu.rhhs.frc.commands.ShooterLaserAlignmentShootAndRetract;
 import edu.rhhs.frc.commands.ShooterShootAndRetract;
 import edu.rhhs.frc.commands.ShooterShootAndRetractCamera;
 import edu.rhhs.frc.commands.ShooterShotPosition;
@@ -127,8 +128,8 @@ public class OI
         JoystickButton disengagePTO = new JoystickButton(m_driverJoystickTurn, 10);
         disengagePTO.whenPressed(new ShooterShotPosition(ShotPosition.SHORT));
         
-        JoystickButton engageClimberAndWinch1 = new JoystickButton(m_driverJoystickTurn, 11);
-        engageClimberAndWinch1.whenPressed(new ClimberEngageAndWinch());
+//        JoystickButton engageClimberAndWinch1 = new JoystickButton(m_driverJoystickTurn, 11);
+//        engageClimberAndWinch1.whenPressed(new ClimberEngageAndWinch());
 
         JoystickButton safeReleaseWinch1 = new JoystickButton(m_driverJoystickTurn, 12);
         safeReleaseWinch1.whenPressed(new ShooterWinchSafeRelease());
@@ -316,7 +317,7 @@ public class OI
 		SmartDashboard.putData("Drive off", driveOff);
 		
 		Button driveMPLaser = new InternalButton();
-		driveMPLaser.whenPressed(new DriveTrainStraightMPLaser(36, DriveTrain.MP_LASER_SEARCH_VELOCITY_INCHES_PER_SEC, true, false, 0));
+		driveMPLaser.whenPressed(new DriveTrainStraightMPLaser(50, DriveTrain.MP_LASER_SEARCH_VELOCITY_INCHES_PER_SEC, true, false, 0));
 		SmartDashboard.putData("Drive Straight Laser", driveMPLaser);
 		
 		Button driveMP = new InternalButton();
@@ -390,6 +391,10 @@ public class OI
 		Button cameraUpdateBestTarget = new InternalButton();
 		cameraUpdateBestTarget.whenPressed(new CameraUpdateBestTarget());
 		SmartDashboard.putData("Camera Update Best", cameraUpdateBestTarget);
+		
+		Button cameraTurnShootLaser = new InternalButton();
+		cameraTurnShootLaser.whenPressed(new ShooterLaserAlignmentShootAndRetract());
+		SmartDashboard.putData("Camera Shoot Laser", cameraTurnShootLaser);
 		
 		Button incrementCameraOffsetPos = new InternalButton();
 		incrementCameraOffsetPos.whenPressed(new CameraOffset(0.5));

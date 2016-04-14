@@ -14,12 +14,12 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class PortcullisPosition3CenterShootCenter extends CommandGroup {
     
     public PortcullisPosition3CenterShootCenter() {
-        addSequential(new ShooterWinchRetract());
+    	addSequential(new ShooterWinchRetract());
         addParallel(new ShooterWinchSpoolOut());
         addParallel(new IntakeDelayedDeploy());
-    	addSequential(new ManipulatorMoveMP(PresetPositions.FULLY_DEPLOYED));
-        addSequential(new DriveTrainStraightMP(150, DriveTrain.MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC, true, true, 0));
-    	addSequential(new ManipulatorMoveMP(PresetPositions.RETRACTED));
+        addParallel(new ManipulatorMoveMP(PresetPositions.FULLY_DEPLOYED));
+        addSequential(new DriveTrainStraightMP(140, DriveTrain.MP_AUTON_CDF_VELOCITY_INCHES_PER_SEC, true, true, 0));
+        addParallel(new ManipulatorMoveMP(PresetPositions.ZERO));
         addSequential(new Position3CenterShootCenter());
     }
 }
