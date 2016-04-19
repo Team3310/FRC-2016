@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.command.WaitCommand;
 public class IntakeDelayedDeploy extends CommandGroup {
     
     public IntakeDelayedDeploy() {
-        addSequential(new WaitCommand(0.5));
+        addSequential(new WaitCommand(0.1));
         addSequential(new IntakeLowBarPosition());
     }
 }

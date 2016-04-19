@@ -1,5 +1,11 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="Camera Shoot Laser" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="0" y="568"/>
+	</widget>
+	<widget field="Last Target Valid" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="870" y="199"/>
+	</widget>
 	<widget field="Climber Retract" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
 		<location x="0" y="544"/>
 	</widget>
@@ -45,7 +51,7 @@
 		<location x="1044" y="168"/>
 	</widget>
 	<widget field="Camera Offset" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1020" y="199"/>
+		<location x="1042" y="198"/>
 	</widget>
 	<widget field="Camera Turn To Best" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
 		<location x="1018" y="227"/>

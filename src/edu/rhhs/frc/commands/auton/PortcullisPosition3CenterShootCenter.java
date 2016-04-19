@@ -18,7 +18,7 @@ public class PortcullisPosition3CenterShootCenter extends CommandGroup {
         addParallel(new ShooterWinchSpoolOut());
         addParallel(new IntakeDelayedDeploy());
         addParallel(new ManipulatorMoveMP(PresetPositions.FULLY_DEPLOYED));
-        addSequential(new DriveTrainStraightMP(140, DriveTrain.MP_AUTON_CDF_VELOCITY_INCHES_PER_SEC, true, true, 0));
+        addSequential(new DriveTrainStraightMP(140, DriveTrain.MP_AUTON_PORTCULLIS_VELOCITY_INCHES_PER_SEC, true, true, 0));
         addParallel(new ManipulatorMoveMP(PresetPositions.ZERO));
         addSequential(new Position3CenterShootCenter());
     }

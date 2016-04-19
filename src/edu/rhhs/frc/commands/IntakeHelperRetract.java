@@ -1,6 +1,8 @@
 package edu.rhhs.frc.commands;
 
 import edu.rhhs.frc.subsystems.Intake.LiftState;
+import edu.rhhs.frc.subsystems.Manipulator.Attachment;
+import edu.rhhs.frc.subsystems.Manipulator.PresetPositions;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitCommand;
 
@@ -13,6 +15,7 @@ public class IntakeHelperRetract extends CommandGroup {
         addSequential(new IntakeInnerPosition(LiftState.UP));
 //        addSequential(new WaitCommand(0.2));
         addSequential(new IntakeOuterPosition(LiftState.UP));
+        addParallel(new ManipulatorMoveMP(PresetPositions.ZERO, Attachment.CHEVAL_DE_FRISE));
         addSequential(new IntakeOuterSpeed(0));
         addSequential(new IntakeInnerSpeed(0));
         addSequential(new WaitCommand(0.8));

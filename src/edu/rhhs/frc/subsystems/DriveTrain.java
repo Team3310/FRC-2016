@@ -40,11 +40,12 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 	// Motion profile max velocities and accel times
 	public static final double MAX_TURN_RATE_DEG_PER_SEC = 320;
 	public static final double MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC = 72;
-	public static final double MP_AUTON_LOWBAR_VELOCITY_INCHES_PER_SEC = 72;
+	public static final double MP_AUTON_LOWBAR_VELOCITY_INCHES_PER_SEC = 90;
 	public static final double MP_AUTON_CDF_VELOCITY_INCHES_PER_SEC = 50;
+	public static final double MP_AUTON_PORTCULLIS_VELOCITY_INCHES_PER_SEC = 80;
 	public static final double MP_AUTON_MOAT_VELOCITY_INCHES_PER_SEC = 108;
 	public static final double MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC = 180;
-	public static final double MP_LASER_SEARCH_VELOCITY_INCHES_PER_SEC = 25;
+	public static final double MP_LASER_SEARCH_VELOCITY_INCHES_PER_SEC = 20;
 	
 	public static final double MP_STRAIGHT_T1 = 600;
 	public static final double MP_STRAIGHT_T2 = 300;
@@ -168,7 +169,8 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 			
 			speedShift = new Solenoid(RobotMap.DRIVETRAIN_SPEEDSHIFT_PCM_ID);
 			climber = new DoubleSolenoid(RobotMap.DRIVETRAIN_CLIMBER_DEPLOY_PCM_ID, RobotMap.DRIVETRAIN_CLIMBER_RETRACT_PCM_ID);		
-
+			setClimberState(ClimberState.RETRACTED);
+			
 			gyroCalibrationSwitch = new DigitalInput(RobotMap.CALIBRATE_GYRO_BUTTON_DIO_PORT_ID);
 			laserSensor = new DigitalInput(RobotMap.LASER_SENSOR_DIO_PORT_ID);
 		}

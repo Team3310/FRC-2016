@@ -11,15 +11,15 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 /**
  *
  */
-public class PortcullisPosition5CenterShootCenter extends CommandGroup {
+public class PortcullisPosition5CenterShootRight extends CommandGroup {
     
-    public PortcullisPosition5CenterShootCenter() {
+    public PortcullisPosition5CenterShootRight() {
         addSequential(new ShooterWinchRetract());
         addParallel(new ShooterWinchSpoolOut());
         addParallel(new IntakeDelayedDeploy());
         addParallel(new ManipulatorMoveMP(PresetPositions.FULLY_DEPLOYED));
         addSequential(new DriveTrainStraightMP(132, DriveTrain.MP_AUTON_CDF_VELOCITY_INCHES_PER_SEC, true, true, 0));
         addParallel(new ManipulatorMoveMP(PresetPositions.ZERO));
-        addSequential(new Position5CenterShootCenter());
+        addSequential(new Position5CenterShootRight());
     }
 }
