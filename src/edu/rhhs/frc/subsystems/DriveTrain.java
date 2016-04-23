@@ -45,7 +45,7 @@ public class DriveTrain extends Subsystem implements ControlLoopable
 	public static final double MP_AUTON_PORTCULLIS_VELOCITY_INCHES_PER_SEC = 80;
 	public static final double MP_AUTON_MOAT_VELOCITY_INCHES_PER_SEC = 108;
 	public static final double MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC = 180;
-	public static final double MP_LASER_SEARCH_VELOCITY_INCHES_PER_SEC = 20;
+	public static final double MP_LASER_SEARCH_VELOCITY_INCHES_PER_SEC = 30;
 	
 	public static final double MP_STRAIGHT_T1 = 600;
 	public static final double MP_STRAIGHT_T2 = 300;

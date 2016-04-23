@@ -17,8 +17,8 @@ public class MoatPosition4CenterShootCenter extends CommandGroup {
     public MoatPosition4CenterShootCenter() {
         addSequential(new ShooterWinchRetract());
         addParallel(new ShooterWinchSpoolOut());
-        addParallel(new IntakeOuterPosition(LiftState.DOWN));
-        addParallel(new IntakeInnerPosition(LiftState.DOWN));
+        addSequential(new IntakeOuterPosition(LiftState.DOWN));
+        addSequential(new IntakeInnerPosition(LiftState.DOWN));
         addSequential(new DriveTrainStraightMP(155, DriveTrain.MP_AUTON_MOAT_VELOCITY_INCHES_PER_SEC, true, true, 0));
         addSequential(new Position4CenterShootCenter());
     }

@@ -19,8 +19,8 @@ public class PortcullisPosition5CenterShootCenter extends CommandGroup {
     public PortcullisPosition5CenterShootCenter() {
         addSequential(new ShooterWinchRetract());
         addParallel(new ShooterWinchSpoolOut());
-        addParallel(new IntakeOuterPosition(LiftState.DOWN));
-        addParallel(new IntakeInnerPosition(LiftState.DOWN));
+        addSequential(new IntakeOuterPosition(LiftState.DOWN));
+        addSequential(new IntakeInnerPosition(LiftState.DOWN));
         addParallel(new ManipulatorMoveMP(PresetPositions.FULLY_DEPLOYED));
         addSequential(new DriveTrainStraightMP(132, DriveTrain.MP_AUTON_CDF_VELOCITY_INCHES_PER_SEC, true, true, 0));
         addParallel(new ManipulatorMoveMP(PresetPositions.ZERO));

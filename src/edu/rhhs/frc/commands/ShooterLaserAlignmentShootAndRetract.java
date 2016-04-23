@@ -12,6 +12,6 @@ public class ShooterLaserAlignmentShootAndRetract extends CommandGroup {
         addSequential(new CameraTurnToBestTarget());
         addSequential(new WaitCommand(0.1));
         addSequential(new ShooterShoot(true));
-        addParallel(new ShooterWinchRetractAndSpoolOut());
+//        addParallel(new ShooterWinchRetractAndSpoolOut());
     }
 }
