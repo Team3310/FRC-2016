@@ -145,7 +145,7 @@ public class OI
 //        deployClimber.whenPressed(new DriveTrainClimberSet(ClimberState.DEPLOYED));
 
         JoystickButton manipulatorRetract = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.A_BUTTON);
-        manipulatorRetract.whenPressed(new ManipulatorMoveMP(PresetPositions.RETRACTED));
+        manipulatorRetract.whenPressed(new ManipulatorMoveMP(PresetPositions.ZERO));
 
 //        JoystickButton shooterShortPosition = new JoystickButton(m_operatorXBox.getJoyStick(), XboxController.X_BUTTON);
 //        shooterShortPosition.whenPressed(new ShooterShotPosition(ShotPosition.SHORT));

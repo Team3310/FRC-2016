@@ -18,7 +18,7 @@ public class IntakeHelperRetract extends CommandGroup {
         addParallel(new ManipulatorMoveMP(PresetPositions.ZERO, Attachment.CHEVAL_DE_FRISE));
         addSequential(new IntakeOuterSpeed(0));
         addSequential(new IntakeInnerSpeed(0));
-        addSequential(new WaitCommand(0.8));
+//        addSequential(new WaitCommand(0.8));
         addSequential(new IntakeInnerPosition(LiftState.DOWN));
     }
 }
