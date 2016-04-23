@@ -4,9 +4,10 @@ import edu.rhhs.frc.RobotMain;
 import edu.rhhs.frc.subsystems.Shooter;
 import edu.rhhs.frc.subsystems.Shooter.CarriageState;
 
-public class ShooterWinchRetract extends ExtraTimeoutCommand
+public class ShooterWinchRetract extends ExtraTwoTimeoutCommand
 {
 	private final static double CARRIAGE_PNEUMATIC_LOCK_TIMEOUT = 0.100;
+	private final static double SAFETY_TIMEOUT = 7.0;
 	private boolean waitingForLock;
 	private boolean carriageIsAlreadyRetracted;
 	
@@ -16,8 +17,11 @@ public class ShooterWinchRetract extends ExtraTimeoutCommand
 
 	@Override
 	protected void initialize() {
+		this.setInterruptible(false);
 		waitingForLock = false;
-		resetTimer();
+		resetTimer1();
+		resetTimer2();
+		startExtraTimeout2(SAFETY_TIMEOUT);
 		RobotMain.shooter.resetWinchEncoder();
 		carriageIsAlreadyRetracted = RobotMain.shooter.isCarriageRetracted();
 		if (!carriageIsAlreadyRetracted) {
@@ -31,7 +35,7 @@ public class ShooterWinchRetract extends ExtraTimeoutCommand
 		if (!carriageIsAlreadyRetracted && !waitingForLock) {
 			if (RobotMain.shooter.isCarriageRetracted() || RobotMain.shooter.isWinchCurrentAtMax()) {
 				RobotMain.shooter.setCarriageRelease(CarriageState.LOCKED);
-				startExtraTimeout(CARRIAGE_PNEUMATIC_LOCK_TIMEOUT);
+				startExtraTimeout1(CARRIAGE_PNEUMATIC_LOCK_TIMEOUT);
 				waitingForLock = true;
 			}
 		}
@@ -39,7 +43,7 @@ public class ShooterWinchRetract extends ExtraTimeoutCommand
 
 	@Override
 	protected boolean isFinished() {
-		return carriageIsAlreadyRetracted || isExtraTimedOut();
+		return carriageIsAlreadyRetracted || isExtraTimedOut1() || isExtraTimedOut2();
 	}
 
 	@Override

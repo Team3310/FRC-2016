@@ -13,7 +13,6 @@ public class IntakeHelperRetract extends CommandGroup {
     
     public IntakeHelperRetract() {
         addSequential(new IntakeInnerPosition(LiftState.UP));
-//        addSequential(new WaitCommand(0.2));
         addSequential(new IntakeOuterPosition(LiftState.UP));
         addParallel(new ManipulatorMoveMP(PresetPositions.ZERO, Attachment.CHEVAL_DE_FRISE));
         addSequential(new IntakeOuterSpeed(0));
