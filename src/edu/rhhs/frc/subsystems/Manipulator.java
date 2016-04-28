@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Manipulator extends Subsystem implements ControlLoopable
 {
-	private static final double ENCODER_TICKS_TO_WORLD = (4096.0 / 360.0) * (18.0 / 16.0);  // 18/16 practice
+	private static final double ENCODER_TICKS_TO_WORLD = (4096.0 / 360.0) * (18.0 / 18.0);  // 18/16 practice
 	public static enum ArmSide { LEFT, RIGHT, BOTH };
 	public static enum ArmState { RETRACT, DEPLOY };
 	public static enum Attachment { CHEVAL_DE_FRISE, PORTCULLIS };
@@ -23,13 +23,13 @@ public class Manipulator extends Subsystem implements ControlLoopable
 	
 	public static final double PORTCULLIS_RETRACTED_ANGLE_DEG = 0;
 	public static final double PORTCULLIS_ZERO_ANGLE_DEG = 0;
-	public static final double PORTCULLIS_PARTIALLY_DEPLOYED_ANGLE_DEG = 165;//180 practice, 165 comp ;
-	public static final double PORTCULLIS_FULLY_DEPLOYED_ANGLE_DEG = 210;//210 practice, 183 comp;
+	public static final double PORTCULLIS_PARTIALLY_DEPLOYED_ANGLE_DEG = 165;//165 practice, 165 comp ;
+	public static final double PORTCULLIS_FULLY_DEPLOYED_ANGLE_DEG = 183;//210 practice, 183 comp;
 
-	public static final double CHEVAL_DE_FRISE_RETRACTED_ANGLE_DEG = -28;  // -28 practice, -37 comp
+	public static final double CHEVAL_DE_FRISE_RETRACTED_ANGLE_DEG = -37;  // -28 practice, -37 comp
 	public static final double CHEVAL_DE_FRISE_ZERO_ANGLE_DEG = 0;
 	public static final double CHEVAL_DE_FRISE_PARTIALLY_DEPLOYED_ANGLE_DEG = 135;
-	public static final double CHEVAL_DE_FRISE_FULLY_DEPLOYED_ANGLE_DEG = 180;  // 180 practice //160 comp
+	public static final double CHEVAL_DE_FRISE_FULLY_DEPLOYED_ANGLE_DEG = 163;  // 180 practice //160 comp
 
 	// Motion profile max velocities and accel times
 	public static final double RETRACT_MAX_RATE_DEG_PER_SEC = 650;
